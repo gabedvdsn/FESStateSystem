@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5b53ee1c2ba94d47aed466015d9271e, type: 3}
+  m_Name: Game
+  m_EditorClassIdentifier: 
+  GeneralIdentifierInitialStateTriggers:
+    _serializedList:
+    - Key: {fileID: 11400000, guid: 89fd2287a1af7204d99d0b3dca1c8009, type: 2}
+      Value: {fileID: 11400000, guid: 50b960bc56ea44040b90178177b5d18c, type: 2}
