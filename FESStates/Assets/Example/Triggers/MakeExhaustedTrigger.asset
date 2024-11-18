@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c0689f9f8f42264fb27d403156ce74c, type: 3}
   m_Name: MakeExhaustedTrigger
   m_EditorClassIdentifier: 
-  ForceOverride: 0
+  ForceOverrideModerator: 0
   OverrideModerator: {fileID: 0}
   TryPreserveStates: []
-  ReEnterSameStates: 0
+  FoceOverrideStates: 1
   OverrideStates:
     _serializedList:
     - Key: {fileID: 11400000, guid: 9978f5e125a0d874faa134abd9f79174, type: 2}
       Value: {fileID: 11400000, guid: 4205b694c46372248b1e967771abc7ab, type: 2}
+  ReEnterSameStates: 0

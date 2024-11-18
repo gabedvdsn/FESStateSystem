@@ -12,5 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c0689f9f8f42264fb27d403156ce74c, type: 3}
   m_Name: EnterHomeTrigger
   m_EditorClassIdentifier: 
+  ForceOverrideModerator: 0
   OverrideModerator: {fileID: 11400000, guid: 6cf9eb13522cc6242bd4afbe6a1aa613, type: 2}
-  TransitionState: {fileID: 0}
+  TryPreserveStates:
+  - {fileID: 11400000, guid: 9978f5e125a0d874faa134abd9f79174, type: 2}
+  FoceOverrideStates: 0
+  OverrideStates:
+    _serializedList: []
+  ReEnterSameStates: 0

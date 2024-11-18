@@ -4,9 +4,36 @@ using UnityEngine;
 
 public abstract class AbstractGameplayStateScriptableObject : ScriptableObject
 {
-    public List<AbstractPassiveStateBehaviourScriptableObject> PassiveStateBehaviours;
+    public AbstractGameplayStateScriptableObject Parent;
     
     public abstract AbstractGameplayState GenerateState(StateActor actor);
+
+    public bool IsDescendantOf(AbstractGameplayStateScriptableObject other)
+    {
+        AbstractGameplayStateScriptableObject parent = Parent;
+        while (parent is not null)
+        {
+            if (parent == other) return true;
+            parent = parent.Parent;
+        }
+
+        return false;
+    }
+
+    public bool IsRelatedTo(AbstractGameplayStateScriptableObject other)
+    {
+        if (other == this) return true;
+        
+        AbstractGameplayStateScriptableObject parent = Parent;
+        while (parent is not null)
+        {
+            if (parent == other) return true;
+            if (other.IsDescendantOf(parent)) return true;
+            parent = parent.Parent;
+        }
+
+        return false;
+    }
 }
 
 public abstract class AbstractGameplayState
@@ -48,5 +75,10 @@ public abstract class AbstractGameplayState
     public virtual void Exit()
     {
         Debug.Log($"Exit {GameplayState.name}");
+    }
+
+    public virtual StateComparisonData Compare(AbstractGameplayState other)
+    {
+        return default;
     }
 }

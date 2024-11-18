@@ -1,10 +1,14 @@
 ﻿using System;
+using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "FESState/Initialization Trigger")]
-public class InitializationStateTriggerScriptableObject : StateTriggerScriptableObject
+[CreateAssetMenu(menuName = "FESState/Trigger/Initialization Trigger")]
+public class InitializationStateTriggerScriptableObject : AbstractStateTriggerScriptableObject
 {
-    public override void Activate(StateActor actor)
+    public StateModeratorScriptableObject OverrideModerator;
+    public SerializedDictionary<StatePriorityTag, AbstractGameplayStateScriptableObject> OverrideStates;
+    
+    public override bool Activate(StateActor actor)
     {
         actor.Moderator = OverrideModerator.GenerateModerator(actor);
         
@@ -13,9 +17,11 @@ public class InitializationStateTriggerScriptableObject : StateTriggerScriptable
             if (!actor.Moderator.DefinesState(priorityTag, OverrideStates[priorityTag])) continue;
             actor.Moderator.ChangeState(priorityTag, OverrideStates[priorityTag]);
         }
+
+        return true;
     }
     
-    protected override void OnValidate()
+    protected void OnValidate()
     {
         if (!OverrideModerator) throw new Exception("Initialization State Trigger must define Override Moderator");
     }

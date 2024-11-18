@@ -14,7 +14,6 @@ public class StateModeratorScriptableObject : ScriptableObject
     
     [Space]
     
-    public bool BlockUndefinedTransitions = true;
     [SerializedDictionary("Priority Tag", "States")]
     [SerializeField] public SerializedDictionary<StatePriorityTag, List<AbstractGameplayStateScriptableObject>> StatesByPriority;
 
@@ -57,6 +56,8 @@ public class StateModerator
     {
         if (!DefinesState(priorityTag, newState) && onlyDefined) return;
         if (!TryGetStoredState(priorityTag, newState, out AbstractGameplayState state)) state = newState.GenerateState(Actor);
+        
+        StateIsChanged(priorityTag, PriorityStateMachines[priorityTag].CurrentState, state);
         PriorityStateMachines[priorityTag].ChangeState(state);
     }
 
@@ -65,6 +66,11 @@ public class StateModerator
         if (!DefinesState(priorityTag, newState) && onlyDefined) return;
         if (!TryGetStoredState(priorityTag, newState, out AbstractGameplayState state)) state = newState.GenerateState(Actor);
         PriorityStateMachines[priorityTag].InterruptChangeState(state);
+    }
+
+    private void StateIsChanged(StatePriorityTag priorityTag, AbstractGameplayState oldState, AbstractGameplayState newState)
+    {
+        StateComparisonData data = oldState.Compare(newState);
     }
 
     public void ReturnToInitial(AbstractGameplayStateScriptableObject sourceState)
@@ -143,8 +149,6 @@ public class StateModerator
 
     public AbstractGameplayStateScriptableObject GetInitialState(StatePriorityTag priorityTag) =>
         BaseModerator.InitialStates.TryGetValue(priorityTag, out AbstractGameplayStateScriptableObject state) ? state : null;
-
-    public bool BlockUndefinedTransitions => BaseModerator.BlockUndefinedTransitions;
     
     public List<AbstractGameplayStateScriptableObject> GetStatesByPriority(StatePriorityTag priorityTag) => BaseModerator.StatesByPriority.TryGetValue(priorityTag, out List<AbstractGameplayStateScriptableObject> states) ? states : null;
     
