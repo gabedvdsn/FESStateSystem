@@ -7,10 +7,6 @@ public class StateActor : MonoBehaviour
 {
     public GameplayStateTagScriptableObject GeneralIdentifier;
     
-    [Space]
-    
-    public List<AbstractPassiveStateBehaviourScriptableObject> PassiveStateBehaviours;
-    
     public StateModerator Moderator;
 
     protected virtual void Awake()

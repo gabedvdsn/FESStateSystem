@@ -36,6 +36,7 @@ public abstract class AbstractGameplayStateScriptableObject : ScriptableObject
     }
 }
 
+
 public abstract class AbstractGameplayState
 {
     public AbstractGameplayStateScriptableObject StateData;

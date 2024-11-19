@@ -130,13 +130,18 @@ public class GameplayStateManager : MonoBehaviour
     
     #endregion
     
-    #region Run Commands
+    #region Trigger Runners
 
-    public void RunStateTrigger(StateActor actor, AbstractStateTriggerScriptableObject trigger)
+    public void RunDefaultTrigger(StateActor actor, AbstractStateTriggerScriptableObject trigger)
     {
         trigger.Activate(actor);
     }
 
+    public void RunDefaultManyTrigger(List<StateActor> actors, AbstractStateTriggerScriptableObject trigger)
+    {
+        foreach (StateActor actor in actors) RunDefaultTrigger(actor, trigger);
+    }
+    
     public void RunActorSpecificTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateTriggerScriptableObject trigger) where T : StateActor
     {
         T actor = actorRetrieval.RetrieveActor<T>();
@@ -145,7 +150,23 @@ public class GameplayStateManager : MonoBehaviour
         trigger.Activate(actor);
     }
 
-    public void RunStateConditionalTrigger(StateActor actor, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent onTrueEvent, UnityEvent onFalseEvent)
+    public void RunActorSpecificManyTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateTriggerScriptableObject trigger) where T : StateActor
+    {
+        List<T> actors = actorRetrieval.RetrieveManyActors<T>(count);
+        if (actors is null) return;
+
+        foreach (T actor in actors) trigger.Activate(actor);
+    }
+    
+    public void RunActorSpecificAllTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateTriggerScriptableObject trigger) where T : StateActor
+    {
+        List<T> actors = actorRetrieval.RetrieveAllActors<T>();
+        if (actors is null) return;
+
+        foreach (T actor in actors) trigger.Activate(actor);
+    }
+
+    public void RunDefaultConditionalTrigger(StateActor actor, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent onTrueEvent, UnityEvent onFalseEvent)
     {
         if (actor is null)
         {
@@ -156,6 +177,19 @@ public class GameplayStateManager : MonoBehaviour
         else onFalseEvent?.Invoke();
     }
 
+    public void RunDefaultManyConditionalTrigger(List<StateActor> actors, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent onTrueEvent, UnityEvent onFalseEvent)
+    {
+        if (actors is null)
+        {
+            if (conditionalTrigger.FalseOnNullActor) onFalseEvent?.Invoke();
+            return;
+        }
+        foreach (StateActor actor in actors)
+        {
+            RunDefaultConditionalTrigger(actor, conditionalTrigger, onTrueEvent, onFalseEvent);
+        }
+    }
+    
     public void RunActorSpecificConditionalTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent onTrueEvent, UnityEvent onFalseEvent) where T : StateActor
     {
         T actor = actorRetrieval.RetrieveActor<T>();
@@ -167,6 +201,38 @@ public class GameplayStateManager : MonoBehaviour
         
         if (conditionalTrigger.Activate(actor)) onTrueEvent?.Invoke();
         else onFalseEvent?.Invoke();
+    }
+    public void RunActorSpecificConditionalManyTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent onTrueEvent, UnityEvent onFalseEvent) where T : StateActor
+    {
+        List<T> actors = actorRetrieval.RetrieveManyActors<T>(count);
+        if (actors is null)
+        {
+            if (conditionalTrigger.FalseOnNullActor) onFalseEvent?.Invoke();
+            return;
+        }
+
+        foreach (T actor in actors)
+        {
+            if (conditionalTrigger.Activate(actor)) onTrueEvent?.Invoke();
+            else onFalseEvent?.Invoke();
+        }
+    }
+
+    public void RunActorSpecificConditionalAllTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval,
+        AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent onTrueEvent, UnityEvent onFalseEvent) where T : StateActor
+    {
+        List<T> actors = actorRetrieval.RetrieveAllActors<T>();
+        if (actors is null)
+        {
+            if (conditionalTrigger.FalseOnNullActor) onFalseEvent?.Invoke();
+            return;
+        }
+
+        foreach (T actor in actors)
+        {
+            if (conditionalTrigger.Activate(actor)) onTrueEvent?.Invoke();
+            else onFalseEvent?.Invoke();
+        }
     }
     
     #endregion

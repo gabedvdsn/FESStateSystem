@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ForceOverrideModerator: 0
   OverrideModerator: {fileID: 11400000, guid: 1dd2f87aecb3ab943ac686eaa4e62373, type: 2}
-  TryPreserveStates:
-  - {fileID: 11400000, guid: 9978f5e125a0d874faa134abd9f79174, type: 2}
+  TryPreserveAllStates: 0
+  TryPreserveStates: []
   FoceOverrideStates: 0
   OverrideStates:
     _serializedList: []

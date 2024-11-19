@@ -19,6 +19,7 @@ public class ConditionalStateTriggerScriptableObject : AbstractStateConditionalT
     
     public override bool Activate(StateActor actor)
     {
+        if (actor.Moderator is null) return false;
         if (LookForModerators.Count > 0 && !LookForModerators.Contains(actor.Moderator.BaseModerator)) return false;
         
         foreach (StatePriorityTagScriptableObject priorityTag in LookForStates.Keys.Where(priorityTag => LookForStates[priorityTag].Count != 0))

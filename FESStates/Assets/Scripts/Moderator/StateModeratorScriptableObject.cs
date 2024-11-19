@@ -25,7 +25,7 @@ public class StateModeratorScriptableObject : ScriptableObject
     
     [Header("System Change Behaviours")]
     
-    public List<AbstractSystemChangeBehaviourScriptableObject> SystemChangeBehaviours;
+    public List<AbstractSystemChangeResponseScriptableObject> SystemChangeBehaviours;
 
     public StateModerator GenerateModerator(StateActor actor) => new(this, actor);
     
@@ -44,20 +44,28 @@ public class StateModerator
         BaseModerator = moderator;
         Actor = actor;
         
+        InitializeModeratorStates();
+    }
+
+    private void InitializeModeratorStates()
+    {
         StoredStates = new Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayState>>();
         PriorityStateMachines = new Dictionary<StatePriorityTagScriptableObject, GameplayStateMachine>();
+        
         foreach (StatePriorityTagScriptableObject priorityTag in BaseModerator.InitialStates.Keys)
         {
             PriorityStateMachines[priorityTag] = new GameplayStateMachine();
             AbstractGameplayState initialState = BaseModerator.InitialStates[priorityTag].GenerateState(Actor);
             PriorityStateMachines[priorityTag].Initialize(initialState);
+            
+            StateIsChanged(priorityTag, null, initialState);
 
             StoredStates[priorityTag] = new List<AbstractGameplayState>();
             StoredStates[priorityTag].Add(initialState);
-            foreach (AbstractGameplayStateScriptableObject storedState in BaseModerator.StatesByPriority[priorityTag].States)
+            foreach (AbstractGameplayStateScriptableObject state in BaseModerator.StatesByPriority[priorityTag].States)
             {
-                if (storedState == initialState.StateData) continue;
-                StoredStates[priorityTag].Add(storedState.GenerateState(actor));
+                if (state == initialState.StateData) continue;
+                StoredStates[priorityTag].Add(state.GenerateState(Actor));
             }
         }
     }
@@ -86,7 +94,11 @@ public class StateModerator
     public void InterruptChangeState(StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject newState, bool onlyDefined = true)
     {
         if (!DefinesState(priorityTag, newState) && onlyDefined) return;
-        if (!TryGetStoredState(priorityTag, newState, out AbstractGameplayState state)) state = newState.GenerateState(Actor);
+        if (!TryGetStoredState(priorityTag, newState, out AbstractGameplayState state))
+        {
+            state = newState.GenerateState(Actor);
+            StoredStates[priorityTag].Add(state);
+        }
         
         StateIsChanged(priorityTag, PriorityStateMachines[priorityTag].CurrentState, state);
         PriorityStateMachines[priorityTag].InterruptChangeState(state);
@@ -94,13 +106,13 @@ public class StateModerator
 
     private void StateIsChanged(StatePriorityTagScriptableObject priorityTag, AbstractGameplayState oldState, AbstractGameplayState newState)
     {
-        foreach (AbstractSystemChangeBehaviourScriptableObject stateChangeBehaviour in BaseModerator.SystemChangeBehaviours)
+        foreach (AbstractSystemChangeResponseScriptableObject stateChangeBehaviour in BaseModerator.SystemChangeBehaviours)
             stateChangeBehaviour.OnStateChanged(Actor, priorityTag, oldState, newState);
     }
 
     private void ModeratorIsChanged(StateModeratorScriptableObject oldModerator, StateModeratorScriptableObject newModerator)
     {
-        foreach (AbstractSystemChangeBehaviourScriptableObject moderatorChangeBehaviour in BaseModerator.SystemChangeBehaviours) moderatorChangeBehaviour.OnModeratorChanged(Actor, oldModerator, newModerator);
+        foreach (AbstractSystemChangeResponseScriptableObject moderatorChangeBehaviour in BaseModerator.SystemChangeBehaviours) moderatorChangeBehaviour.OnModeratorChanged(Actor, oldModerator, newModerator);
     }
 
     public void ReturnToInitial(AbstractGameplayStateScriptableObject sourceState)
@@ -167,16 +179,6 @@ public class StateModerator
 
         return activeStates;
     }
-    
-    public void FillEmptyStates(StateModerator other)
-    {
-        foreach (StatePriorityTagScriptableObject priorityTag in other.PriorityStateMachines.Keys)
-        {
-            if (PriorityStateMachines.Keys.Contains(priorityTag)) continue;
-            PriorityStateMachines[priorityTag] = new GameplayStateMachine();
-            PriorityStateMachines[priorityTag].Initialize(other.PriorityStateMachines[priorityTag].CurrentState);
-        }
-    }
 
     public void RunStatesLogicUpdate()
     {
@@ -201,15 +203,58 @@ public class StateModerator
     public static bool operator >=(StateModerator self, StateModerator other) => self.BaseModerator.ModeratorPriority >= other.BaseModerator.ModeratorPriority;
     public static bool operator <=(StateModerator self, StateModerator other) => self.BaseModerator.ModeratorPriority <= other.BaseModerator.ModeratorPriority;
 
-    public void ImplementMeta(MetaStateModerator metaModerator, bool reEnterSameStates)
+    public void ImplementModeratorMeta(MetaStateModerator metaModerator, bool reEnterSameStates)
     {
         ModeratorIsChanged(BaseModerator, metaModerator.BaseModerator);
         BaseModerator = metaModerator.BaseModerator;
+        
         foreach (StatePriorityTagScriptableObject priorityTag in metaModerator.InitialStates.Keys)
         {
-            if (!reEnterSameStates && PriorityStateMachines[priorityTag].CurrentState.StateData == metaModerator.InitialStates[priorityTag]) continue;
-            InterruptChangeState(priorityTag, metaModerator.InitialStates[priorityTag]);
+            // Add state machines for new priority levels
+            if (!PriorityStateMachines.ContainsKey(priorityTag))
+            {
+                PriorityStateMachines[priorityTag] = new GameplayStateMachine();
+                PriorityStateMachines[priorityTag].Initialize(metaModerator.InitialStates[priorityTag].GenerateState(Actor));
+            }
+            // If the priority tag exists, handle changing state as necessary
+            else
+            {
+                if (!reEnterSameStates && PriorityStateMachines[priorityTag].CurrentState.StateData == metaModerator.InitialStates[priorityTag]) continue;
+                InterruptChangeState(priorityTag, metaModerator.InitialStates[priorityTag]);
+            }
+
+            // Store new states 
+            foreach (AbstractGameplayStateScriptableObject sourceState in metaModerator.BaseModerator.StatesByPriority[priorityTag].States)
+            {
+                if (!TryGetStoredState(priorityTag, sourceState, out AbstractGameplayState _)) StoredStates[priorityTag].Add(sourceState.GenerateState(Actor));
+            }
         }
+        
+        // Dump state machines for unused priority levels
+        List<StatePriorityTagScriptableObject> machinesToRemove = PriorityStateMachines.Keys.Where(priorityTag => !BaseModerator.StatesByPriority.Keys.Contains(priorityTag)).ToList();
+        foreach (StatePriorityTagScriptableObject priorityTag in machinesToRemove)
+        {
+            PriorityStateMachines.Remove(priorityTag);
+            StoredStates.Remove(priorityTag);
+        }
+
+        // Dump unusable states
+        foreach (StatePriorityTagScriptableObject priorityTag in StoredStates.Keys)
+        {
+            List<AbstractGameplayState> statesToRemove = new List<AbstractGameplayState>();
+            foreach (AbstractGameplayState storedState in StoredStates[priorityTag])
+            {
+                if (!DefinesState(priorityTag, storedState.StateData)) statesToRemove.Add(storedState);
+            }
+            foreach (AbstractGameplayState state in statesToRemove) StoredStates[priorityTag].Remove(state);
+        }
+    }
+
+    private void PrepareForMetaImplementation(MetaStateModerator metaModerator)
+    {
+        
+        // dump unusable stored states
+        // store new states
     }
     
     public static MetaStateModerator GenerateMeta(StateModeratorScriptableObject moderator)

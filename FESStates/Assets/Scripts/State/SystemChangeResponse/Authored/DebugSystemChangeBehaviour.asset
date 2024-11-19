@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb5a0dd5f36ce2e49bc34028614a4e8e, type: 3}
+  m_Name: DebugSystemChangeBehaviour
+  m_EditorClassIdentifier: 
+  FromConditional: {fileID: 11400000, guid: cd9768dc9cd9d9544956244d26ec47fe, type: 2}
+  ToConditional: {fileID: 11400000, guid: e8d9aee53bfda454596a76b7892b6e61, type: 2}
+  SkipChangeToSame: 0
