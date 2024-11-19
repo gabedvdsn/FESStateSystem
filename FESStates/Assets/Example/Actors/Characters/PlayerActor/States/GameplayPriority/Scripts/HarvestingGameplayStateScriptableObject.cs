@@ -19,14 +19,12 @@ public class HarvestingGameplayStateScriptableObject : AbstractPlayerGameplaySta
         }
         public override void Enter()
         {
-            base.Enter();
             progress = 0f;
             UIManager.Instance.EnableProgressSlider("Harvesting");
             // Play harvesting animation
         }
         public override void LogicUpdate()
         {
-            base.LogicUpdate();
             UIManager.Instance.SetProgressSliderValue(progress);
             progress += speed * Time.deltaTime;
             if (progress >= 1f)
@@ -37,28 +35,20 @@ public class HarvestingGameplayStateScriptableObject : AbstractPlayerGameplaySta
         }
         public override void PhysicsUpdate()
         {
-            base.PhysicsUpdate();
             // Nothing needed
         }
         public override void Interrupt()
         {
-            base.Interrupt();
-            UIManager.Instance.DisableProgressSlider();
             // Don't collect harvesting rewards
-            // Cancel harvesting progress bar
         }
         public override void Conclude()
         {
-            base.Conclude();
-            UIManager.Instance.DisableProgressSlider();
-            Player.Moderator.ReturnToInitial(GameplayState);
+            // Collect harvesting rewards
+            Player.Moderator.ReturnToInitial(StateData);
         }
         public override void Exit()
         {
-            base.Exit();
-            // Collect harvesting rewards
-            // Conclude harvesting progress bar
-            // Exit harvesting animation
+            UIManager.Instance.DisableProgressSlider();
         }
     }
 }

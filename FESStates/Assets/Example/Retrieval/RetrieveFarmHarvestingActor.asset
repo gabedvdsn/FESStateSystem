@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef2a7bb3177a428487dbab236db28e14, type: 3}
+  m_Name: RetrieveFarmHarvestingActor
+  m_EditorClassIdentifier: 
+  SourceRetrieval: {fileID: 11400000, guid: 30a01a2144385cf40ad98361b4c9656d, type: 2}
+  LookForModerator:
+  - {fileID: 11400000, guid: 1dd2f87aecb3ab943ac686eaa4e62373, type: 2}
+  ActiveStatesOnly: 1
+  LookForState:
+    _serializedList:
+    - Key: {fileID: 11400000, guid: 5be2b7c35712b6f40a35ba73eec68126, type: 2}
+      Value:
+      - {fileID: 11400000, guid: b26ad38133bc80f408e82e79dc7e10d9, type: 2}

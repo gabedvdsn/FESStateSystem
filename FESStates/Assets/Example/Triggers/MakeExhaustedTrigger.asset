@@ -15,7 +15,7 @@ MonoBehaviour:
   ForceOverrideModerator: 0
   OverrideModerator: {fileID: 0}
   TryPreserveStates: []
-  FoceOverrideStates: 1
+  FoceOverrideStates: 0
   OverrideStates:
     _serializedList:
     - Key: {fileID: 11400000, guid: 9978f5e125a0d874faa134abd9f79174, type: 2}

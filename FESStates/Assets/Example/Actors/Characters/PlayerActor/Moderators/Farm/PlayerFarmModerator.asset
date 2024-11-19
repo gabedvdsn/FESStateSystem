@@ -21,20 +21,13 @@ MonoBehaviour:
       Value: {fileID: 11400000, guid: 283a02be010c49540a00cd123763c6b4, type: 2}
     - Key: {fileID: 11400000, guid: 27db2071ebb61f74caaacb5070adf7a3, type: 2}
       Value: {fileID: 11400000, guid: c78b5767e5e9e7e45b3f9ded1f15a81a, type: 2}
-  BlockUndefinedTransitions: 1
   StatesByPriority:
     _serializedList:
     - Key: {fileID: 11400000, guid: 9978f5e125a0d874faa134abd9f79174, type: 2}
-      Value:
-      - {fileID: 11400000, guid: 9c5f7f36438791c408e9d43ae5e88818, type: 2}
-      - {fileID: 11400000, guid: 412fc579b57d9d54994bcc5f4ac0ea31, type: 2}
-      - {fileID: 11400000, guid: 4205b694c46372248b1e967771abc7ab, type: 2}
+      Value: {fileID: 11400000, guid: 0112434e585a8794fbec38f366173a49, type: 2}
     - Key: {fileID: 11400000, guid: 5be2b7c35712b6f40a35ba73eec68126, type: 2}
-      Value:
-      - {fileID: 11400000, guid: 283a02be010c49540a00cd123763c6b4, type: 2}
-      - {fileID: 11400000, guid: b26ad38133bc80f408e82e79dc7e10d9, type: 2}
-      - {fileID: 11400000, guid: 4333dc51d32ef634f8c62c375b52cffc, type: 2}
+      Value: {fileID: 11400000, guid: 3ddd09d2601c2354d9b435d126b4b908, type: 2}
     - Key: {fileID: 11400000, guid: 27db2071ebb61f74caaacb5070adf7a3, type: 2}
-      Value:
-      - {fileID: 11400000, guid: c78b5767e5e9e7e45b3f9ded1f15a81a, type: 2}
-      - {fileID: 11400000, guid: 83c2d90a8ce703c45938147457d73c73, type: 2}
+      Value: {fileID: 11400000, guid: e46a82cf9c5ca964385735e293f269dc, type: 2}
+  SystemChangeBehaviours:
+  - {fileID: 11400000, guid: 401fc6b9a95792546a1666d96696c7ef, type: 2}

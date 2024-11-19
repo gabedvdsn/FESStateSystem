@@ -19,46 +19,35 @@ public class PlantingGameplayStateScriptableObject : AbstractPlayerGameplayState
         }
         public override void Enter()
         {
-            base.Enter();
-            base.Enter();
             progress = 0f;
             UIManager.Instance.EnableProgressSlider("Planting");
             // Play planting animation
         }
         public override void LogicUpdate()
         {
-            base.LogicUpdate();
             UIManager.Instance.SetProgressSliderValue(progress);
             progress += speed * Time.deltaTime;
             if (progress >= 1f)
             {
                 Conclude();
             }
-            // Run planting progress bar
         }
         public override void PhysicsUpdate()
         {
-            base.PhysicsUpdate();
             // Nothing needed
         }
         public override void Interrupt()
         {
-            base.Interrupt();
-            UIManager.Instance.DisableProgressSlider();
             // Don't plant
-            // Cancel planting progress bar
         }
         public override void Conclude()
         {
-            base.Conclude();
-            UIManager.Instance.DisableProgressSlider();
-            Player.Moderator.ReturnToInitial(GameplayState);
+            // Plant plant
+            Player.Moderator.ReturnToInitial(StateData);
         }
         public override void Exit()
         {
-            base.Exit();
-            // Plant plant
-            // Conclude planting progress bar
+            UIManager.Instance.DisableProgressSlider();
             // Exit planting animation
         }
     }

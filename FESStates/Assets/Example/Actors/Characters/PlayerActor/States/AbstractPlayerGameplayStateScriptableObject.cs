@@ -4,7 +4,7 @@
     {
         public PlayerStateActor Player;
         
-        public AbstractPlayerGameplayState(AbstractGameplayStateScriptableObject gameplayState, PlayerStateActor actor) : base(gameplayState)
+        public AbstractPlayerGameplayState(AbstractGameplayStateScriptableObject stateData, PlayerStateActor actor) : base(stateData)
         {
             Player = actor;
         }

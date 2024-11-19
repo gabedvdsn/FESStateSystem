@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ffb57d0b01bd094dacded974e66dee7, type: 3}
+  m_Name: KitchenCharacterStates
+  m_EditorClassIdentifier: 
+  States:
+  - {fileID: 11400000, guid: c78b5767e5e9e7e45b3f9ded1f15a81a, type: 2}
+  - {fileID: 11400000, guid: 83c2d90a8ce703c45938147457d73c73, type: 2}

@@ -15,19 +15,17 @@ public class CookingGameplayStateScriptableObject : AbstractPlayerGameplayStateS
         private float progress;
         private float speed = .75f;
         
-        public CookingGameplayState(AbstractGameplayStateScriptableObject gameplayState, PlayerStateActor actor) : base(gameplayState, actor)
+        public CookingGameplayState(AbstractGameplayStateScriptableObject stateData, PlayerStateActor actor) : base(stateData, actor)
         {
         }
         public override void Enter()
         {
-            base.Enter();
             progress = 0f;
             UIManager.Instance.EnableProgressSlider("Cooking");
             // Play cooking animation
         }
         public override void LogicUpdate()
         {
-            base.LogicUpdate();
             UIManager.Instance.SetProgressSliderValue(progress);
             progress += speed * Time.deltaTime;
             if (progress >= 1f)
@@ -38,37 +36,23 @@ public class CookingGameplayStateScriptableObject : AbstractPlayerGameplayStateS
         }
         public override void PhysicsUpdate()
         {
-            base.PhysicsUpdate();
             // Nothing needed
         }
         
-        /// <summary>
-        /// Does not transition state
-        /// </summary>
         public override void Interrupt()
         {
-            base.Interrupt();
-            UIManager.Instance.DisableProgressSlider();
             // Don't collect cooking rewards
-            // Cancel cooking progress bar
         }
         
-        /// <summary>
-        /// Natural state conclusion.
-        /// Initiates state transition
-        /// </summary>
         public override void Conclude()
         {
-            base.Conclude();
-            UIManager.Instance.DisableProgressSlider();
-            Player.Moderator.ReturnToInitial(GameplayState);
+            // Collect cooking rewards
+
+            Player.Moderator.ReturnToInitial(StateData);
         }
         public override void Exit()
         {
-            base.Exit();
-            
-            // Collect cooking rewards
-            // Conclude cooking progress bar
+            UIManager.Instance.DisableProgressSlider();
             // Exit cooking animation
         }
     }

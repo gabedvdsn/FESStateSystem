@@ -17,23 +17,27 @@ public class WalkingGameplayStateScriptableObject : AbstractPlayerGameplayStateS
 
         public override void Enter()
         {
-            base.Enter();
+            
         }
         public override void LogicUpdate()
         {
-            base.LogicUpdate();
+            
         }
         public override void PhysicsUpdate()
         {
-            base.PhysicsUpdate();
+            
         }
         public override void Interrupt()
         {
-            base.Interrupt();
+            
+        }
+        public override void Conclude()
+        {
+            
         }
         public override void Exit()
         {
-            base.Exit();
+            
         }
     }
 }

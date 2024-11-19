@@ -16,17 +16,17 @@ public class UIManager : MonoBehaviour
     
     public StateActor Actor;
     public TMP_Text WorldStateText;
-    public StatePriorityTag WorldPriority;
+    public StatePriorityTagScriptableObject WorldPriority;
     
     [Space]
     
     public TMP_Text GameplayStateText;
-    public StatePriorityTag GameplayPriority;
+    public StatePriorityTagScriptableObject GameplayPriority;
     
     [Space]
     
     public TMP_Text CharacterStateText;
-    public StatePriorityTag CharacterPriority;
+    public StatePriorityTagScriptableObject CharacterPriority;
     
     [Space]
     
@@ -63,8 +63,8 @@ public class UIManager : MonoBehaviour
 
         ModeratorText.text = Actor.Moderator.BaseModerator.name;
 
-        if (Actor.Moderator.TryGetActiveState(WorldPriority, out AbstractGameplayState worldState)) WorldStateText.text = $"World: {worldState.GameplayState.name}";
-        if (Actor.Moderator.TryGetActiveState(GameplayPriority, out AbstractGameplayState gameplayState)) GameplayStateText.text = $"Gameplay: {gameplayState.GameplayState.name}";
-        if (Actor.Moderator.TryGetActiveState(CharacterPriority, out AbstractGameplayState characterState)) CharacterStateText.text = $"Character: {characterState.GameplayState.name}";
+        if (Actor.Moderator.TryGetActiveState(WorldPriority, out AbstractGameplayState worldState)) WorldStateText.text = $"World: {worldState.StateData.name}";
+        if (Actor.Moderator.TryGetActiveState(GameplayPriority, out AbstractGameplayState gameplayState)) GameplayStateText.text = $"Gameplay: {gameplayState.StateData.name}";
+        if (Actor.Moderator.TryGetActiveState(CharacterPriority, out AbstractGameplayState characterState)) CharacterStateText.text = $"Character: {characterState.StateData.name}";
     }
 }
