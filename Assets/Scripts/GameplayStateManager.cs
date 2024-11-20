@@ -72,6 +72,8 @@ public class GameplayStateManager : MonoBehaviour
         {
             SubscribedActors[actor.GeneralIdentifier].Remove(actor);
         }
+
+        if (SubscribedActors[actor.GeneralIdentifier].Count == 0) SubscribedActors.Remove(actor.GeneralIdentifier);
     }
 
     public List<T> RetrieveActorsByTag<T>(GameplayStateTagScriptableObject actorTag) where T : StateActor

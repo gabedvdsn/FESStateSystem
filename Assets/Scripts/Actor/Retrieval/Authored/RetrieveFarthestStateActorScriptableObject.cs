@@ -80,6 +80,8 @@ public class RetrieveFarthestStateActorScriptableObject : AbstractRetrieveStateA
         Vector3 origin = source.transform.position;
         
         List<T> targets = GameplayStateManager.Instance.RetrieveActorsByTag<T>(TargetTag);
+        if (targets is null || targets.Count == 0) return null;
+        
         int realCount = count < 0 ? targets.Count : Mathf.Min(count, targets.Count);
         return targets
             .OrderByDescending(t => Vector3.Distance(origin, t.transform.position))

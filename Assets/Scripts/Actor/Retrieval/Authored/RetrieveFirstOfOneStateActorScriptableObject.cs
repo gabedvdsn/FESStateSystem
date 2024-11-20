@@ -59,6 +59,7 @@ public class RetrieveFirstOfOneStateActorScriptableObject : AbstractRetrieveStat
     {
         List<T> actors = GameplayStateManager.Instance.RetrieveActorsByTag<T>(ActorTag);
         if (actors is null || actors.Count == 0) return null;
+        
         int realCount = count < 0 ? actors.Count : Mathf.Min(count, actors.Count);
         return actors.Take(realCount).ToList();
     }
