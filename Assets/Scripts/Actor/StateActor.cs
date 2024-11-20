@@ -24,9 +24,9 @@ public class StateActor : MonoBehaviour
         Moderator?.RunStatesPhysicsUpdate();
     }
 
-    public void SetModerator(StateModerator.MetaStateModerator metaModerator)
+    protected virtual void OnDestroy()
     {
-        
+        GameplayStateManager.Instance.UnsubscribeActor(this);
     }
-    
+
 }

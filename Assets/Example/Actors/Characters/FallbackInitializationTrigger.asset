@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb5a0dd5f36ce2e49bc34028614a4e8e, type: 3}
-  m_Name: DebugSystemChangeBehaviour
+  m_Script: {fileID: 11500000, guid: e4c84219a74440f39acf83b3f681b18a, type: 3}
+  m_Name: FallbackInitializationTrigger
   m_EditorClassIdentifier: 
-  FromConditional: {fileID: 0}
-  ToConditional: {fileID: 0}
-  SkipChangeToSame: 0
+  InitialModerator: {fileID: 11400000, guid: 6cf9eb13522cc6242bd4afbe6a1aa613, type: 2}
+  OverrideStates:
+    _serializedList: []

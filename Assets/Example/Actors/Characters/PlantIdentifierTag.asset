@@ -9,9 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb5a0dd5f36ce2e49bc34028614a4e8e, type: 3}
-  m_Name: DebugSystemChangeBehaviour
+  m_Script: {fileID: 11500000, guid: 32317de0dad143f29e16b19b6b93e78e, type: 3}
+  m_Name: PlantIdentifierTag
   m_EditorClassIdentifier: 
-  FromConditional: {fileID: 0}
-  ToConditional: {fileID: 0}
-  SkipChangeToSame: 0
+  Name: Plant

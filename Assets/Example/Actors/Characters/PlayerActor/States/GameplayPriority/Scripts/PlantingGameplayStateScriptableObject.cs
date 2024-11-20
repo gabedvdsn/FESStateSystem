@@ -9,11 +9,12 @@ public class PlantingGameplayStateScriptableObject : AbstractPlayerGameplayState
     {
         return new PlantingGameplayState(this, actor as PlayerStateActor);
     }
-    
+
     public class PlantingGameplayState : AbstractPlayerGameplayState
     {
         private float progress;
-        private float speed = .5f;
+        private float plantSpeed = .5f;
+        
         public PlantingGameplayState(AbstractGameplayStateScriptableObject gameplayState, PlayerStateActor actor) : base(gameplayState, actor)
         {
         }
@@ -26,7 +27,7 @@ public class PlantingGameplayStateScriptableObject : AbstractPlayerGameplayState
         public override void LogicUpdate()
         {
             UIManager.Instance.SetProgressSliderValue(progress);
-            progress += speed * Time.deltaTime;
+            progress += plantSpeed * Time.deltaTime;
             if (progress >= 1f)
             {
                 Conclude();

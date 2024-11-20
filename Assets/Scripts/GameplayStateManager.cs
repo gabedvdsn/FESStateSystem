@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 public class GameplayStateManager : MonoBehaviour
 {
@@ -30,7 +31,7 @@ public class GameplayStateManager : MonoBehaviour
 
     [SerializedDictionary("State Environment Identifier", "State Environment")]
     [SerializeField] private SerializedDictionary<GameplayStateTagScriptableObject, StateEnvironmentScriptableObject> StateEnvironments;
-    [SerializeField] private StateTriggerScriptableObject DefaultStateTrigger;
+    [SerializeField] private InitializationStateTriggerScriptableObject FallbackInitializationTrigger;
 
     private Dictionary<GameplayStateTagScriptableObject, List<StateActor>> SubscribedActors = new();
     public Dictionary<GameplayStateTagScriptableObject, List<StateActor>> AllActors => SubscribedActors;
@@ -116,7 +117,7 @@ public class GameplayStateManager : MonoBehaviour
             {
                 InitializationStateTriggerScriptableObject initialTrigger = environment.GetInitialStateTrigger(actor.GeneralIdentifier);
                 if (initialTrigger) initialTrigger.Activate(actor);
-                else DefaultStateTrigger.Activate(actor);
+                else FallbackInitializationTrigger.Activate(actor);
             }
         }
     }
@@ -125,7 +126,7 @@ public class GameplayStateManager : MonoBehaviour
     {
         InitializationStateTriggerScriptableObject initialTrigger = GetStateEnvironment(environmentIdentifier).GetInitialStateTrigger(actor.GeneralIdentifier);
         if (initialTrigger) initialTrigger.Activate(actor);
-        else DefaultStateTrigger.Activate(actor);
+        else FallbackInitializationTrigger.Activate(actor);
     }
     
     #endregion
