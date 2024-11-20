@@ -11,24 +11,25 @@ public class RetrieveFarthestStateActorScriptableObject : AbstractRetrieveStateA
     [Header("Target")]
     public GameplayStateTagScriptableObject TargetTag;
     
-    public override T RetrieveActor<T>()
+    public override bool TryRetrieveActor<T>(out T actor)
     {
         try
         {
-            return RetrieveFarthestActor<T>();
+            actor = RetrieveFarthestActor<T>();
+            return actor is not null;
         }
         catch
         {
-            return null;
+            actor = null;
+            return false;
         }
     }
     
     private T RetrieveFarthestActor<T>() where T : StateActor
     {
-        StateActor source = SourceRetrieval.RetrieveActor<StateActor>();
-        if (source is null) return null;
+        if (!SourceRetrieval.TryRetrieveActor(out StateActor source)) return null;
 
-        List<T> targets = GameplayStateManager.Instance.RetrieveActors<T>(TargetTag);
+        List<T> targets = GameplayStateManager.Instance.RetrieveActorsByTag<T>(TargetTag);
         T farthest = null;
         float farthestDistance = float.MinValue;
         foreach (T target in targets)
@@ -44,38 +45,41 @@ public class RetrieveFarthestStateActorScriptableObject : AbstractRetrieveStateA
         return farthest;
     }
 
-    public override List<T> RetrieveManyActors<T>(int count)
+    public override bool TryRetrieveManyActors<T>(int count, out List<T> actors)
     {
         try
         {
-            return RetrieveManyFarthestActors<T>(count);
+            actors = RetrieveManyFarthestActors<T>(count);
+            return actors is not null;
         }
         catch
         {
-            return null;
+            actors = null;
+            return false;
         }
     }
     
-    public override List<T> RetrieveAllActors<T>()
+    public override bool TryRetrieveAllActors<T>(out List<T> actors)
     {
         try
         {
-            return RetrieveManyFarthestActors<T>(-1);
+            actors = RetrieveManyFarthestActors<T>(-1);
+            return false;
         }
         catch
         {
-            return null;
+            actors = null;
+            return false;
         }
     }
     
     private List<T> RetrieveManyFarthestActors<T>(int count) where T : StateActor
     {
-        StateActor source = SourceRetrieval.RetrieveActor<StateActor>();
-        if (source is null) return null;
+        if (!SourceRetrieval.TryRetrieveActor(out StateActor source)) return null;
         
         Vector3 origin = source.transform.position;
         
-        List<T> targets = GameplayStateManager.Instance.RetrieveActors<T>(TargetTag);
+        List<T> targets = GameplayStateManager.Instance.RetrieveActorsByTag<T>(TargetTag);
         int realCount = count < 0 ? targets.Count : Mathf.Min(count, targets.Count);
         return targets
             .OrderByDescending(t => Vector3.Distance(origin, t.transform.position))

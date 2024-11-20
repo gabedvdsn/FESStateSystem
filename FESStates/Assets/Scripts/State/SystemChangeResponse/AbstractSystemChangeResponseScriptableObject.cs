@@ -24,7 +24,7 @@ public abstract class AbstractSystemChangeResponseScriptableObject : ScriptableO
             if (!ToConditional.ModeratorSpecificActivate(newModerator)) return;
         }
         
-        OnModeratorChangedBehaviour(actor, oldModerator, newModerator);
+        ModeratorChangeResponse(actor, oldModerator, newModerator);
     }
     
     public void OnStateChanged(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayState oldState, AbstractGameplayState newState)
@@ -38,14 +38,14 @@ public abstract class AbstractSystemChangeResponseScriptableObject : ScriptableO
 
         if (ToConditional)
         {
-            if (!ToConditional.StateSpecificActivate(priorityTag, newState.StateData)) return;
+            if (!ToConditional.StateSpecificActivate(actor, priorityTag, newState.StateData)) return;
         }
         
-        OnStateChangedBehaviour(actor, priorityTag, oldState, newState);
+        StateChangeResponse(actor, oldState, newState, FromConditional, ToConditional);
         
     }
 
-    protected abstract void OnModeratorChangedBehaviour(StateActor actor, StateModeratorScriptableObject oldModerator, StateModeratorScriptableObject newModerator);
+    protected abstract void ModeratorChangeResponse(StateActor actor, StateModeratorScriptableObject oldModerator, StateModeratorScriptableObject newModerator);
     
-    protected abstract void OnStateChangedBehaviour(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayState oldState, AbstractGameplayState newState);
+    protected abstract void StateChangeResponse(StateActor actor, AbstractGameplayState oldState, AbstractGameplayState newState, AbstractStateConditionalTriggerScriptableObject fromConditional, AbstractStateConditionalTriggerScriptableObject toConditional);
 }

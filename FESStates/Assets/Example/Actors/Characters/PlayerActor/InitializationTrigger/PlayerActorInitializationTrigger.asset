@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4c84219a74440f39acf83b3f681b18a, type: 3}
   m_Name: PlayerActorInitializationTrigger
   m_EditorClassIdentifier: 
-  OverrideModerator: {fileID: 11400000, guid: 1dd2f87aecb3ab943ac686eaa4e62373, type: 2}
+  InitialModerator: {fileID: 11400000, guid: 6cf9eb13522cc6242bd4afbe6a1aa613, type: 2}
   OverrideStates:
     _serializedList: []

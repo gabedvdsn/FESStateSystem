@@ -23,9 +23,9 @@ public class StateModeratorScriptableObject : ScriptableObject
     [SerializedDictionary("Priority Tag", "States")]
     [SerializeField] public SerializedDictionary<StatePriorityTagScriptableObject, GameplayStateGroupScriptableObject> StatesByPriority;
     
-    [Header("System Change Behaviours")]
+    [FormerlySerializedAs("SystemChangeBehaviours")] [Header("System Change Behaviours")]
     
-    public List<AbstractSystemChangeResponseScriptableObject> SystemChangeBehaviours;
+    public List<AbstractSystemChangeResponseScriptableObject> SystemChangeResponders;
 
     public StateModerator GenerateModerator(StateActor actor) => new(this, actor);
     
@@ -58,10 +58,11 @@ public class StateModerator
             AbstractGameplayState initialState = BaseModerator.InitialStates[priorityTag].GenerateState(Actor);
             PriorityStateMachines[priorityTag].Initialize(initialState);
             
-            StateIsChanged(priorityTag, null, initialState);
-
             StoredStates[priorityTag] = new List<AbstractGameplayState>();
             StoredStates[priorityTag].Add(initialState);
+            
+            StateIsChanged(priorityTag, null, initialState);
+            
             foreach (AbstractGameplayStateScriptableObject state in BaseModerator.StatesByPriority[priorityTag].States)
             {
                 if (state == initialState.StateData) continue;
@@ -106,13 +107,13 @@ public class StateModerator
 
     private void StateIsChanged(StatePriorityTagScriptableObject priorityTag, AbstractGameplayState oldState, AbstractGameplayState newState)
     {
-        foreach (AbstractSystemChangeResponseScriptableObject stateChangeBehaviour in BaseModerator.SystemChangeBehaviours)
-            stateChangeBehaviour.OnStateChanged(Actor, priorityTag, oldState, newState);
+        foreach (AbstractSystemChangeResponseScriptableObject systemChangeResponse in BaseModerator.SystemChangeResponders)
+            systemChangeResponse.OnStateChanged(Actor, priorityTag, oldState, newState);
     }
 
     private void ModeratorIsChanged(StateModeratorScriptableObject oldModerator, StateModeratorScriptableObject newModerator)
     {
-        foreach (AbstractSystemChangeResponseScriptableObject moderatorChangeBehaviour in BaseModerator.SystemChangeBehaviours) moderatorChangeBehaviour.OnModeratorChanged(Actor, oldModerator, newModerator);
+        foreach (AbstractSystemChangeResponseScriptableObject moderatorChangeBehaviour in BaseModerator.SystemChangeResponders) moderatorChangeBehaviour.OnModeratorChanged(Actor, oldModerator, newModerator);
     }
 
     public void ReturnToInitial(AbstractGameplayStateScriptableObject sourceState)

@@ -6,7 +6,9 @@ public abstract class AbstractStateConditionalTriggerScriptableObject : Abstract
 {
     public bool FalseOnNullActor = true;
     
-    public abstract bool StateSpecificActivate(StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject state);
+    public abstract bool StateSpecificActivate(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject state);
+
+    public abstract Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> GetStates();
 
     public abstract bool ModeratorSpecificActivate(StateModeratorScriptableObject moderator);
 }

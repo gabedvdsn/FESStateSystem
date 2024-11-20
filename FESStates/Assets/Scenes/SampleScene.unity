@@ -673,7 +673,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 268899822}
-        m_TargetAssemblyTypeName: UICheckConditionalTrigger, Assembly-CSharp
+        m_TargetAssemblyTypeName: RunStateConditionalTrigger, Assembly-CSharp
         m_MethodName: LogFeedback
         m_Mode: 5
         m_Arguments:
@@ -1299,8 +1299,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GeneralIdentifier: {fileID: 11400000, guid: 89fd2287a1af7204d99d0b3dca1c8009, type: 2}
-  PassiveStateBehaviours:
-  - {fileID: 11400000, guid: d53dae005071e5847af54e90589cffa5, type: 2}
 --- !u!1 &702755430
 GameObject:
   m_ObjectHideFlags: 0
@@ -3103,7 +3101,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1170019974}
-        m_TargetAssemblyTypeName: UICheckConditionalTrigger, Assembly-CSharp
+        m_TargetAssemblyTypeName: RunStateConditionalTrigger, Assembly-CSharp
         m_MethodName: RunDefault
         m_Mode: 1
         m_Arguments:

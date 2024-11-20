@@ -12,24 +12,25 @@ public class RetrieveClosestStateActorScriptableObject : AbstractRetrieveStateAc
     [Header("Target")]
     public GameplayStateTagScriptableObject TargetTag;
     
-    public override T RetrieveActor<T>()
+    public override bool TryRetrieveActor<T>(out T actor)
     {
         try
         {
-            return RetrieveClosestActor<T>();
+            actor = RetrieveClosestActor<T>();
+            return actor is not null;
         }
         catch
         {
-            return null;
+            actor = null;
+            return false;
         }
     }
     
     private T RetrieveClosestActor<T>() where T : StateActor
     {
-        StateActor source = SourceRetrieval.RetrieveActor<StateActor>();
-        if (source is null) return null;
+        if (!SourceRetrieval.TryRetrieveActor(out StateActor source)) return null;
 
-        List<T> targets = GameplayStateManager.Instance.RetrieveActors<T>(TargetTag);
+        List<T> targets = GameplayStateManager.Instance.RetrieveActorsByTag<T>(TargetTag);
         T closest = null;
         float closestDistance = float.MaxValue;
         foreach (T target in targets)
@@ -45,26 +46,27 @@ public class RetrieveClosestStateActorScriptableObject : AbstractRetrieveStateAc
         return closest;
     }
     
-    public override List<T> RetrieveManyActors<T>(int count)
+    public override bool TryRetrieveManyActors<T>(int count, out List<T> actors)
     {
         try
         {
-            return RetrieveManyClosestActors<T>(count);
+            actors = RetrieveManyClosestActors<T>(count);
+            return actors is not null;
         }
         catch
         {
-            return null;
+            actors = null;
+            return false;
         }
     }
 
     private List<T> RetrieveManyClosestActors<T>(int count) where T : StateActor
     {
-        StateActor source = SourceRetrieval.RetrieveActor<StateActor>();
-        if (source is null) return null;
+        if (!SourceRetrieval.TryRetrieveActor(out StateActor source)) return null;
         
         Vector3 origin = source.transform.position;
         
-        List<T> targets = GameplayStateManager.Instance.RetrieveActors<T>(TargetTag);
+        List<T> targets = GameplayStateManager.Instance.RetrieveActorsByTag<T>(TargetTag);
         int realCount = count < 0 ? targets.Count : Mathf.Min(count, targets.Count);
         return targets
             .OrderBy(t => Vector3.Distance(origin, t.transform.position))
@@ -72,15 +74,17 @@ public class RetrieveClosestStateActorScriptableObject : AbstractRetrieveStateAc
             .ToList();
     }
     
-    public override List<T> RetrieveAllActors<T>()
+    public override bool TryRetrieveAllActors<T>(out List<T> actors)
     {
         try
         {
-            return RetrieveManyClosestActors<T>(-1);
+            actors = RetrieveManyClosestActors<T>(-1);
+            return actors is not null;
         }
         catch
         {
-            return null;
+            actors = null;
+            return false;
         }
     }
 

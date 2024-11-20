@@ -8,24 +8,22 @@ public class RunStateConditionalTrigger : AbstractTriggerRunner
 {
     public AbstractRetrieveStateActorScriptableObject ActorRetrieval;
     public AbstractStateConditionalTriggerScriptableObject ConditionalTrigger;
-    public UnityEvent OnTrueEvent;
-    public UnityEvent OnFalseEvent;
+    public UnityEvent<StateActor> OnTrueEvent;
+    public UnityEvent<StateActor> OnFalseEvent;
 
     public override void RunDefault()
     {
-        StateActor actor = ActorRetrieval.RetrieveActor<StateActor>();
-        GameplayStateManager.Instance.RunDefaultConditionalTrigger(actor, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
+        GameplayStateManager.Instance.RunDefaultConditionalTrigger(ActorRetrieval, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
     }
     public override void RunDefaultMany(int count = -1)
     {
-        List<StateActor> actors = ActorRetrieval.RetrieveManyActors<StateActor>(count);
-        GameplayStateManager.Instance.RunDefaultManyConditionalTrigger(actors, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
+        GameplayStateManager.Instance.RunDefaultManyConditionalTrigger(ActorRetrieval, count, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
     }
     public override void RunDefaultAll()
     {
-        List<StateActor> actors = ActorRetrieval.RetrieveAllActors<StateActor>();
-        GameplayStateManager.Instance.RunDefaultManyConditionalTrigger(actors, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
+        GameplayStateManager.Instance.RunDefaultManyConditionalTrigger(ActorRetrieval, -1, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
     }
+    
     public override void RunActorSpecific<T>()
     {
         GameplayStateManager.Instance.RunActorSpecificConditionalTrigger<T>(ActorRetrieval, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
@@ -36,8 +34,10 @@ public class RunStateConditionalTrigger : AbstractTriggerRunner
     }
     public override void RunActorSpecificAll<T>()
     {
-        GameplayStateManager.Instance.RunActorSpecificConditionalAllTrigger<T>(ActorRetrieval, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
+        GameplayStateManager.Instance.RunActorSpecificConditionalManyTrigger<T>(ActorRetrieval, -1, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
     }
 
+
     public void LogFeedback(string message) => Debug.Log(message);
+    public void LogActorConditional(StateActor actor) => Debug.Log($"[{actor.name}] {ConditionalTrigger.name}");
 }

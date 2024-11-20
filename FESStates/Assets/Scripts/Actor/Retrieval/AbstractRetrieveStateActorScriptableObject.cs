@@ -3,9 +3,9 @@ using UnityEngine;
 
 public abstract class AbstractRetrieveStateActorScriptableObject : ScriptableObject
 {
-    public abstract T RetrieveActor<T>() where T : StateActor;
+    public abstract bool TryRetrieveActor<T>(out T actor) where T : StateActor;
 
-    public abstract List<T> RetrieveManyActors<T>(int count) where T : StateActor;
+    public abstract bool TryRetrieveManyActors<T>(int count, out List<T> actors) where T : StateActor;
 
-    public abstract List<T> RetrieveAllActors<T>() where T : StateActor;
+    public abstract bool TryRetrieveAllActors<T>(out List<T> actors) where T : StateActor;
 }

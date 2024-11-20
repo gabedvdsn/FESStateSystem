@@ -8,25 +8,16 @@ public class RunStateTrigger : AbstractTriggerRunner
 
     public override void RunDefault()
     {
-        StateActor actor = ActorRetrieval.RetrieveActor<StateActor>();
-        if (actor is null) return;
-        
-        GameplayStateManager.Instance.RunDefaultTrigger(actor, Trigger);
+        GameplayStateManager.Instance.RunDefaultTrigger(ActorRetrieval, Trigger);
     }
 
     public override void RunDefaultMany(int count = -1)
     {
-        List<StateActor> actors = ActorRetrieval.RetrieveManyActors<StateActor>(count);
-        if (actors is null) return;
-        
-        GameplayStateManager.Instance.RunDefaultManyTrigger(actors, Trigger);
+        GameplayStateManager.Instance.RunDefaultManyTrigger(ActorRetrieval, count, Trigger);
     }
     public override void RunDefaultAll()
     {
-        List<StateActor> actors = ActorRetrieval.RetrieveAllActors<StateActor>();
-        if (actors is null) return;
-        
-        GameplayStateManager.Instance.RunDefaultManyTrigger(actors, Trigger);
+        GameplayStateManager.Instance.RunDefaultManyTrigger(ActorRetrieval, -1, Trigger);
     }
 
     public override void RunActorSpecific<T>()
@@ -40,6 +31,6 @@ public class RunStateTrigger : AbstractTriggerRunner
     }
     public override void RunActorSpecificAll<T>()
     {
-        GameplayStateManager.Instance.RunActorSpecificAllTrigger<T>(ActorRetrieval, Trigger);
+        GameplayStateManager.Instance.RunActorSpecificManyTrigger<T>(ActorRetrieval, -1, Trigger);
     }
 }

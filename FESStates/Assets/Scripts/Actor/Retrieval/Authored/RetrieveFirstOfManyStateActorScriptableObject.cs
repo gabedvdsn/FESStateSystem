@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "FESState/Retrieval/First of Many")]
@@ -7,15 +8,17 @@ public class RetrieveFirstOfManyStateActorScriptableObject : AbstractRetrieveSta
 {
     public List<GameplayStateTagScriptableObject> FirstTagInOrder;
     
-    public override T RetrieveActor<T>()
+    public override bool TryRetrieveActor<T>(out T actor)
     {
         try
         {
-            return RetrieveFirstOfManyActor<T>();
+            actor = RetrieveFirstOfManyActor<T>();
+            return actor is not null;
         }
         catch
         {
-            return null;
+            actor = null;
+            return false;
         }
     }
 
@@ -23,7 +26,7 @@ public class RetrieveFirstOfManyStateActorScriptableObject : AbstractRetrieveSta
     {
         foreach (GameplayStateTagScriptableObject actorTag in FirstTagInOrder)
         {
-            List<T> actors = GameplayStateManager.Instance.RetrieveActors<T>(actorTag);
+            List<T> actors = GameplayStateManager.Instance.RetrieveActorsByTag<T>(actorTag);
             if (actors is not null && actors.Count > 0)
             {
                 return actors[0];
@@ -33,18 +36,46 @@ public class RetrieveFirstOfManyStateActorScriptableObject : AbstractRetrieveSta
         return null;
     }
 
-    public override List<T> RetrieveManyActors<T>(int count)
+    public override bool TryRetrieveManyActors<T>(int count, out List<T> actors)
     {
-        throw new System.NotImplementedException();
+        try
+        {
+            actors = RetrieveManyFirstOfManyActors<T>(count);
+            return actors is not null;
+        }
+        catch
+        {
+            actors = null;
+            return false;
+        }
     }
     
-    public override List<T> RetrieveAllActors<T>()
+    public override bool TryRetrieveAllActors<T>(out List<T> actors)
     {
-        throw new System.NotImplementedException();
+        try
+        {
+            actors = RetrieveManyFirstOfManyActors<T>(-1);
+            return actors is not null;
+        }
+        catch
+        {
+            actors = null;
+            return false;
+        }
     }
 
-    private List<T> RetrieveManyFirstOfManyActors<T>(int count)
+    private List<T> RetrieveManyFirstOfManyActors<T>(int count) where T : StateActor
     {
-        
+        foreach (GameplayStateTagScriptableObject actorTag in FirstTagInOrder)
+        {
+            List<T> actors = GameplayStateManager.Instance.RetrieveActorsByTag<T>(actorTag);
+            if (actors is not null && actors.Count > 0)
+            {
+                int realCount = count < 0 ? actors.Count : Mathf.Min(count, actors.Count);
+                return actors.Take(realCount).ToList();
+            }
+        }
+
+        return null;
     }
 }

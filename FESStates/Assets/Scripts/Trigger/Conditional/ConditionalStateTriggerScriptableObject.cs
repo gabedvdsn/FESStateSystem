@@ -4,7 +4,7 @@ using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "FESState/Trigger/Conditional Trigger")]
-public class ConditionalStateTriggerScriptableObject : AbstractStateConditionalTriggerScriptableObject, IStateConditional
+public class ConditionalStateTriggerScriptableObject : AbstractStateConditionalTriggerScriptableObject
 {
     [Header("Moderator")]
     
@@ -39,30 +39,36 @@ public class ConditionalStateTriggerScriptableObject : AbstractStateConditionalT
         return true;
     }
 
-    public override bool StateSpecificActivate(StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject state)
+    public override bool StateSpecificActivate(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject state)
     {
         if (!LookForStates.ContainsKey(priorityTag)) return false;
         
+        bool status = true;
         if (AllowRelations)
         {
-            if (LookForStates[priorityTag].Any(lookForState => !state.IsRelatedTo(lookForState))) return false;
+            // If any of the look for states are not related to state
+            if (LookForStates[priorityTag].Any(lookForState => !state.IsRelatedTo(lookForState))) status = false;
         }
         else if (AllowDescendants)
         {
-            if (LookForStates[priorityTag].Any(lookForState => !state.IsDescendantOf(lookForState))) return false;
+            // If any of the look for states are not descended from state
+            if (LookForStates[priorityTag].Any(lookForState => !state.IsDescendantOf(lookForState))) status = false;
         }
-        else if (!LookForStates[priorityTag].Contains(state)) return false;
+        else if (!LookForStates[priorityTag].Contains(state)) status = false;
 
-        return true;
+        // Check within actor for the look for states
+        if (!status)
+        {
+            if (LookForStates[priorityTag].Any(s => !actor.Moderator.TryGetStoredState(priorityTag, s, out AbstractGameplayState _))) return false;
+        }
+
+        return status;
     }
+
+    public override Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> GetStates() => LookForStates;
 
     public override bool ModeratorSpecificActivate(StateModeratorScriptableObject moderator)
     {
         return LookForModerators.Count <= 0 || LookForModerators.Contains(moderator);
     }
-}
-
-public interface IStateConditional
-{
-    public bool Activate(StateActor actor);
 }

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: DebugSystemChangeBehaviour
   m_EditorClassIdentifier: 
   FromConditional: {fileID: 11400000, guid: cd9768dc9cd9d9544956244d26ec47fe, type: 2}
-  ToConditional: {fileID: 11400000, guid: e8d9aee53bfda454596a76b7892b6e61, type: 2}
+  ToConditional: {fileID: 0}
   SkipChangeToSame: 0
