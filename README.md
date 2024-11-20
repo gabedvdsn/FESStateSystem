@@ -171,6 +171,12 @@ System specific retrievals are retrievals that find actors based on their modera
 
 ![image](https://github.com/user-attachments/assets/c7815738-9cfb-4121-b8aa-1062323151ac)
 
+### FUTURE WORK
+- Add stated-related actions & state action permissibility screening
+  - Actions extendable to manufactured contexts
+- Add state logical continuation for state conclusion and interruption
+- Robust example
+
 ### LIMITATIONS
 - The `GameplayStateManager` holds a reference to every subscribed actor. This can introduce some overhead if actors are held in multiple places.
 - Actor retrieval can produce slow results if the conditions being applied to it require iteration across every subscribed actor.
