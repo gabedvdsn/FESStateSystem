@@ -157,7 +157,7 @@ The other aspect of triggers is trigger runners which are one of the few compone
 ![image](https://github.com/user-attachments/assets/c81c1740-094b-45bb-8a24-5071e43c28f1)
 
 ### SYSTEM CHANGE RESPONDERS
-System change responders are utilized by moderators to handle state and moderator transition-specific decisions using conditional triggers and actor retrievals. System change responders provide the affected actor, transitioned states, and applied conditions to support easy extendability.
+System change responders are utilized by moderators to handle state and moderator transition-specific decisions using conditional triggers and actor retrievals. System change responders provide the affected actor, transitioned states, and applied conditions to support easy extendability. Responders are useful for implementing modular state-based feedback and behavior that can directly impact the state system (and more; see 
 
 ![image](https://github.com/user-attachments/assets/d37f0fef-4550-4e6e-bc35-e62dd31e9a66)
 
@@ -177,6 +177,9 @@ System specific retrievals are retrievals that find actors based on their modera
 - Add state logical continuation for state conclusion and interruption
 - Robust example
 
+##### FUTURE IMPLEMENTATIONS
+- Attribute-based system (e.g. GAS; see under **Limitations**).
+
 ### LIMITATIONS
 - The `GameplayStateManager` holds a reference to every subscribed actor. This can introduce some overhead if actors are held in multiple places.
 - Actor retrieval can produce slow results if the conditions being applied to it require iteration across every subscribed actor.
@@ -184,6 +187,7 @@ System specific retrievals are retrievals that find actors based on their modera
 - Actor retrievals cannot access type-specific member variables.
   - This behavior can be implemented using an attribute system such as a Unity implementation of Unreal Engine's Gameplay Ability System ([GAS](https://dev.epicgames.com/documentation/en-us/unreal-engine/gameplay-ability-system-for-unreal-engine)), where actor-related variables are bound to tag objects.
   - One Unity implementation of GAS (which I have used successfully in the past) is @sjai013's [unity-gameplay-ability-system](https://github.com/sjai013/unity-gameplay-ability-system).
+- System change responders also suffer this limitation, but can be worked around using the same or a similar solution.
 
 ### DEPENDENCIES
 This system makes use of the SerializedDictionary asset by AYellowPaper (see [Unity Asset Store](https://assetstore.unity.com/packages/tools/utilities/serialized-dictionary-243052)).
