@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "FESState/Trigger/Conditional Group Trigger")]
+[CreateAssetMenu(menuName = "FESState/Trigger/Conditional Trigger Group")]
 public class ConditionalStateGroupTriggerScriptableObject : AbstractStateConditionalTriggerScriptableObject
 {
     public List<AbstractStateConditionalTriggerScriptableObject> Conditionals;
@@ -13,10 +13,17 @@ public class ConditionalStateGroupTriggerScriptableObject : AbstractStateConditi
         return Conditionals.All(_ => Conditionals.Any(c => c.Activate(actor)));
     }
 
-    public override bool StateSpecificActivate(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject state)
+    public override bool PreStateChangeActivate(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject newState)
     {
-        // return Conditionals.All(c => c.StateSpecificActivate(actor, priorityTag, state));
-        return Conditionals.All(_ => Conditionals.Any(c => c.StateSpecificActivate(actor, priorityTag, state)));
+        // The new newState should align with one of the conditionals
+        // The other conditionals should hold true for active/stored states (depending on conditional)
+        bool foundNewState;
+        foreach (AbstractStateConditionalTriggerScriptableObject conditional in Conditionals)
+        {
+            if (!conditional.PreStateChangeActivate(actor, priorityTag, newState)) continue;
+            foundNewState = true;
+        }
+        return Conditionals.All(_ => Conditionals.Any(c => c.PreStateChangeActivate(actor, priorityTag, newState)));
     }
 
     public override Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> GetStates()
@@ -42,8 +49,8 @@ public class ConditionalStateGroupTriggerScriptableObject : AbstractStateConditi
         return states;
     }
 
-    public override bool ModeratorSpecificActivate(StateModeratorScriptableObject moderator)
+    public override bool PreModeratorChangeActivate(StateModeratorScriptableObject moderator)
     {
-        return Conditionals.All(c => c.ModeratorSpecificActivate(moderator));
+        return Conditionals.All(c => c.PreModeratorChangeActivate(moderator));
     }
 }

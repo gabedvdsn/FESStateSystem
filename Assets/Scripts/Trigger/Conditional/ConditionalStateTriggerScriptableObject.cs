@@ -14,6 +14,8 @@ public class ConditionalStateTriggerScriptableObject : AbstractStateConditionalT
     
     public SerializedDictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> LookForStates;
 
+    public bool LookForAny = true;
+    public bool ActiveStatesOnly = true;
     public bool AllowDescendants;
     public bool AllowRelations;
     
@@ -39,27 +41,55 @@ public class ConditionalStateTriggerScriptableObject : AbstractStateConditionalT
         return true;
     }
 
-    public override bool StateSpecificActivate(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject state)
+    public override bool PreStateChangeActivate(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject newState)
     {
         if (!LookForStates.ContainsKey(priorityTag)) return false;
         
         bool status = true;
         if (AllowRelations)
         {
-            // If any of the look for states are not related to state
-            if (LookForStates[priorityTag].Any(lookForState => !state.IsRelatedTo(lookForState))) status = false;
+            // If any of the look for states are not related to newState
+            if (LookForAny)
+            {
+                if (LookForStates[priorityTag].Any(lookForState => !newState.IsRelatedTo(lookForState))) status = false;
+            }
+            else
+            {
+                if (!LookForStates[priorityTag].All(newState.IsRelatedTo)) status = false;
+            }
         }
         else if (AllowDescendants)
         {
-            // If any of the look for states are not descended from state
-            if (LookForStates[priorityTag].Any(lookForState => !state.IsDescendantOf(lookForState))) status = false;
+            // If any of the look for states are not descended from newState
+            if (LookForAny)
+            {
+                if (LookForStates[priorityTag].Any(lookForState => !newState.IsDescendantOf(lookForState))) status = false;
+            }
+            else
+            {
+                if (!LookForStates[priorityTag].All(newState.IsDescendantOf)) status = false;
+            }
         }
-        else if (!LookForStates[priorityTag].Contains(state)) status = false;
+        else
+        {
+            if (LookForAny)
+            {
+                if (!LookForStates[priorityTag].Contains(newState)) status = false;
+            }
+            else
+            {
+                if (LookForStates[priorityTag].Any(s => s != newState)) status = false;
+            }
+        }
 
         // Check within actor for the look for states
         if (!status)
         {
-            if (LookForStates[priorityTag].Any(s => !actor.Moderator.TryGetStoredState(priorityTag, s, out AbstractGameplayState _))) return false;
+            if (ActiveStatesOnly)
+            {
+                if (!LookForStates[priorityTag].All(s => actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState state) && state.StateData == s)) return false;
+            }
+            
         }
 
         return status;
@@ -67,7 +97,7 @@ public class ConditionalStateTriggerScriptableObject : AbstractStateConditionalT
 
     public override Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> GetStates() => LookForStates;
 
-    public override bool ModeratorSpecificActivate(StateModeratorScriptableObject moderator)
+    public override bool PreModeratorChangeActivate(StateModeratorScriptableObject moderator)
     {
         return LookForModerators.Count <= 0 || LookForModerators.Contains(moderator);
     }

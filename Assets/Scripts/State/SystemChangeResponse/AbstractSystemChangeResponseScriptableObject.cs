@@ -21,7 +21,7 @@ public abstract class AbstractSystemChangeResponseScriptableObject : ScriptableO
 
         if (ToConditional)
         {
-            if (!ToConditional.ModeratorSpecificActivate(newModerator)) return;
+            if (!ToConditional.PreModeratorChangeActivate(newModerator)) return;
         }
         
         ModeratorChangeResponse(actor, oldModerator, newModerator);
@@ -38,7 +38,7 @@ public abstract class AbstractSystemChangeResponseScriptableObject : ScriptableO
 
         if (ToConditional)
         {
-            if (!ToConditional.StateSpecificActivate(actor, priorityTag, newState.StateData)) return;
+            if (!ToConditional.PreStateChangeActivate(actor, priorityTag, newState.StateData)) return;
         }
         
         StateChangeResponse(actor, oldState, newState, FromConditional, ToConditional);
