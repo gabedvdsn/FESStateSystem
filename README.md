@@ -17,7 +17,7 @@ Monobehaviours implementing the state system must implement the `StateActor` cla
 
 The `StateActor` class does, however, implement the Unity event functions `Awake()`, `Update()`, and `LateUpdate()`.
 
-##### Inheritance
+##### INHERITANCE
 The `StateActor` class can be extended as you like. Other functionality within this system allows for type-specific retrieval of actors (see under **Actor Retrieval**).
 
 ![image](https://github.com/user-attachments/assets/97cf17f0-5e2a-4a1c-92ea-372e872d7e1c)
