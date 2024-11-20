@@ -15,9 +15,7 @@ For the purposes of this readme, I will be using the following example setup.
 ---
 
 ### ACTORS
-Monobehaviours implementing the state system must implement the `StateActor` class. All functional implementation is complete and does not inherit any dependent implementation.
-
-The `StateActor` class does, however, implement the Unity event functions `Awake()`, `Update()`, and `LateUpdate()`.
+The `StateActor` component represents an actor that behaves according to a state system. Subclassing the `StateActor` class is acceptable but functionally unnecessary; all functional implementation is complete and subclasses do not inherit any dependent implementation. The responsibility of the `StateActor` component is not to mechanically control the state system, rather just to contain it. Objects should define their own behavior outside of the `StateActor` class (e.g. PlayerController, EnemyController) and delegate state-related behavior to individual gameplay states that directly reference the external behavior component.
 
 ##### INHERITANCE
 The `StateActor` class can be extended as you like. Other functionality within this system allows for type-specific retrieval of actors (see under **Actor Retrieval**).
