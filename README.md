@@ -210,7 +210,7 @@ System change responders are utilized by moderators to handle state and moderato
 
 ![image](https://github.com/user-attachments/assets/d37f0fef-4550-4e6e-bc35-e62dd31e9a66)
 
-If either `StateConditionalTrigger` is left as `null`, it will always activate to `True`.
+If either `StateConditionalTrigger` is left as `null`, it will always activate to `True`. Some responders will never activate based on the conditionals. For example, detecting a change FROM a state in *priority 0* TO a state in *priority 1* could never activate the responder.
 
 ---
 
