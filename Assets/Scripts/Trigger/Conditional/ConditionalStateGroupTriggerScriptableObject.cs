@@ -10,6 +10,7 @@ public class ConditionalStateGroupTriggerScriptableObject : AbstractStateConditi
     
     public override bool Activate(StateActor actor)
     {
+        return Conditionals.All(c => c.Activate(actor));
         return Conditionals.All(_ => Conditionals.Any(c => c.Activate(actor)));
     }
 
@@ -17,12 +18,7 @@ public class ConditionalStateGroupTriggerScriptableObject : AbstractStateConditi
     {
         // The new newState should align with one of the conditionals
         // The other conditionals should hold true for active/stored states (depending on conditional)
-        bool foundNewState;
-        foreach (AbstractStateConditionalTriggerScriptableObject conditional in Conditionals)
-        {
-            if (!conditional.PreStateChangeActivate(actor, priorityTag, newState)) continue;
-            foundNewState = true;
-        }
+        return Conditionals.All(c => c.PreStateChangeActivate(actor, priorityTag, newState));
         return Conditionals.All(_ => Conditionals.Any(c => c.PreStateChangeActivate(actor, priorityTag, newState)));
     }
 

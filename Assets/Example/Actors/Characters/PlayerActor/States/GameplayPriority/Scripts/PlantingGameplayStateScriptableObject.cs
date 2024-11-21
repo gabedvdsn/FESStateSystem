@@ -7,7 +7,7 @@ public class PlantingGameplayStateScriptableObject : AbstractPlayerGameplayState
 {
     public override AbstractGameplayState GenerateState(StateActor actor)
     {
-        return new PlantingGameplayState(this, actor as PlayerStateActor);
+        return new PlantingGameplayState(this, actor);
     }
 
     public class PlantingGameplayState : AbstractPlayerGameplayState
@@ -15,8 +15,12 @@ public class PlantingGameplayStateScriptableObject : AbstractPlayerGameplayState
         private float progress;
         private float plantSpeed = .5f;
         
-        public PlantingGameplayState(AbstractGameplayStateScriptableObject gameplayState, PlayerStateActor actor) : base(gameplayState, actor)
+        public PlantingGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
         {
+        }
+        public override void Initialize(StateActor actor)
+        {
+            
         }
         public override void Enter()
         {
@@ -44,7 +48,7 @@ public class PlantingGameplayStateScriptableObject : AbstractPlayerGameplayState
         public override void Conclude()
         {
             // Plant plant
-            Player.Moderator.ReturnToInitial(StateData);
+            State.Moderator.ReturnToInitial(StateData);
         }
         public override void Exit()
         {

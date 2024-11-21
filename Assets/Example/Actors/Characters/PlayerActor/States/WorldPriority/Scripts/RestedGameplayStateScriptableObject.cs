@@ -7,16 +7,20 @@ public class RestedGameplayStateScriptableObject : AbstractPlayerGameplayStateSc
 {
     public override AbstractGameplayState GenerateState(StateActor actor)
     {
-        return new SafeGameplayState(this, actor as PlayerStateActor);
+        return new SafeGameplayState(this, actor);
     }
     
     public class SafeGameplayState : AbstractPlayerGameplayState
     {
 
-        public SafeGameplayState(AbstractGameplayStateScriptableObject gameplayState, PlayerStateActor actor) : base(gameplayState, actor)
+        public SafeGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
         {
         }
 
+        public override void Initialize(StateActor actor)
+        {
+            
+        }
         public override void Enter()
         {
             

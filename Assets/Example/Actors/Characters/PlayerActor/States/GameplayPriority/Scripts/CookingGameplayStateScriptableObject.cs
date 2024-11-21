@@ -7,7 +7,7 @@ public class CookingGameplayStateScriptableObject : AbstractPlayerGameplayStateS
 {
     public override AbstractGameplayState GenerateState(StateActor actor)
     {
-        return new CookingGameplayState(this, actor as PlayerStateActor);
+        return new CookingGameplayState(this, actor);
     }
     
     public class CookingGameplayState : AbstractPlayerGameplayState
@@ -15,9 +15,10 @@ public class CookingGameplayStateScriptableObject : AbstractPlayerGameplayStateS
         private float progress;
         private float speed = .75f;
         
-        public CookingGameplayState(AbstractGameplayStateScriptableObject stateData, PlayerStateActor actor) : base(stateData, actor)
+        public CookingGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
         {
         }
+
         public override void Enter()
         {
             progress = 0f;
@@ -48,7 +49,7 @@ public class CookingGameplayStateScriptableObject : AbstractPlayerGameplayStateS
         {
             // Collect cooking rewards
 
-            Player.Moderator.ReturnToInitial(StateData);
+            State.Moderator.ReturnToInitial(StateData);
         }
         public override void Exit()
         {

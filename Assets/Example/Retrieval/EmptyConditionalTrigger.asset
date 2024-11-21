@@ -16,5 +16,7 @@ MonoBehaviour:
   LookForModerators: []
   LookForStates:
     _serializedList: []
+  LookForAny: 0
+  ActiveStatesOnly: 0
   AllowDescendants: 0
   AllowRelations: 0

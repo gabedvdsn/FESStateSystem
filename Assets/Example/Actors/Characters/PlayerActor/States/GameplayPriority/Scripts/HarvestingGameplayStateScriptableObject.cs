@@ -7,15 +7,19 @@ public class HarvestingGameplayStateScriptableObject : AbstractPlayerGameplaySta
 {
     public override AbstractGameplayState GenerateState(StateActor actor)
     {
-        return new HarvestingGameplayState(this, actor as PlayerStateActor);
+        return new HarvestingGameplayState(this, actor);
     }
     
     public class HarvestingGameplayState : AbstractPlayerGameplayState
     {
         private float progress;
         private float speed = .25f;
-        public HarvestingGameplayState(AbstractGameplayStateScriptableObject gameplayState, PlayerStateActor actor) : base(gameplayState, actor)
+        public HarvestingGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
         {
+        }
+        public override void Initialize(StateActor actor)
+        {
+            
         }
         public override void Enter()
         {
@@ -44,7 +48,7 @@ public class HarvestingGameplayStateScriptableObject : AbstractPlayerGameplaySta
         public override void Conclude()
         {
             // Collect harvesting rewards
-            Player.Moderator.ReturnToInitial(StateData);
+            State.Moderator.ReturnToInitial(StateData);
         }
         public override void Exit()
         {

@@ -6,16 +6,15 @@ public class IdleGameplayStateScriptableObject : AbstractPlayerGameplayStateScri
 
     public override AbstractGameplayState GenerateState(StateActor actor)
     {
-        return new IdleGameplaySate(this, actor as PlayerStateActor);
+        return new IdleGameplaySate(this, actor);
     }
 
     public class IdleGameplaySate : AbstractPlayerGameplayState
     {
 
-        public IdleGameplaySate(AbstractGameplayStateScriptableObject gameplayState, PlayerStateActor actor) : base(gameplayState, actor)
+        public IdleGameplaySate(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
         {
         }
-
         public override void Enter()
         {
             

@@ -2,11 +2,15 @@
 {
     public abstract class AbstractPlayerGameplayState : AbstractGameplayState
     {
-        public PlayerStateActor Player;
+        public PlayerController Player;
         
-        public AbstractPlayerGameplayState(AbstractGameplayStateScriptableObject stateData, PlayerStateActor actor) : base(stateData)
+        public override void Initialize(StateActor actor)
         {
-            Player = actor;
+            Player = actor.GetComponent<PlayerController>();
+        }
+        public AbstractPlayerGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
+        {
+            
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AYellowpaper.SerializedCollections;
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "FESState/Trigger/Conditional Trigger")]
@@ -14,87 +15,146 @@ public class ConditionalStateTriggerScriptableObject : AbstractStateConditionalT
     
     public SerializedDictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> LookForStates;
 
+    [Tooltip("Any conditional can evaluate to true, as opposed to all of them")]
     public bool LookForAny = true;
     public bool ActiveStatesOnly = true;
     public bool AllowDescendants;
     public bool AllowRelations;
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="actor"></param>
+    /// <returns></returns>
     public override bool Activate(StateActor actor)
     {
         if (actor.Moderator is null) return false;
         if (LookForModerators.Count > 0 && !LookForModerators.Contains(actor.Moderator.BaseModerator)) return false;
+
+        bool status = LookForStates.Count == 0;
         
         foreach (StatePriorityTagScriptableObject priorityTag in LookForStates.Keys.Where(priorityTag => LookForStates[priorityTag].Count != 0))
         {
-            if (!actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState state)) return false;
-            if (AllowRelations)
-            {
-                if (LookForStates[priorityTag].Any(lookForState => !state.StateData.IsRelatedTo(lookForState))) return false;
-            }
-            else if (AllowDescendants)
-            {
-                if (LookForStates[priorityTag].Any(lookForState => !state.StateData.IsDescendantOf(lookForState))) return false;
-            }
-            else if (!LookForStates[priorityTag].Contains(state.StateData)) return false;
-        }
-
-        return true;
-    }
-
-    public override bool PreStateChangeActivate(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject newState)
-    {
-        if (!LookForStates.ContainsKey(priorityTag)) return false;
-        
-        bool status = true;
-        if (AllowRelations)
-        {
-            // If any of the look for states are not related to newState
-            if (LookForAny)
-            {
-                if (LookForStates[priorityTag].Any(lookForState => !newState.IsRelatedTo(lookForState))) status = false;
-            }
-            else
-            {
-                if (!LookForStates[priorityTag].All(newState.IsRelatedTo)) status = false;
-            }
-        }
-        else if (AllowDescendants)
-        {
-            // If any of the look for states are not descended from newState
-            if (LookForAny)
-            {
-                if (LookForStates[priorityTag].Any(lookForState => !newState.IsDescendantOf(lookForState))) status = false;
-            }
-            else
-            {
-                if (!LookForStates[priorityTag].All(newState.IsDescendantOf)) status = false;
-            }
-        }
-        else
-        {
-            if (LookForAny)
-            {
-                if (!LookForStates[priorityTag].Contains(newState)) status = false;
-            }
-            else
-            {
-                if (LookForStates[priorityTag].Any(s => s != newState)) status = false;
-            }
-        }
-
-        // Check within actor for the look for states
-        if (!status)
-        {
             if (ActiveStatesOnly)
             {
-                if (!LookForStates[priorityTag].All(s => actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState state) && state.StateData == s)) return false;
+                if (AllowRelations)
+                {
+                    status = actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState state) && (LookForAny ? LookForStates[priorityTag].Any(state.StateData.IsRelatedTo) : LookForStates[priorityTag].All(state.StateData.IsRelatedTo));
+                }
+                if (AllowDescendants && !status)
+                {
+                    status = actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState state) && (LookForAny ? LookForStates[priorityTag].Any(state.StateData.IsDescendantOf) : LookForStates[priorityTag].All(state.StateData.IsDescendantOf));
+                }
+                if (!status)
+                {
+                    status = actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState state) && (LookForAny ? LookForStates[priorityTag].Contains(state.StateData) : LookForStates[priorityTag].All(s => s == state.StateData));
+                }
+            }
+            else
+            {
+                status = LookForAny ? LookForStates[priorityTag].Any(state => actor.Moderator.TryGetStoredState(priorityTag, state, out _)) : LookForStates[priorityTag].All(state => actor.Moderator.TryGetStoredState(priorityTag, state, out _));
+                if (!status)
+                {
+                    // LookForStates were not found in stored states, let's check relations & descendents of stored states
+                    if (AllowRelations)
+                    {
+                        // Any or all the conditions have relations in stored states
+                        status = LookForAny
+                            ? LookForStates[priorityTag].Any(state =>
+                                actor.Moderator.TryGetStoredState(priorityTag, state, out AbstractGameplayState storedState) && state.IsRelatedTo(storedState.StateData))
+                            : LookForStates[priorityTag].All(state =>
+                                actor.Moderator.TryGetStoredState(priorityTag, state, out AbstractGameplayState storedState) && state.IsRelatedTo(storedState.StateData));
+                    }
+
+                    if (AllowDescendants && !status)
+                    {
+                        // Any or all the conditions have descendents in stored states
+                        status = LookForAny
+                            ? LookForStates[priorityTag].Any(state =>
+                                actor.Moderator.TryGetStoredState(priorityTag, state, out AbstractGameplayState storedState) && state.IsDescendantOf(storedState.StateData))
+                            : LookForStates[priorityTag].All(state =>
+                                actor.Moderator.TryGetStoredState(priorityTag, state, out AbstractGameplayState storedState) && state.IsDescendantOf(storedState.StateData));
+                    }
+                }
             }
             
+            /*foreach (AbstractGameplayStateScriptableObject state in LookForStates[priorityTag])
+            {
+                if (AllowDescendants && !status)
+                {
+                    status = ActiveStatesOnly
+                        ? actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState _state) && _state.StateData.IsDescendantOf(state)
+                        : actor.Moderator.TryGetStoredState(priorityTag, state, out _);
+                }
+
+                if (!status)
+                {
+                    status = ActiveStatesOnly
+                        ? actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState _state) && _state.StateData == state
+                        : actor.Moderator.TryGetStoredState(priorityTag, state, out _);
+                }
+                
+                if (AllowRelations)
+                {
+                    status = ActiveStatesOnly
+                        ? actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState _state) && _state.StateData.IsRelatedTo(state)
+                        : actor.Moderator.TryGetStoredState(priorityTag, state, out _);
+
+                }
+                if (AllowDescendants && !status)
+                {
+                    status = ActiveStatesOnly
+                        ? actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState _state) && _state.StateData.IsDescendantOf(state)
+                        : actor.Moderator.TryGetStoredState(priorityTag, state, out _);
+                }
+
+                if (!status)
+                {
+                    status = ActiveStatesOnly
+                        ? actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState _state) && _state.StateData == state
+                        : actor.Moderator.TryGetStoredState(priorityTag, state, out _);
+                }
+            }*/
         }
 
         return status;
     }
 
+    /// <summary>
+    /// Finds the newState in LookForStates, or within the actor's stored states if not ActiveOnly
+    /// </summary>
+    /// <param name="actor"></param>
+    /// <param name="priorityTag"></param>
+    /// <param name="newState"></param>
+    /// <returns></returns>
+    public override bool PreStateChangeActivate(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject newState)
+    {
+        if (!LookForStates.ContainsKey(priorityTag)) return false;
+        
+        bool status = false;
+        if (AllowRelations)
+        {
+            status = LookForAny ? LookForStates[priorityTag].Any(newState.IsRelatedTo) : LookForStates[priorityTag].All(newState.IsRelatedTo);
+        }
+        if (AllowDescendants && !status)
+        {
+            status = LookForAny ? LookForStates[priorityTag].Any(newState.IsDescendantOf) : LookForStates[priorityTag].All(newState.IsDescendantOf);
+        }
+        if (!status)
+        {
+            status = LookForAny ? LookForStates[priorityTag].Contains(newState) : LookForStates[priorityTag].All(s => s == newState);
+        }
+
+        // If we haven't found the newState in LookFor and !ActiveStatesOnly, let's check to see if the LookFor states exist in Stored States
+        if (!status && !ActiveStatesOnly)
+        {
+            if (LookForAny) status = LookForStates[priorityTag].Any(s => actor.Moderator.TryGetStoredState(priorityTag, s, out AbstractGameplayState _));
+            else status = LookForStates[priorityTag].All(s => actor.Moderator.TryGetStoredState(priorityTag, s, out AbstractGameplayState _));
+        }
+
+        return status;
+    }
+    
     public override Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> GetStates() => LookForStates;
 
     public override bool PreModeratorChangeActivate(StateModeratorScriptableObject moderator)

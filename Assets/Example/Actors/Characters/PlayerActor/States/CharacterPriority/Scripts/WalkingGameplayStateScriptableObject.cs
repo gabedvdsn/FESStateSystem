@@ -5,16 +5,15 @@ public class WalkingGameplayStateScriptableObject : AbstractPlayerGameplayStateS
 {
     public override AbstractGameplayState GenerateState(StateActor actor)
     {
-        return new WalkingGameplaySate(this, actor as PlayerStateActor);
+        return new WalkingGameplaySate(this, actor);
     }
     
     public class WalkingGameplaySate : AbstractPlayerGameplayState
     {
 
-        public WalkingGameplaySate(AbstractGameplayStateScriptableObject gameplayState, PlayerStateActor actor) : base(gameplayState, actor)
+        public WalkingGameplaySate(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
         {
         }
-
         public override void Enter()
         {
             

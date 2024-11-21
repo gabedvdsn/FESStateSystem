@@ -40,11 +40,18 @@ public abstract class AbstractGameplayStateScriptableObject : ScriptableObject
 public abstract class AbstractGameplayState
 {
     public AbstractGameplayStateScriptableObject StateData;
+    public StateActor State;
     
-    protected AbstractGameplayState(AbstractGameplayStateScriptableObject stateData)
+    protected AbstractGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor)
     {
         StateData = stateData;
+        State = actor;
     }
+
+    /// <summary>
+    ///  Called once when the state is created by the moderator, or when a new moderator is implemented.
+    /// </summary>
+    public abstract void Initialize(StateActor actor);
 
     /// <summary>
     /// Called when the state is entered

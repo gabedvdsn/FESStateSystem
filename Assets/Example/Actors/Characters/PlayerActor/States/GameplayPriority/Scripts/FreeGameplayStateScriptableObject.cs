@@ -6,16 +6,15 @@ public class FreeGameplayStateScriptableObject : AbstractPlayerGameplayStateScri
 {
     public override AbstractGameplayState GenerateState(StateActor actor)
     {
-        return new FreeGameplayState(this, actor as PlayerStateActor);
+        return new FreeGameplayState(this, actor);
     }
     
     public class FreeGameplayState : AbstractPlayerGameplayState
     {
 
-        public FreeGameplayState(AbstractGameplayStateScriptableObject gameplayState, PlayerStateActor actor) : base(gameplayState, actor)
+        public FreeGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
         {
         }
-
         public override void Enter()
         {
 

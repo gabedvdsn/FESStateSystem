@@ -1341,6 +1341,7 @@ GameObject:
   - component: {fileID: 617613154}
   - component: {fileID: 617613153}
   - component: {fileID: 617613157}
+  - component: {fileID: 617613158}
   m_Layer: 0
   m_Name: PlayerActor
   m_TagString: Untagged
@@ -1444,6 +1445,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e1a0814690d8e7459fbb693b7b68735, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &617613158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 617613152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8110b4e02b4d24f984f582a31a9cf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   GeneralIdentifier: {fileID: 11400000, guid: 89fd2287a1af7204d99d0b3dca1c8009, type: 2}
@@ -3755,7 +3768,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ProgressText: {fileID: 2065081717}
   ProgressSlider: {fileID: 1680789250}
-  Actor: {fileID: 617613157}
+  Actor: {fileID: 617613158}
   WorldStateText: {fileID: 1467082148}
   WorldPriority: {fileID: 11400000, guid: 9978f5e125a0d874faa134abd9f79174, type: 2}
   GameplayStateText: {fileID: 544730709}

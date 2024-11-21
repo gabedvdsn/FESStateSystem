@@ -7,16 +7,20 @@ public class ExhaustedGameplayStateScriptableObject : AbstractPlayerGameplayStat
 {
     public override AbstractGameplayState GenerateState(StateActor actor)
     {
-        return new ExhaustedGameplayState(this, actor as PlayerStateActor);
+        return new ExhaustedGameplayState(this, actor);
     }
     
     public class ExhaustedGameplayState : AbstractPlayerGameplayState
     {
 
-        public ExhaustedGameplayState(AbstractGameplayStateScriptableObject gameplayState, PlayerStateActor actor) : base(gameplayState, actor)
+        public ExhaustedGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
         {
         }
 
+        public override void Initialize(StateActor actor)
+        {
+            
+        }
         public override void Enter()
         {
             
