@@ -4,9 +4,9 @@
     {
         public PlayerController Player;
         
-        public override void Initialize(StateActor actor)
+        public override void Initialize()
         {
-            Player = actor.GetComponent<PlayerController>();
+            Player = State.GetComponent<PlayerController>();
         }
         public AbstractPlayerGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
         {

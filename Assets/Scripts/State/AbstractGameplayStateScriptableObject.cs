@@ -51,7 +51,7 @@ public abstract class AbstractGameplayState
     /// <summary>
     ///  Called once when the state is created by the moderator, or when a new moderator is implemented.
     /// </summary>
-    public abstract void Initialize(StateActor actor);
+    public abstract void Initialize();
 
     /// <summary>
     /// Called when the state is entered

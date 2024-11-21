@@ -195,7 +195,7 @@ public class StateModerator
     {
         if (TryGetStoredState(priorityTag, stateData, out AbstractGameplayState state)) return state;
         state = stateData.GenerateState(StateComponent);
-        state.Initialize(StateComponent);
+        state.Initialize();
         if (!StoredStates.ContainsKey(priorityTag)) StoredStates[priorityTag] = new List<AbstractGameplayState>();
         StoredStates[priorityTag].Add(state);
         return state;

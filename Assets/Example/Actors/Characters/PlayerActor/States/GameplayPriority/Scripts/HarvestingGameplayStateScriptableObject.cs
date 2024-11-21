@@ -17,12 +17,9 @@ public class HarvestingGameplayStateScriptableObject : AbstractPlayerGameplaySta
         public HarvestingGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
         {
         }
-        public override void Initialize(StateActor actor)
-        {
-            
-        }
         public override void Enter()
         {
+            Debug.Log(Player);
             progress = 0f;
             UIManager.Instance.EnableProgressSlider("Harvesting");
             // Play harvesting animation

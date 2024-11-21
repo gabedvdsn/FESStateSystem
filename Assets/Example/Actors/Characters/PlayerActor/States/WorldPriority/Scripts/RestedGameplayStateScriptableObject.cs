@@ -16,11 +16,6 @@ public class RestedGameplayStateScriptableObject : AbstractPlayerGameplayStateSc
         public SafeGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
         {
         }
-
-        public override void Initialize(StateActor actor)
-        {
-            
-        }
         public override void Enter()
         {
             
