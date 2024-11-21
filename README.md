@@ -216,7 +216,9 @@ System change responders are utilized by moderators to handle state and moderato
 Actor retrievals are the means by which to find subscribed actors. Retrievals cannot access type-specific member variables (see more under **Limitations**).
 
 ![image](https://github.com/user-attachments/assets/5bb5f180-75d7-4c74-8660-949dff2778f8)
+
 ---
+
 #### SYSTEM SPECIFIC RETRIEVAL
 System specific retrievals are retrievals that find actors based on their moderators and/or states (active or otherwise). 
 
