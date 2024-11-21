@@ -62,60 +62,80 @@ While the gameplay state itself does not care about its priority level, the game
 ![image](https://github.com/user-attachments/assets/d7d1b047-b86c-4782-a9ea-731afd74dc36)
 <details>
   <summary>Code Example</summary>
+
+  ```
+  public abstract class AbstractPlayerGameplayStateScriptableObject : AbstractGameplayStateScriptableObject
+  {
+      public abstract class AbstractPlayerGameplayState : AbstractGameplayState
+      {
+          public PlayerController Player;
+          
+          public override void Initialize()
+          {
+              Player = State.GetComponent<PlayerController>();
+          }
+          public AbstractPlayerGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
+          {
+              
+          }
+      }
+  }
+
+  ```
   
   ```
   public class PlantingGameplayStateScriptableObject : AbstractPlayerGameplayStateScriptableObject
   {
       public override AbstractGameplayState GenerateState(StateActor actor)
       {
-          return new PlantingGameplayState(this, actor as PlayerStateActor);
+          return new PlantingGameplayState(this, actor);
       }
   }
   ```
   
   ```
 public class PlantingGameplayState : AbstractPlayerGameplayState
-{
-        private float progress;
-        private float plantSpeed = .5f;
-        
-        public PlantingGameplayState(AbstractGameplayStateScriptableObject gameplayState, PlayerStateActor actor) : base(gameplayState, actor)
-        {
-        }
-        public override void Enter()
-        {
-            progress = 0f;
-            UIManager.Instance.EnableProgressSlider("Planting");
-            // Play planting animation
-        }
-        public override void LogicUpdate()
-        {
-            UIManager.Instance.SetProgressSliderValue(progress);
-            progress += plantSpeed * Time.deltaTime;
-            if (progress >= 1f)
-            {
-                Conclude();
-            }
-        }
-        public override void PhysicsUpdate()
-        {
-            // Nothing needed
-        }
-        public override void Interrupt()
-        {
-            // Don't plant
-        }
-        public override void Conclude()
-        {
-            // Plant plant
-            Player.Moderator.ReturnToInitial(StateData);
-        }
-        public override void Exit()
-        {
-            UIManager.Instance.DisableProgressSlider();
-            // Exit planting animation
-        }
-}
+  {
+      private float progress;
+      private float plantSpeed = .5f;
+      
+      public PlantingGameplayState(AbstractGameplayStateScriptableObject stateDate, StateActor actor) : base(stateDate, actor)
+      {
+      }
+      public override void Enter()
+      {
+          progress = 0f;
+          UIManager.Instance.EnableProgressSlider("Planting");
+          // Play planting animation
+      }
+      public override void LogicUpdate()
+      {
+          UIManager.Instance.SetProgressSliderValue(progress);
+          progress += plantSpeed * Time.deltaTime;
+          if (progress >= 1f)
+          {
+              Conclude();
+          }
+      }
+      public override void PhysicsUpdate()
+      {
+          // Nothing needed
+      }
+      public override void Interrupt()
+      {
+          // Don't plant
+      }
+      public override void Conclude()
+      {
+          // Plant plant
+          Player.Moderator.ReturnToInitial(StateData);
+      }
+      public override void Exit()
+      {
+          UIManager.Instance.DisableProgressSlider();
+          // Exit planting animation
+      }
+  }
   ```
 </details>
 
