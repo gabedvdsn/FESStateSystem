@@ -15,12 +15,14 @@ For the purposes of this readme, I will be using the following example setup.
 ---
 
 ### ACTORS
-The `StateActor` component represents an actor that behaves according to a state system. Subclassing the `StateActor` class is acceptable but functionally unnecessary; all functional implementation is complete and subclasses do not inherit any dependent implementation. The responsibility of the `StateActor` component is not to mechanically control the state system, rather just to contain it. Objects should define their own behavior outside of the `StateActor` class (e.g. PlayerController, EnemyController) and delegate state-related behavior to individual gameplay states that directly reference the external behavior component.
+The `StateActor` component represents an actor that behaves according to a state system. Subclassing the `StateActor` class is acceptable but functionally unnecessary; all functional implementation is complete and subclasses do not inherit any dependent implementation. The responsibility of the `StateActor` component is not to mechanically control the state system, rather just to contain it. 
+
+Objects should define their own behavior outside of the `StateActor` class (e.g. PlayerController, EnemyController) and delegate state-related behavior to individual gameplay states that directly reference the external behavior component. Every state holds a reference to the `StateActor` component (stored as `State`) which it is attached to. When states undergo initialization (which occurs once immediately after the state is created), the state can derive pertinent components from the state component using `State.GetComponent<T>()` or similar.
 
 ##### INHERITANCE
-The `StateActor` class can be extended as you like. Other functionality within this system allows for type-specific retrieval of actors (see under **Actor Retrieval**).
+Although stated as functionally unnecessary previously, `StateActor` class can be extended as you like. Other functionality within this system allows for type-specific retrieval of subclassed actors (see under **Actor Retrieval**).
 
-![image](https://github.com/user-attachments/assets/97cf17f0-5e2a-4a1c-92ea-372e872d7e1c)
+![image](https://github.com/user-attachments/assets/ef794b36-5f2c-4ec3-9cac-9cc719b327cb)
 
 ---
 
@@ -46,7 +48,7 @@ The `GameplayStateManager` class is a singleton manager class that handles initi
 ---
 
 ### STATE PRIORITY TAG
-Priority tags are used to differentiate different levels (or contexts) of gameplay states and moderators.
+Priority tags are used to differentiate different levels (or contexts) of gameplay states and moderators. State actors can only be in one state at a time per defined priority level.
 
 ![image](https://github.com/user-attachments/assets/dcf5e454-b7e9-42c8-aca3-56fcf75751ce)
 
@@ -156,11 +158,11 @@ State triggers are the #1 most important aspect of this whole system. These trig
 #### CONDITIONAL TRIGGERS
 Conditional triggers are used to discern the state-related circumstances of an actor. Conditional triggers are used natively by trigger runners (via `GameplayStateManager`) and by system change responders to handle actor retrieval. Conditionals are not confined to this purpose and can be used widely to handle state-dependent decisions.
 
-![image](https://github.com/user-attachments/assets/b788efb5-ef06-4d4e-bf24-55fd223a3f59)
+![image](https://github.com/user-attachments/assets/574c7ba4-3530-4106-8188-315966a8f221)
 
 ---
 
-#### CONDITIONAL GROUP TRIGGERS
+###### CONDITIONAL GROUP TRIGGERS
 Conditional group triggers behave similarly to conditional triggers, except they hold groups of conditionals (either conditional triggers or other conditional group triggers).
 
 ![image](https://github.com/user-attachments/assets/74ef3c91-f398-430f-ae86-58c4cd3a6470)
@@ -216,9 +218,9 @@ System specific retrievals are retrievals that find actors based on their modera
 - Actor retrieval can produce slow results if the conditions being applied to it require iteration across every subscribed actor.
   - This applies to trigger runners that perform retrievals, as well as activating possibly expensive conditional triggers.
 - `StateConditionalTrigger` and `SystemChangeResponse` scripts cannot access type-specific member variables.
-  - This type of sensitive access can be implemented using an attribute system such as a Unity implementation of Unreal Engine's Gameplay Ability System ([GAS](https://dev.epicgames.com/documentation/en-us/unreal-engine/gameplay-ability-system-for-unreal-engine)), where many actor-related variables are bound to tag objects.
+  - The easiest solution would be to subclass these classes to align with specific behaviors (e.g. `PlayerStateConditional` and `PlayerSystemChangeResponse`) where you can ensure type safety.
+  - This type of sensitive access can also be implemented using an attribute system such as a Unity implementation of Unreal Engine's Gameplay Ability System ([GAS](https://dev.epicgames.com/documentation/en-us/unreal-engine/gameplay-ability-system-for-unreal-engine)), where many actor-related variables are bound to tag objects.
     - One Unity implementation of GAS (which I have used successfully in the past) is @sjai013's [unity-gameplay-ability-system](https://github.com/sjai013/unity-gameplay-ability-system).
-  - While this limitation impacts the scripts ability to directly interface with the actor's associated behaviours (despite being only a `GetComponent<T>()` away)
 - `RetrieveStateActor` suffer a similar limitation
 
 ### DEPENDENCIES
