@@ -192,7 +192,7 @@ The conditional group trigger shown in the example is used below in the example 
 ---
 
 #### INITIALIZATION TRIGGERS
-Initialization triggers are defined in state environments to define how actors should be initialized.
+Initialization triggers are utilized in `StateEnvironment` objects and define the `StateModerator` and, optionally, any overriding states a `StateActor` should be initialized to.
 
 ![image](https://github.com/user-attachments/assets/c16c7bd0-a9f0-423d-a2fc-a9c3f311f9eb)
 
