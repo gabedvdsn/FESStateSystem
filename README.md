@@ -210,6 +210,8 @@ System change responders are utilized by moderators to handle state and moderato
 
 ![image](https://github.com/user-attachments/assets/d37f0fef-4550-4e6e-bc35-e62dd31e9a66)
 
+If either `StateConditionalTrigger` is left as `null`, it will always activate to `True`.
+
 ---
 
 ### ACTOR RETRIEVAL
