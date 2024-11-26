@@ -4,8 +4,31 @@
 A fully abstract, scalable state system to represent actors in multiple states within multiple control contexts. Implemented almost entirely within scriptable objects, this system is modular and easily extendable. This project is built using native Unity and C#. 
 
 ## How To Use
+### Creating States
+Creating states is simplified by using the **State Creator** tool under `Tools/State Creator`. By usin this tool, the user can avoid the repetitive task of creating scripts and writing the necessary boiler-plate code. Let's walk through using this tool.
 
-## Description of Material
+#### First Steps
+Let's start by creating a new state for the player, called **Eating**. Input the name of the state.
+![Screenshot 2024-11-25 225654](https://github.com/user-attachments/assets/c923265e-9974-4404-835b-9fb6a8d4d14e)
+
+#### Assigning Inheritance
+Next, let's make it inherit from the `AbstractPlayerGameplayStateScriptableObject`. There are additional options to control the naming of the scripts. Without assigning an inherited script, the state will automatically inherit from `AbstractGameplayStateScriptableObject`.
+![Screenshot 2024-11-25 225720](https://github.com/user-attachments/assets/3d5dfb33-f1c4-423a-baac-cabdc53ec921)
+
+#### Actor Targets
+By assigning an inherited script, it's meaningful name is derived and assigned in the `Actor Target` field. This can be changed manually.
+![Screenshot 2024-11-25 225840](https://github.com/user-attachments/assets/3d3b9262-fd0c-45c5-b018-457d24a1dc83)
+
+And that is it! Hit `Create State` and the script will automatically be created at the desired path. 
+
+#### Abstract States
+Let's take a quick look at creating an abstract class. For this demo, instead of creating a state meant for the player actor, let's create a new subset of gameplay states for a camera actor.
+![Screenshot 2024-11-25 225908](https://github.com/user-attachments/assets/265e950a-811f-4a2c-9830-ffdbf907292b)
+
+#### Next Steps
+Moving forward, you will have to write any further code within the script itself.
+
+## Descriptions
 In this section, I will describe the purpose of each component of the state system. 
 
 ### Breakdown of Example Material
