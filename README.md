@@ -5,10 +5,10 @@ A fully abstract, scalable state system to represent actors in multiple states w
 
 ## How To Use
 ### Creating States
-Creating states is simplified by using the **State Creator** tool under `Tools/State Creator`. By usin this tool, the user can avoid the repetitive task of creating scripts and writing the necessary boiler-plate code. Let's walk through using this tool.
+Creating states is simplified by using the **State Creator** tool under `Tools/State Creator`. By using this tool, the user can avoid the repetitive task of creating scripts and writing the necessary boilerplate code. Let's walk through using this tool.
 
 #### First Steps
-Let's start by creating a new state for the player, called **Eating**. Input the name of the state.
+Let's start by creating a new state for the player, called **Eating**. The player would enter this state when they are actively eating. Input the name of the state.
 ![Screenshot 2024-11-25 225654](https://github.com/user-attachments/assets/c923265e-9974-4404-835b-9fb6a8d4d14e)
 
 #### Assigning Inheritance
@@ -16,7 +16,7 @@ Next, let's make it inherit from the `AbstractPlayerGameplayStateScriptableObjec
 ![Screenshot 2024-11-25 225720](https://github.com/user-attachments/assets/3d5dfb33-f1c4-423a-baac-cabdc53ec921)
 
 #### Actor Targets
-By assigning an inherited script, it's meaningful name is derived and assigned in the `Actor Target` field. This can be changed manually.
+By assigning an inherited script, its meaningful name is derived and assigned in the `Actor Target` field. This can be changed manually.
 ![Screenshot 2024-11-25 225840](https://github.com/user-attachments/assets/3d3b9262-fd0c-45c5-b018-457d24a1dc83)
 
 And that is it! Hit `Create State` and the script will automatically be created at the desired path. 
@@ -27,6 +27,20 @@ Let's take a quick look at creating an abstract class. For this demo, instead of
 
 #### Next Steps
 Moving forward, you will have to write any further code within the script itself.
+
+### Creating Retrievals
+Creating retrievals is easy using the **Retrieval Creator** tool, found under `Tools/Retrieval Creator`. Just like the **State Creator** tool, this allows the user to bypass the repetitive re-writing of necessary boilerplate code. In general, besides the use cases mentioned under **Limitations**, there won't be many reasons to create new retrievals, but the option is nice to have.
+
+#### First Steps
+Let's create a new retrieval, called **InView**. This retrieval would find the actors that are in view. Input the name of the retrieval.
+![Screenshot 2024-11-26 142443](https://github.com/user-attachments/assets/96e67b7b-47d0-49de-9ce1-5e1799fbb3a9)
+
+#### External Sources
+Many retrievals require the use of a `State Actor` object, and therefore implement a secondary retrieval. To utilize a `State Actor` object in the retrieval, check the box labeled `Use External Source`. For the purposes of this retrieval, we want to utilize this functionality. The source `State Actor` will serve as the origin from which other we will decide if other actors are *in view*.
+![Screenshot 2024-11-26 142455](https://github.com/user-attachments/assets/07836c60-fd50-4ff1-9b83-b6437ef21830)
+
+#### External Target
+
 
 ## Descriptions
 In this section, I will describe the purpose of each component of the state system. 
