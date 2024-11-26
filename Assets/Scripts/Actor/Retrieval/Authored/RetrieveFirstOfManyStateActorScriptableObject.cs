@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "FESState/Retrieval/First of Many")]
 public class RetrieveFirstOfManyStateActorScriptableObject : AbstractRetrieveStateActorScriptableObject
 {
-    public List<GameplayStateTagScriptableObject> FirstTagInOrder;
+    public List<StateIdentifierTagScriptableObject> FirstTagInOrder;
     
     public override bool TryRetrieveActor<T>(out T actor)
     {
@@ -24,7 +24,7 @@ public class RetrieveFirstOfManyStateActorScriptableObject : AbstractRetrieveSta
 
     private T RetrieveFirstOfManyActor<T>() where T : StateActor
     {
-        foreach (GameplayStateTagScriptableObject actorTag in FirstTagInOrder)
+        foreach (StateIdentifierTagScriptableObject actorTag in FirstTagInOrder)
         {
             List<T> actors = GameplayStateManager.Instance.RetrieveActorsByTag<T>(actorTag);
             if (actors is not null && actors.Count > 0)
@@ -41,7 +41,7 @@ public class RetrieveFirstOfManyStateActorScriptableObject : AbstractRetrieveSta
         try
         {
             actors = RetrieveManyFirstOfManyActors<T>(count);
-            return actors is not null;
+            return actors is not null && actors.Count > 0;
         }
         catch
         {
@@ -55,7 +55,7 @@ public class RetrieveFirstOfManyStateActorScriptableObject : AbstractRetrieveSta
         try
         {
             actors = RetrieveManyFirstOfManyActors<T>(-1);
-            return actors is not null;
+            return actors is not null && actors.Count > 0;
         }
         catch
         {
@@ -66,7 +66,7 @@ public class RetrieveFirstOfManyStateActorScriptableObject : AbstractRetrieveSta
 
     private List<T> RetrieveManyFirstOfManyActors<T>(int count) where T : StateActor
     {
-        foreach (GameplayStateTagScriptableObject actorTag in FirstTagInOrder)
+        foreach (StateIdentifierTagScriptableObject actorTag in FirstTagInOrder)
         {
             List<T> actors = GameplayStateManager.Instance.RetrieveActorsByTag<T>(actorTag);
             if (actors is not null && actors.Count > 0)

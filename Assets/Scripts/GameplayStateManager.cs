@@ -25,16 +25,16 @@ public class GameplayStateManager : MonoBehaviour
         }
     }
     
-    public GameplayStateTagScriptableObject DefaultStateEnvironmentIdentifier;
+    public StateIdentifierTagScriptableObject DefaultStateEnvironmentIdentifier;
     
     [Space]
 
     [SerializedDictionary("State Environment Identifier", "State Environment")]
-    [SerializeField] private SerializedDictionary<GameplayStateTagScriptableObject, StateEnvironmentScriptableObject> StateEnvironments;
+    [SerializeField] private SerializedDictionary<StateIdentifierTagScriptableObject, StateEnvironmentScriptableObject> StateEnvironments;
     [SerializeField] private InitializationStateTriggerScriptableObject FallbackInitializationTrigger;
 
-    private Dictionary<GameplayStateTagScriptableObject, List<StateActor>> SubscribedActors = new();
-    public Dictionary<GameplayStateTagScriptableObject, List<StateActor>> AllActors => SubscribedActors;
+    private Dictionary<StateIdentifierTagScriptableObject, List<StateActor>> SubscribedActors = new();
+    public Dictionary<StateIdentifierTagScriptableObject, List<StateActor>> AllActors => SubscribedActors;
     
     private bool Initialized;
 
@@ -76,7 +76,7 @@ public class GameplayStateManager : MonoBehaviour
         if (SubscribedActors[actor.GeneralIdentifier].Count == 0) SubscribedActors.Remove(actor.GeneralIdentifier);
     }
 
-    public List<T> RetrieveActorsByTag<T>(GameplayStateTagScriptableObject actorTag) where T : StateActor
+    public List<T> RetrieveActorsByTag<T>(StateIdentifierTagScriptableObject actorTag) where T : StateActor
     {
         if (!SubscribedActors.ContainsKey(actorTag)) return null;
         
@@ -93,7 +93,7 @@ public class GameplayStateManager : MonoBehaviour
     
     #region Subscription Trigger Distribution
     
-    public void PerformInitialDistribution(GameplayStateTagScriptableObject environmentIdentifier)
+    public void PerformInitialDistribution(StateIdentifierTagScriptableObject environmentIdentifier)
     {
         DistributeInitialEnvironmentTriggers(environmentIdentifier);
         Initialized = true;
@@ -102,7 +102,7 @@ public class GameplayStateManager : MonoBehaviour
     public void Reset()
     {
         Initialized = false;
-        foreach (GameplayStateTagScriptableObject actorTag in SubscribedActors.Keys)
+        foreach (StateIdentifierTagScriptableObject actorTag in SubscribedActors.Keys)
         {
             foreach (StateActor actor in SubscribedActors[actorTag]) Destroy(actor.gameObject);
         }
@@ -110,10 +110,10 @@ public class GameplayStateManager : MonoBehaviour
         SubscribedActors.Clear();
     }
 
-    private void DistributeInitialEnvironmentTriggers(GameplayStateTagScriptableObject environmentIdentifier)
+    private void DistributeInitialEnvironmentTriggers(StateIdentifierTagScriptableObject environmentIdentifier)
     {
         StateEnvironmentScriptableObject environment = GetStateEnvironment(environmentIdentifier);
-        foreach (GameplayStateTagScriptableObject actorTag in SubscribedActors.Keys)
+        foreach (StateIdentifierTagScriptableObject actorTag in SubscribedActors.Keys)
         {
             foreach (StateActor actor in SubscribedActors[actorTag])
             {
@@ -124,7 +124,7 @@ public class GameplayStateManager : MonoBehaviour
         }
     }
 
-    private void DistributeIndividualEnvironmentTrigger(StateActor actor, GameplayStateTagScriptableObject environmentIdentifier)
+    private void DistributeIndividualEnvironmentTrigger(StateActor actor, StateIdentifierTagScriptableObject environmentIdentifier)
     {
         InitializationStateTriggerScriptableObject initialTrigger = GetStateEnvironment(environmentIdentifier).GetInitialStateTrigger(actor.GeneralIdentifier);
         if (initialTrigger) initialTrigger.Activate(actor);
@@ -218,7 +218,7 @@ public class GameplayStateManager : MonoBehaviour
     
     #endregion
 
-    public StateEnvironmentScriptableObject GetStateEnvironment(GameplayStateTagScriptableObject StateEnvironmentIdentifier)
+    public StateEnvironmentScriptableObject GetStateEnvironment(StateIdentifierTagScriptableObject StateEnvironmentIdentifier)
     {
         return StateEnvironments.TryGetValue(StateEnvironmentIdentifier, out StateEnvironmentScriptableObject stateEnvironment) ? stateEnvironment : StateEnvironments[DefaultStateEnvironmentIdentifier];
     }

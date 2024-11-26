@@ -10,7 +10,7 @@ public class RetrieveClosestStateActorScriptableObject : AbstractRetrieveStateAc
     public AbstractRetrieveStateActorScriptableObject SourceRetrieval;
     
     [Header("Target")]
-    public GameplayStateTagScriptableObject TargetTag;
+    public StateIdentifierTagScriptableObject TargetTag;
     
     public override bool TryRetrieveActor<T>(out T actor)
     {
@@ -53,7 +53,7 @@ public class RetrieveClosestStateActorScriptableObject : AbstractRetrieveStateAc
         try
         {
             actors = RetrieveManyClosestActors<T>(count);
-            return actors is not null;
+            return actors is not null && actors.Count > 0;
         }
         catch
         {
@@ -83,7 +83,7 @@ public class RetrieveClosestStateActorScriptableObject : AbstractRetrieveStateAc
         try
         {
             actors = RetrieveManyClosestActors<T>(-1);
-            return actors is not null;
+            return actors is not null && actors.Count > 0;
         }
         catch
         {

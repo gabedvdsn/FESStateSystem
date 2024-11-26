@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "FESState/Retrieval/First of One")]
 public class RetrieveFirstOfOneStateActorScriptableObject : AbstractRetrieveStateActorScriptableObject
 {
-    public GameplayStateTagScriptableObject ActorTag;
+    public StateIdentifierTagScriptableObject ActorTag;
     
     public override bool TryRetrieveActor<T>(out T actor)
     {
@@ -25,7 +25,7 @@ public class RetrieveFirstOfOneStateActorScriptableObject : AbstractRetrieveStat
         try
         {
             actors = RetrieveManyFirstOfExactActor<T>(count);
-            return actors is not null;
+            return actors is not null && actors.Count > 0;
         }
         catch
         {
@@ -38,7 +38,7 @@ public class RetrieveFirstOfOneStateActorScriptableObject : AbstractRetrieveStat
         try
         {
             actors = RetrieveManyFirstOfExactActor<T>(-1);
-            return actors is not null;
+            return actors is not null && actors.Count > 0;
         }
         catch
         {

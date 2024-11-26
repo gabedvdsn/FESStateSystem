@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(menuName = "FESState/Priority Tag")]
+[CreateAssetMenu(menuName = "FESState/State/Tag/Priority")]
 public class StatePriorityTagScriptableObject : ScriptableObject
 {
     public int Priority;

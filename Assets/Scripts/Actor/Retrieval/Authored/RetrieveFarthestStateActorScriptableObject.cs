@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(menuName = "FESState/Retrieval/Farthest From")]
 public class RetrieveFarthestStateActorScriptableObject : AbstractRetrieveStateActorScriptableObject
@@ -9,7 +10,7 @@ public class RetrieveFarthestStateActorScriptableObject : AbstractRetrieveStateA
     public AbstractRetrieveStateActorScriptableObject SourceRetrieval;
     
     [Header("Target")]
-    public GameplayStateTagScriptableObject TargetTag;
+    public StateIdentifierTagScriptableObject TargetIdentifier;
     
     public override bool TryRetrieveActor<T>(out T actor)
     {
@@ -29,7 +30,9 @@ public class RetrieveFarthestStateActorScriptableObject : AbstractRetrieveStateA
     {
         if (!SourceRetrieval.TryRetrieveActor(out StateActor source)) return null;
 
-        List<T> targets = GameplayStateManager.Instance.RetrieveActorsByTag<T>(TargetTag);
+        List<T> targets = GameplayStateManager.Instance.RetrieveActorsByTag<T>(TargetIdentifier);
+        if (targets is null || targets.Count == 0) return null;
+        
         T farthest = null;
         float farthestDistance = float.MinValue;
         foreach (T target in targets)
@@ -50,7 +53,7 @@ public class RetrieveFarthestStateActorScriptableObject : AbstractRetrieveStateA
         try
         {
             actors = RetrieveManyFarthestActors<T>(count);
-            return actors is not null;
+            return actors is not null && actors.Count > 0;
         }
         catch
         {
@@ -64,7 +67,7 @@ public class RetrieveFarthestStateActorScriptableObject : AbstractRetrieveStateA
         try
         {
             actors = RetrieveManyFarthestActors<T>(-1);
-            return false;
+            return actors is not null && actors.Count > 0;
         }
         catch
         {
@@ -79,7 +82,7 @@ public class RetrieveFarthestStateActorScriptableObject : AbstractRetrieveStateA
         
         Vector3 origin = source.transform.position;
         
-        List<T> targets = GameplayStateManager.Instance.RetrieveActorsByTag<T>(TargetTag);
+        List<T> targets = GameplayStateManager.Instance.RetrieveActorsByTag<T>(TargetIdentifier);
         if (targets is null || targets.Count == 0) return null;
         
         int realCount = count < 0 ? targets.Count : Mathf.Min(count, targets.Count);

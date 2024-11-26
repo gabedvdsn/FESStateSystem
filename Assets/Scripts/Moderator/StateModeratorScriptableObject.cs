@@ -6,7 +6,7 @@ using AYellowpaper.SerializedCollections;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-[CreateAssetMenu(menuName = "FESState/Moderator")]
+[CreateAssetMenu(menuName = "FESState/State/Moderator")]
 public class StateModeratorScriptableObject : ScriptableObject
 {
     [Header("Priority")]
@@ -23,7 +23,7 @@ public class StateModeratorScriptableObject : ScriptableObject
     [SerializedDictionary("Priority Tag", "States")]
     [SerializeField] public SerializedDictionary<StatePriorityTagScriptableObject, GameplayStateGroupScriptableObject> StatesByPriority;
     
-    [FormerlySerializedAs("SystemChangeBehaviours")] [Header("System Change Behaviours")]
+    [Header("System Change Behaviours")]
     
     public List<AbstractSystemChangeResponseScriptableObject> SystemChangeResponders;
 

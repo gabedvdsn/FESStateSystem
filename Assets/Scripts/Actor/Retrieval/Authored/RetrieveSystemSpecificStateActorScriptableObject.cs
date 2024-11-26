@@ -65,7 +65,7 @@ public class RetrieveSystemSpecificStateActorScriptableObject : AbstractRetrieve
             }
 
             actors = RetrieveManyByAllActors<T>(count);
-            return actors.Count > 0;
+            return actors is not null && actors.Count > 0;
         }
         catch
         {
@@ -88,12 +88,12 @@ public class RetrieveSystemSpecificStateActorScriptableObject : AbstractRetrieve
 
     private List<T> RetrieveManyByAllActors<T>(int count) where T : StateActor
     {
-        Dictionary<GameplayStateTagScriptableObject, List<StateActor>> allActors = GameplayStateManager.Instance.AllActors;
+        Dictionary<StateIdentifierTagScriptableObject, List<StateActor>> allActors = GameplayStateManager.Instance.AllActors;
         List<T> actors = new List<T>();
         int realCount = count < 0 ? allActors.Sum(kvp => kvp.Value.Count) : count;
         int activeCount = 0;
         
-        foreach (GameplayStateTagScriptableObject actorTag in allActors.Keys)
+        foreach (StateIdentifierTagScriptableObject actorTag in allActors.Keys)
         {
             foreach (StateActor actor in allActors[actorTag])
             {
@@ -111,8 +111,8 @@ public class RetrieveSystemSpecificStateActorScriptableObject : AbstractRetrieve
 
     private T RetrieveByAllActors<T>() where T : StateActor
     {
-        Dictionary<GameplayStateTagScriptableObject, List<StateActor>> allActors = GameplayStateManager.Instance.AllActors;
-        foreach (GameplayStateTagScriptableObject actorTag in allActors.Keys)
+        Dictionary<StateIdentifierTagScriptableObject, List<StateActor>> allActors = GameplayStateManager.Instance.AllActors;
+        foreach (StateIdentifierTagScriptableObject actorTag in allActors.Keys)
         {
             foreach (StateActor actor in allActors[actorTag])
             {

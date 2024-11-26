@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class StateActor : MonoBehaviour
 {
-    public GameplayStateTagScriptableObject GeneralIdentifier;
+    public StateIdentifierTagScriptableObject GeneralIdentifier;
     
     public StateModerator Moderator;
 
