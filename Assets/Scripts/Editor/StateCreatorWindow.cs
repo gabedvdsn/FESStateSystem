@@ -107,8 +107,9 @@ public class StateCreatorWindow : EditorWindow
         }
         
         actorTarget = EditorGUILayout.TextField("Actor Target", actorTarget);
+        string menuTarget = !string.IsNullOrEmpty(realStateName) ? $"{realStateName} State" : "";
         string menuPath = !isAbstract
-            ? $"FESStates/Actor/{(!string.IsNullOrEmpty(actorTarget) ? $"{actorTarget}/{realStateName}" : $"General/{realStateName}")}"
+            ? $"FESStates/Actor/{(!string.IsNullOrEmpty(actorTarget) ? $"{actorTarget}/{menuTarget}" : $"General/{menuTarget}")}"
             : "No menu path for abstract classes";
         EditorGUI.BeginDisabledGroup(true);
         EditorGUILayout.TextField("", menuPath);
@@ -116,9 +117,13 @@ public class StateCreatorWindow : EditorWindow
         
         savePath = EditorGUILayout.TextField("Path", savePath);
         
-        EditorGUILayout.Space(10);
+        EditorGUILayout.Space(15);
 
-        if (GUILayout.Button("Create State"))
+        if (File.Exists(Path.Combine(savePath + '/', scriptName + ".cs")))
+        {
+            GUILayout.Label("Cannot create state: This file already exists at this path.");
+        }
+        else if (GUILayout.Button("Create State"))
         {
             if (string.IsNullOrEmpty(stateName))
             {
@@ -152,7 +157,7 @@ public class StateCreatorWindow : EditorWindow
             : "AbstractGameplayStateScriptableObject";
         string subInheritedFrom = inheritsFromState is not null
             ? inheritedFrom.Replace("ScriptableObject", "") : "AbstractGameplayState";
-        string menuTarget = !string.IsNullOrEmpty(actorTarget) ? $"{actorTarget}/{stateName}" : $"General/{stateName}";
+        string menuTarget = !string.IsNullOrEmpty(actorTarget) ? $"{actorTarget}/{stateName} State" : $"General/{stateName} State";
         string header = isAbstract ? "" : $"[CreateAssetMenu(menuName = \"FESState/Actor/{menuTarget}\")]";
         string abstractTag = isAbstract ? "abstract " : "";
 
@@ -230,7 +235,5 @@ public {abstractTag}class {scriptName} : {inheritedFrom}
 
         // Refresh the Asset Database to show the new script
         AssetDatabase.Refresh();
-
-        Debug.Log($"State script '{scriptName}' created at: {filePath}");
     }
 }
