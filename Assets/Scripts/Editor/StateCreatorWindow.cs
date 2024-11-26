@@ -10,8 +10,8 @@ public class StateCreatorWindow : EditorWindow
     private bool isAbstract;
     private string scriptName;
     private string className;
-    private bool attachInherited = true;
-    private bool prefixInherited = true;
+    private bool attachInherited = false;
+    private bool prefixInherited = false;
     
     private MonoScript inheritsFromState;
     private Type inheritsBaseclass = typeof(AbstractGameplayStateScriptableObject);
@@ -19,7 +19,7 @@ public class StateCreatorWindow : EditorWindow
     
     private string actorTarget;
 
-    private string savePath = "Assets/Scripts/GameplayStates";
+    private string savePath = "Assets/Scripts/StateSystem/GameplayStates";
 
     [MenuItem("Tools/State Creator")]
     public static void ShowWindow()
@@ -123,14 +123,12 @@ public class StateCreatorWindow : EditorWindow
         {
             GUILayout.Label("Cannot create state: This file already exists at this path.");
         }
+        else if (string.IsNullOrEmpty(stateName))
+        {
+            GUILayout.Label("Cannot create state: State must have a valid name.");
+        }
         else if (GUILayout.Button("Create State"))
         {
-            if (string.IsNullOrEmpty(stateName))
-            {
-                Debug.LogError("State name cannot be empty!");
-                return;
-            }
-
             CreateStateScript();
             ResetStateStuff();
         }

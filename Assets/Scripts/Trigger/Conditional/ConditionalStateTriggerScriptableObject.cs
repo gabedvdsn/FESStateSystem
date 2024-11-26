@@ -53,9 +53,10 @@ public class ConditionalStateTriggerScriptableObject : AbstractStateConditionalT
             else
             {
                 status = LookForAny ? LookForStates[priorityTag].Any(state => actor.Moderator.TryGetStoredState(priorityTag, state, out _)) : LookForStates[priorityTag].All(state => actor.Moderator.TryGetStoredState(priorityTag, state, out _));
+                
+                // LookForStates were not found in stored states, let's check relations & descendents of stored states
                 if (!status)
                 {
-                    // LookForStates were not found in stored states, let's check relations & descendents of stored states
                     if (AllowRelations)
                     {
                         // Any or all the conditions have relations in stored states
@@ -65,7 +66,7 @@ public class ConditionalStateTriggerScriptableObject : AbstractStateConditionalT
                             : LookForStates[priorityTag].All(state =>
                                 actor.Moderator.TryGetStoredState(priorityTag, state, out AbstractGameplayState storedState) && state.IsRelatedTo(storedState.StateData));
                     }
-
+                    
                     if (AllowDescendants && !status)
                     {
                         // Any or all the conditions have descendents in stored states
@@ -77,44 +78,6 @@ public class ConditionalStateTriggerScriptableObject : AbstractStateConditionalT
                     }
                 }
             }
-            
-            /*foreach (AbstractGameplayStateScriptableObject state in LookForStates[priorityTag])
-            {
-                if (AllowDescendants && !status)
-                {
-                    status = ActiveStatesOnly
-                        ? actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState _state) && _state.StateData.IsDescendantOf(state)
-                        : actor.Moderator.TryGetStoredState(priorityTag, state, out _);
-                }
-
-                if (!status)
-                {
-                    status = ActiveStatesOnly
-                        ? actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState _state) && _state.StateData == state
-                        : actor.Moderator.TryGetStoredState(priorityTag, state, out _);
-                }
-                
-                if (AllowRelations)
-                {
-                    status = ActiveStatesOnly
-                        ? actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState _state) && _state.StateData.IsRelatedTo(state)
-                        : actor.Moderator.TryGetStoredState(priorityTag, state, out _);
-
-                }
-                if (AllowDescendants && !status)
-                {
-                    status = ActiveStatesOnly
-                        ? actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState _state) && _state.StateData.IsDescendantOf(state)
-                        : actor.Moderator.TryGetStoredState(priorityTag, state, out _);
-                }
-
-                if (!status)
-                {
-                    status = ActiveStatesOnly
-                        ? actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState _state) && _state.StateData == state
-                        : actor.Moderator.TryGetStoredState(priorityTag, state, out _);
-                }
-            }*/
         }
 
         return status;
