@@ -125,9 +125,23 @@ Priority tags are used to differentiate different levels (or contexts) of gamepl
 ### Gameplay States
 Gameplay states are the heart and soul of any state system. This implementation does not reinvent the wheel and defines the expected behaviors of any gameplay state. Active gameplay states are maintained within a state machine but are managed by state moderators. Gameplay states allow for both interruptions and natural conclusions.
 
-While the gameplay state itself does not care about its priority level, the gameplay state is always defined by moderators (see below) within the context of a state priority tag. This differentiation allows the moderator to handle an actor's multiple states.
+While the gameplay state itself does not care about its priority level, the gameplay state is always defined by moderators (see below) within the context of a state priority tag. This differentiation allows the moderator to handle an actor's multiple states at once.
 
-![image](https://github.com/user-attachments/assets/d7d1b047-b86c-4782-a9ea-731afd74dc36)
+The state can define a `StateTrigger`, which activates when the state reaches its natural conclusion via the `Conclude()` method. See below for more information.
+
+![image](https://github.com/user-attachments/assets/a455d681-0a13-462f-bfc7-530f8239bb8e)
+
+##### Conclusion and Interruption
+When a moderator changes an active gameplay state, the state is either concluded naturally or interrupted. States must implement the logic for both scenarios, and take care with the `Conclude()` method, as its base implementation is responsible for transitioning the moderator. State interruption handles only the unique logic around that state, and does not handle state transition.
+
+```
+public virtual void Conclude()
+{
+    if (StateData.ConclusionTrigger) StateData.ConclusionTrigger.Activate(State, false);
+    else State.Moderator.ReturnToInitial(StateData);
+}
+```
+
 <details>
   <summary>Code Example</summary>
 
@@ -209,27 +223,28 @@ public class PlantingGameplayState : AbstractPlayerGameplayState
 
 ---
 
-##### Gameplay State Groups
-
-Gameplay state groups are simply collections of gameplay states. Many systems, such as moderators and conditional triggers, require state groups as opposed to individual states. This adds some overhead work while creating the state system, but the ease and additional quickness of working with state groups quickly overcome this. 
-
-![image](https://github.com/user-attachments/assets/571ff573-3923-43a0-8c5f-37364b2a35ae)
-
 ##### Gameplay State Inheritance
 Gameplay states are easily extended. Desired states are extended from the `AbstractGameplayStateScriptableObject` class and define their own `AbstractGameplayState` class, within which any state-specific implementation is defined. Please see above in the **How To Use** section to learn more about easily creating states.
 
 ---
 
+### Gameplay State Manifest
+A `GameplayStateManifest` is a collection of priority tags and states which is utilized by `GameplayStateModerator`s. The manifest defines which states the moderator allows under which priority levels. The very first state listed under each priority level in the manifest is used by the moderator as its initial state in that priority. 
+
+![image](https://github.com/user-attachments/assets/73f178e7-d6d1-4df3-b0d6-f527013cb9bf)
+
+---
+
 ### State Moderators
-The `GameplayStateModerator` class is the true work-horse of the operation. Each `StateActor` holds a reference to its own moderator. Moderators represent contexts within the game that are specific to types of `StateActor`, e.g. PlayerWithinCutsceneModerator, CameraModerator, or DefaultEnemyModerator. In general, unique moderators are only needed to account for special circumstances. Similar to gameplay states, moderators have their own priority tag, which controls whether or not other moderators can be implemented (i.e. a cutscene is triggered and the PlayerWithinCutsceneModerator moderator is implemented).
+The `GameplayStateModerator` class is the true work-horse of the operation. Each `StateActor` holds a reference to its own moderator. Moderators represent contexts within the game that are specific to types of `StateActor`, e.g. PlayerWithinCutsceneModerator, FollowCameraModerator, or DefaultEnemyModerator. In general, unique moderators are only needed to account for special circumstances. Similar to gameplay states, moderators have their own priority tag, which controls whether or not other moderators can be implemented (i.e. a cutscene is triggered and the PlayerWithinCutsceneModerator moderator is implemented).
 
 Moderators allow for intimate access to the inner workings of the state system. Because the system is abstract in general, moderators handle the work of finding, storing, changing, and interrupting states, in addition to other helpful functionality.
 
-Each moderator must define the states it allows the actor to transition between, in addition to the initial states it may impose on the actor when the moderator is implemented. 
+Moderators define a `GameplayStateManifest`, which is a collection of priority tags and their associated states, which defines how the moderator can transition between states.
 
 Lastly, moderators can define a list of system change responders (see under **System Change Responders**). 
 
-![image](https://github.com/user-attachments/assets/9d35d77a-ad52-434f-bf9f-bb59bd4ec9bf)
+![image](https://github.com/user-attachments/assets/b8318484-515c-4bf0-89c2-99ff651476e3)
 
 ---
 
