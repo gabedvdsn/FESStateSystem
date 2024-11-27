@@ -3,6 +3,8 @@
 # FAR EMERALD DYNAMIC STATE SYSTEM
 A fully abstract, scalable state system to represent actors in multiple states within multiple control contexts. Implemented almost entirely within scriptable objects, this system is modular and easily extendable. This project is built using native Unity and C#. 
 
+---
+
 ## How To Use
 ### Creating States
 Creating states is simplified by using the **State Creator** tool under `Tools/State Creator`. By using this tool, the user can avoid the repetitive task of creating scripts and writing the necessary boilerplate code. Let's walk through using this tool.
@@ -27,10 +29,17 @@ And that is it! Hit `Create State` and the script will automatically be created 
 #### Abstract States
 Let's take a quick look at creating an abstract class. For this demo, instead of creating a state meant for the player actor, let's create a new subset of gameplay states for a camera actor.
 
-![Screenshot 2024-11-25 225908](https://github.com/user-attachments/assets/265e950a-811f-4a2c-9830-ffdbf907292b)
+![Screenshot 2024-11-26 182714](https://github.com/user-attachments/assets/49c6a430-d606-40d7-9bef-a4390db8ba88)
+
+#### Encapsulated Fields in Abstract States
+We can assign the abstract script to encapsulate a field by providing it a MonoScript. If this field is not null, the abstract script will include a reference to a field of that type within the abstract class. In the `Initialize()` method of the class, it will assign that field via `Field = State.GetComponent<FieldType>();`. 
+
+![Screenshot 2024-11-26 182146](https://github.com/user-attachments/assets/dbc9f299-55be-4d1f-b555-695df614b89c)
 
 #### Next Steps
 Moving forward, you will have to write any further code within the script itself.
+
+---
 
 ### Creating Retrievals
 Creating retrievals is easy using the **Retrieval Creator** tool, found under `Tools/Retrieval Creator`. Just like the **State Creator** tool, this allows the user to bypass the repetitive re-writing of necessary boilerplate code. In general, besides the use cases mentioned under **Limitations**, there won't be many reasons to create new retrievals, but the option is nice to have.
@@ -56,6 +65,8 @@ For the purposes of this retrieval, we want to collect a single target `StateIde
 
 #### Next Steps
 After filling out the form, click **Create Retrieval**, and the script will be created at the desired path. To implement the functionality of the retrieval, open the script and write the necessary code in the `RetrieveActor(out StateActor actor)` and `RetrieveManyActors(int count, out List<StateActor> actors)` methods. The `TryRetrieveActor<T>(out T actor)` and `TryRetrieveManyActors<T>(int count, out List<T> actors)` methods can also be overridden from the base class. An example of this is shown in the `SystemSpecificStateActorRetrievalScriptableObject` script, which is an included authored script. In that case, it allows for the `Source` field to be left as `null`.
+
+---
 
 ## Descriptions
 In this section, I will describe the purpose of each component of the state system. 
