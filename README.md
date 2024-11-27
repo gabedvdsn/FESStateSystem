@@ -55,7 +55,7 @@ For the purposes of this retrieval, we want to collect a single target `StateIde
 ![Screenshot 2024-11-26 142526](https://github.com/user-attachments/assets/3e043cea-07b1-4101-9e32-a3f44542f403)
 
 #### Next Steps
-After filling out the form, click **Create Retrieval**, and the script will be created at the desired path. To implement the functionality of the retrieval, open the script and write the necessary code in the `Retrieve___StateActor<T>()` and `RetrieveMany___StateActors<T>()` methods, where the `___` should be the name of the retrieval. Do not change the implementations for any of the other methods. 
+After filling out the form, click **Create Retrieval**, and the script will be created at the desired path. To implement the functionality of the retrieval, open the script and write the necessary code in the `RetrieveActor(out StateActor actor)` and `RetrieveManyActors(int count, out List<StateActor> actors)` methods. The `TryRetrieveActor<T>(out T actor)` and `TryRetrieveManyActors<T>(int count, out List<T> actors)` methods can also be overridden from the base class. An example of this is shown in the `SystemSpecificStateActorRetrievalScriptableObject` script, which is an included authored script. In that case, it allows for the `Source` field to be left as `null`.
 
 ## Descriptions
 In this section, I will describe the purpose of each component of the state system. 
