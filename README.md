@@ -7,7 +7,7 @@ A fully abstract, scalable state system to represent actors in multiple states w
 
 ## How To Use
 ### Creating States
-Creating states is simplified by using the **State Creator** tool under `Tools/State Creator`. By using this tool, the user can avoid the repetitive task of creating scripts and writing the necessary boilerplate code. Let's walk through using this tool.
+Creating states is simplified by using the **State Creator** tool under `StateSystem/State Creator`. By using this tool, the user can avoid the repetitive task of creating scripts and writing the necessary boilerplate code. Let's walk through using this tool.
 
 #### First Steps
 Let's start by creating a new state for the player, called **Eating**. The player would enter this state when they are actively eating. Input the name of the state.
@@ -42,7 +42,7 @@ Moving forward, you will have to write any further code within the script itself
 ---
 
 ### Creating Retrievals
-Creating retrievals is easy using the **Retrieval Creator** tool, found under `Tools/Retrieval Creator`. Just like the **State Creator** tool, this allows the user to bypass the repetitive re-writing of necessary boilerplate code. In general, besides the use cases mentioned under **Limitations**, there won't be many reasons to create new retrievals, but the option is nice to have.
+Creating retrievals is easy using the **Retrieval Creator** tool, found under `StateSystem/Retrieval Creator`. Just like the **State Creator** tool, this allows the user to bypass the repetitive re-writing of necessary boilerplate code. In general, besides the use cases mentioned under **Limitations**, there won't be many reasons to create new retrievals, but the option is nice to have.
 
 #### First Steps
 Let's create a new retrieval, called **InView**. This retrieval would find the actors that are in view. Input the name of the retrieval.
