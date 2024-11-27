@@ -2,6 +2,8 @@ using System;
 using UnityEditor;
 using UnityEngine;
 using System.IO;
+using System.Text;
+using Unity.VisualScripting;
 
 public class StateCreatorWindow : EditorWindow
 {
@@ -12,6 +14,8 @@ public class StateCreatorWindow : EditorWindow
     private string className;
     private bool attachInherited = false;
     private bool prefixInherited = false;
+    private bool encapsulateField = false;
+    private MonoScript encapsulates;
     
     private MonoScript inheritsFromState;
     private Type inheritsBaseclass = typeof(AbstractGameplayStateScriptableObject);
@@ -78,6 +82,21 @@ public class StateCreatorWindow : EditorWindow
         }
         
         isAbstract = EditorGUILayout.Toggle("Make Abstract", isAbstract);
+        if (isAbstract)
+        {
+            EditorGUI.indentLevel = 1;
+            encapsulates = (MonoScript)EditorGUILayout.ObjectField(
+                "Encapsulates", 
+                encapsulates, 
+                typeof(MonoScript), 
+                false // Set to 'true' if you want to allow selecting objects from the scene
+            );
+            EditorGUI.indentLevel = 0;
+        }
+        else
+        {
+            encapsulates = null;
+        }
         
         EditorGUI.BeginDisabledGroup(true);
         EditorGUILayout.TextField("", scriptName);
@@ -159,6 +178,20 @@ public class StateCreatorWindow : EditorWindow
         string header = isAbstract ? "" : $"[CreateAssetMenu(menuName = \"FESState/Actor/{menuTarget}\")]";
         string abstractTag = isAbstract ? "abstract " : "";
 
+        string encapsulatesName = "";
+        string classMembers = "";
+        string classInit = "";
+        if (isAbstract && encapsulates is not null)
+        {
+            encapsulatesName = encapsulates.GetClass().ToString();
+            encapsulatesName = encapsulatesName.Replace("ScriptableObject", "");
+            encapsulatesName = encapsulatesName.Replace("Controller", "");
+            encapsulatesName = encapsulatesName.Replace("Manager", "");
+
+            classMembers = $"public {encapsulates.GetClass()} {encapsulatesName};";
+            classInit = $"{encapsulatesName} = State.GetComponent<{encapsulates.GetClass()}>();";
+        }
+
         string scriptableObjectInternals = !isAbstract
             ? $@"
     public override AbstractGameplayState GenerateState(StateActor actor)
@@ -199,7 +232,12 @@ public class StateCreatorWindow : EditorWindow
             
         }}
 " 
-            : "";
+            : $@"
+        public override void Initialize()
+        {{
+            {classInit}
+        }}
+";
         
         string scriptTemplate = $@"using UnityEngine;
 
@@ -209,6 +247,7 @@ public {abstractTag}class {scriptName} : {inheritedFrom}
     {scriptableObjectInternals}
     public {abstractTag}class {className} : {subInheritedFrom}
     {{
+        {classMembers}
         public {className}(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
         {{
             
