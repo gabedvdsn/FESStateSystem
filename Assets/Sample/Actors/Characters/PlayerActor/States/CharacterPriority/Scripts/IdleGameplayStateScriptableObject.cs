@@ -3,7 +3,6 @@
 [CreateAssetMenu(menuName = "FESState/Actor/Player/Idle State")]
 public class IdleGameplayStateScriptableObject : AbstractPlayerGameplayStateScriptableObject
 {
-
     public override AbstractGameplayState GenerateState(StateActor actor)
     {
         return new IdleGameplaySate(this, actor);

@@ -23,9 +23,9 @@ public class StateModeratorScriptableObject : ScriptableObject
     [SerializedDictionary("Priority Tag", "States")]
     [SerializeField] public SerializedDictionary<StatePriorityTagScriptableObject, GameplayStateGroupScriptableObject> StatesByPriority;
     
-    [Header("System Change Behaviours")]
+    [Header("System Change Responders")]
     
-    public List<AbstractSystemChangeResponseScriptableObject> SystemChangeResponders;
+    public List<AbstractSystemChangeResponseScriptableObject> Responders;
 
     public StateModerator GenerateModerator(StateActor actor) => new(this, actor);
     
@@ -100,13 +100,13 @@ public class StateModerator
 
     private void StateIsChanged(StatePriorityTagScriptableObject priorityTag, AbstractGameplayState oldState, AbstractGameplayState newState)
     {
-        foreach (AbstractSystemChangeResponseScriptableObject systemChangeResponse in BaseModerator.SystemChangeResponders)
+        foreach (AbstractSystemChangeResponseScriptableObject systemChangeResponse in BaseModerator.Responders)
             systemChangeResponse.OnStateChanged(StateComponent, priorityTag, oldState, newState);
     }
 
     private void ModeratorIsChanged(StateModeratorScriptableObject oldModerator, StateModeratorScriptableObject newModerator)
     {
-        foreach (AbstractSystemChangeResponseScriptableObject moderatorChangeBehaviour in BaseModerator.SystemChangeResponders) moderatorChangeBehaviour.OnModeratorChanged(StateComponent, oldModerator, newModerator);
+        foreach (AbstractSystemChangeResponseScriptableObject moderatorChangeBehaviour in BaseModerator.Responders) moderatorChangeBehaviour.OnModeratorChanged(StateComponent, oldModerator, newModerator);
     }
 
     public void ReturnToInitial(AbstractGameplayStateScriptableObject sourceState)

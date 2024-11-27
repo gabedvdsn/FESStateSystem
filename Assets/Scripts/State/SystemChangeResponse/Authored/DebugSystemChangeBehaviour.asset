@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb5a0dd5f36ce2e49bc34028614a4e8e, type: 3}
   m_Name: DebugSystemChangeBehaviour
   m_EditorClassIdentifier: 
-  FromConditional: {fileID: 0}
-  ToConditional: {fileID: 0}
+  FromConditional: {fileID: 11400000, guid: 3dcde5d7e4dc7cf4ca8553b34dfbde97, type: 2}
+  ToConditional: {fileID: 11400000, guid: cd9768dc9cd9d9544956244d26ec47fe, type: 2}
   SkipChangeToSame: 0
