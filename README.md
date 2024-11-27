@@ -9,20 +9,24 @@ Creating states is simplified by using the **State Creator** tool under `Tools/S
 
 #### First Steps
 Let's start by creating a new state for the player, called **Eating**. The player would enter this state when they are actively eating. Input the name of the state.
+
 ![Screenshot 2024-11-25 225654](https://github.com/user-attachments/assets/c923265e-9974-4404-835b-9fb6a8d4d14e)
 
 #### Assigning Inheritance
 Next, let's make it inherit from the `AbstractPlayerGameplayStateScriptableObject`. There are additional options to control the naming of the scripts. Without assigning an inherited script, the state will automatically inherit from `AbstractGameplayStateScriptableObject`.
+
 ![Screenshot 2024-11-25 225720](https://github.com/user-attachments/assets/3d5dfb33-f1c4-423a-baac-cabdc53ec921)
 
 #### Actor Targets
 By assigning an inherited script, its meaningful name is derived and assigned in the `Actor Target` field. This can be changed manually.
+
 ![Screenshot 2024-11-25 225840](https://github.com/user-attachments/assets/3d3b9262-fd0c-45c5-b018-457d24a1dc83)
 
 And that is it! Hit `Create State` and the script will automatically be created at the desired path. 
 
 #### Abstract States
 Let's take a quick look at creating an abstract class. For this demo, instead of creating a state meant for the player actor, let's create a new subset of gameplay states for a camera actor.
+
 ![Screenshot 2024-11-25 225908](https://github.com/user-attachments/assets/265e950a-811f-4a2c-9830-ffdbf907292b)
 
 #### Next Steps
@@ -33,14 +37,25 @@ Creating retrievals is easy using the **Retrieval Creator** tool, found under `T
 
 #### First Steps
 Let's create a new retrieval, called **InView**. This retrieval would find the actors that are in view. Input the name of the retrieval.
+
 ![Screenshot 2024-11-26 142443](https://github.com/user-attachments/assets/96e67b7b-47d0-49de-9ce1-5e1799fbb3a9)
 
 #### External Sources
 Many retrievals require the use of a `State Actor` object, and therefore implement a secondary retrieval. To utilize a `State Actor` object in the retrieval, check the box labeled `Use External Source`. For the purposes of this retrieval, we want to utilize this functionality. The source `State Actor` will serve as the origin from which other we will decide if other actors are *in view*.
+
 ![Screenshot 2024-11-26 142455](https://github.com/user-attachments/assets/07836c60-fd50-4ff1-9b83-b6437ef21830)
 
 #### External Target
+Targets refer to a `StateIdentifierTagScriptableObject`, or a list of `StateIdentifierTagScriptableObject`s, depending on the toggle selected (you may only choose one or the other). 
 
+![Screenshot 2024-11-26 142455](https://github.com/user-attachments/assets/9061c3de-e8bc-4621-82c8-7c2114f9fc70)
+
+For the purposes of this retrieval, we want to collect a single target `StateIdentifierTagScriptableObject` to use. This way, we can iterate over each `State Actor` under that identifier tag to compare which ones are *in view*. Alternatively, we could collect a list of `StateIdentifierTagScriptableObject` and iterate over many collections of `State Actor`s.
+
+![Screenshot 2024-11-26 142526](https://github.com/user-attachments/assets/3e043cea-07b1-4101-9e32-a3f44542f403)
+
+#### Next Steps
+After filling out the form, click **Create Retrieval**, and the script will be created at the desired path. To implement the functionality of the retrieval, open the script and write the necessary code in the `Retrieve___StateActor<T>()` and `RetrieveMany___StateActors<T>()` methods, where the `___` should be the name of the retrieval. Do not change the implementations for any of the other methods. 
 
 ## Descriptions
 In this section, I will describe the purpose of each component of the state system. 
@@ -68,8 +83,8 @@ Although stated as functionally unnecessary previously, `StateActor` class can b
 
 ---
 
-### Gameplay State Tags
-The `GameplayStateTag` class is used to uniquely identify groups of actors, as well as state environments (see below). Every actor must be assigned a tag. It is important that every type of actor is assigned its own tag or that of its inherited type.
+### State Identifier Tags
+The `StateIdentifierTagScriptableObject` class is used to uniquely identify groups of actors, as well as state environments (see below). Every actor must be assigned a tag. It is important that every type of actor is assigned its own tag or that of its inherited type.
 
 ![image](https://github.com/user-attachments/assets/8c334423-8635-4772-b3c8-b54d31f45161)
 
@@ -89,7 +104,7 @@ The `GameplayStateManager` class is a singleton manager class that handles initi
 
 ---
 
-### State Priority Tag
+### State Priority Tags
 Priority tags are used to differentiate different levels (or contexts) of gameplay states and moderators. State actors can only be in one state at a time per defined priority level.
 
 ![image](https://github.com/user-attachments/assets/dcf5e454-b7e9-42c8-aca3-56fcf75751ce)
