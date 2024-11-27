@@ -12,12 +12,17 @@ public class RetrievalCreatorWindow : EditorWindow
 
     private string savePath = "Assets/Scripts/StateSystem/Retrievals";
 
-    [MenuItem("Tools/Retrieval Creator")]
+    [MenuItem("StateSystem/Retrieval Creator")]
     public static void ShowWindow()
     {
         GetWindow<RetrievalCreatorWindow>("Retrieval Creator");
     }
-    
+
+    public override void SaveChanges()
+    {
+        base.SaveChanges();
+    }
+
     private void OnGUI()
     {
         GUILayout.Label("Create a New Retrieval", EditorStyles.boldLabel);
@@ -25,7 +30,7 @@ public class RetrievalCreatorWindow : EditorWindow
         retrievalName = EditorGUILayout.TextField("Retrieval Name", retrievalName);
         if (!string.IsNullOrEmpty(retrievalName))
         {
-            scriptName = $"Retrieve{retrievalName}StateActorScriptableObject";
+            scriptName = $"Retrieve{retrievalName.Replace(" ", "")}StateActorScriptableObject";
         }
         else scriptName = "";
         
@@ -42,6 +47,8 @@ public class RetrievalCreatorWindow : EditorWindow
         if (!useExternalTarget) useExternalTargets = EditorGUILayout.Toggle("Use External Target List", useExternalTargets);
         
         EditorGUILayout.Space(15);
+        
+        savePath = EditorGUILayout.TextField("Path", savePath);
 
         if (File.Exists(Path.Combine(savePath + '/', scriptName + ".cs")))
         {

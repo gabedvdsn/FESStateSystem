@@ -25,7 +25,7 @@ public class StateCreatorWindow : EditorWindow
 
     private string savePath = "Assets/Scripts/StateSystem/GameplayStates";
 
-    [MenuItem("Tools/State Creator")]
+    [MenuItem("StateSystem/State Creator")]
     public static void ShowWindow()
     {
         GetWindow<StateCreatorWindow>("State Creator");

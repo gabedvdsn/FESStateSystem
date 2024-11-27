@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85cb31c558a7e7840b4acf31a73782cd, type: 3}
   m_Name: PlayerPlantingState
   m_EditorClassIdentifier: 
-  StatePriority: {fileID: 11400000, guid: 27db2071ebb61f74caaacb5070adf7a3, type: 2}
+  Parent: {fileID: 0}
+  ConclusionTrigger: {fileID: 11400000, guid: 5e8e8b91f7c4e3d4fb73cc6557397dfe, type: 2}
