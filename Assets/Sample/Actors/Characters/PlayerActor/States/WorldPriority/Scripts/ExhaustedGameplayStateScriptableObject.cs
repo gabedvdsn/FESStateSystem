@@ -34,7 +34,7 @@ public class ExhaustedGameplayStateScriptableObject : AbstractPlayerGameplayStat
         }
         public override void Conclude()
         {
-            
+            base.Conclude();
         }
         public override void Exit()
         {

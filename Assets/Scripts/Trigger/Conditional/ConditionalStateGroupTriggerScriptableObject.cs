@@ -8,10 +8,9 @@ public class ConditionalStateGroupTriggerScriptableObject : AbstractStateConditi
 {
     public List<AbstractStateConditionalTriggerScriptableObject> Conditionals;
     
-    public override bool Activate(StateActor actor)
+    public override bool Activate(StateActor actor, bool flag)
     {
-        return Conditionals.All(c => c.Activate(actor));
-        return Conditionals.All(_ => Conditionals.Any(c => c.Activate(actor)));
+        return Conditionals.All(c => c.Activate(actor, flag));
     }
 
     public override bool PreStateChangeActivate(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject newState)
@@ -19,7 +18,6 @@ public class ConditionalStateGroupTriggerScriptableObject : AbstractStateConditi
         // The new newState should align with one of the conditionals
         // The other conditionals should hold true for active/stored states (depending on conditional)
         return Conditionals.All(c => c.PreStateChangeActivate(actor, priorityTag, newState));
-        return Conditionals.All(_ => Conditionals.Any(c => c.PreStateChangeActivate(actor, priorityTag, newState)));
     }
 
     public override Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> GetStates()

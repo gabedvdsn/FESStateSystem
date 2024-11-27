@@ -13,21 +13,6 @@ MonoBehaviour:
   m_Name: PlayerKitchenModerator
   m_EditorClassIdentifier: 
   ModeratorPriority: {fileID: 11400000, guid: b9ada08d61b001c449eeee6352a70c41, type: 2}
-  InitialStates:
-    _serializedList:
-    - Key: {fileID: 11400000, guid: 9978f5e125a0d874faa134abd9f79174, type: 2}
-      Value: {fileID: 11400000, guid: 9c5f7f36438791c408e9d43ae5e88818, type: 2}
-    - Key: {fileID: 11400000, guid: 5be2b7c35712b6f40a35ba73eec68126, type: 2}
-      Value: {fileID: 11400000, guid: 283a02be010c49540a00cd123763c6b4, type: 2}
-    - Key: {fileID: 11400000, guid: 27db2071ebb61f74caaacb5070adf7a3, type: 2}
-      Value: {fileID: 11400000, guid: c78b5767e5e9e7e45b3f9ded1f15a81a, type: 2}
-  StatesByPriority:
-    _serializedList:
-    - Key: {fileID: 11400000, guid: 9978f5e125a0d874faa134abd9f79174, type: 2}
-      Value: {fileID: 11400000, guid: 0f9e3dacf6a4f4c47b2def2debaac2b1, type: 2}
-    - Key: {fileID: 11400000, guid: 5be2b7c35712b6f40a35ba73eec68126, type: 2}
-      Value: {fileID: 11400000, guid: 855fdfff1792e41429b74634d371a743, type: 2}
-    - Key: {fileID: 11400000, guid: 27db2071ebb61f74caaacb5070adf7a3, type: 2}
-      Value: {fileID: 11400000, guid: a377b0437b4d6414385a29410f9f2a3b, type: 2}
-  SystemChangeResponders:
+  Manifest: {fileID: 11400000, guid: 0c3d1d7827be5994baaab14e8ef62595, type: 2}
+  Responders:
   - {fileID: 11400000, guid: 401fc6b9a95792546a1666d96696c7ef, type: 2}

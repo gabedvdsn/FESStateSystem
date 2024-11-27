@@ -34,7 +34,7 @@ public class TiredGameplayStateScriptableObject : AbstractPlayerGameplayStateScr
         }
         public override void Conclude()
         {
-            
+            base.Conclude();
         }
         public override void Exit()
         {

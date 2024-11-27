@@ -16,7 +16,7 @@ public abstract class AbstractSystemChangeResponseScriptableObject : ScriptableO
         
         if (FromConditional)
         {
-            if (!FromConditional.Activate(actor)) return;
+            if (!FromConditional.Activate(actor, true)) return;
         }
 
         if (ToConditional)
@@ -33,7 +33,7 @@ public abstract class AbstractSystemChangeResponseScriptableObject : ScriptableO
         
         if (FromConditional)
         {
-            if (!FromConditional.Activate(actor)) return;
+            if (!FromConditional.Activate(actor, true)) return;
         }
 
         if (ToConditional)

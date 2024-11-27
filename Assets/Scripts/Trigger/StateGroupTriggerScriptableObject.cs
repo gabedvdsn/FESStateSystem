@@ -7,8 +7,8 @@ public class StateGroupTriggerScriptableObject : AbstractStateTriggerScriptableO
 {
     public List<StateTriggerScriptableObject> Triggers;
     
-    public override bool Activate(StateActor actor)
+    public override bool Activate(StateActor actor, bool flag)
     {
-        return Triggers.All(t => t.Activate(actor));
+        return Triggers.All(t => t.Activate(actor, flag));
     }
 }

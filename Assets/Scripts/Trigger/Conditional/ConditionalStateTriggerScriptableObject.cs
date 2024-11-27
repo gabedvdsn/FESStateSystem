@@ -26,7 +26,7 @@ public class ConditionalStateTriggerScriptableObject : AbstractStateConditionalT
     /// </summary>
     /// <param name="actor"></param>
     /// <returns></returns>
-    public override bool Activate(StateActor actor)
+    public override bool Activate(StateActor actor, bool flag)
     {
         if (actor.Moderator is null) return false;
         if (LookForModerators.Count > 0 && !LookForModerators.Contains(actor.Moderator.BaseModerator)) return false;

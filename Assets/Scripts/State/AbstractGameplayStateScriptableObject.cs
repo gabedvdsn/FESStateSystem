@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class AbstractGameplayStateScriptableObject : ScriptableObject
 {
     public AbstractGameplayStateScriptableObject Parent;
+    public StateTriggerScriptableObject ConclusionTrigger;
     
     public abstract AbstractGameplayState GenerateState(StateActor actor);
 
@@ -72,11 +73,15 @@ public abstract class AbstractGameplayState
     /// Called when the state is exited from a trigger, as opposed to concluding itself.
     /// </summary>
     public abstract void Interrupt();
-    
+
     /// <summary>
-    /// Defines the natural conclusion of this state. Conclude must implement any further state transition. The state should always conclude itself.
+    /// Defines the natural conclusion of this state. The state should always conclude itself. State transition is handled in the base implementation.
     /// </summary>
-    public abstract void Conclude();
+    public virtual void Conclude()
+    {
+        if (StateData.ConclusionTrigger) StateData.ConclusionTrigger.Activate(State, false);
+        else State.Moderator.ReturnToInitial(StateData);
+    }
     
     /// <summary>
     /// Called when the state is exited. Any state-specific exit behaviour should be implemented in Interrupt() and Conclude()

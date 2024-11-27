@@ -29,7 +29,13 @@ public class StateTriggerScriptableObject : AbstractStateTriggerScriptableObject
         
     public bool ReEnterSameStates;
 
-    public override bool Activate(StateActor actor)
+    /// <summary>
+    /// Activates the state trigger WRT some State Actor
+    /// </summary>
+    /// <param name="actor"></param>
+    /// <param name="flag">Does the state change interrupt (true) or change normally (false)</param>
+    /// <returns></returns>
+    public override bool Activate(StateActor actor, bool flag)
     {
         // We want to change the actor's state moderator
         if (OverrideModerator)
@@ -45,7 +51,8 @@ public class StateTriggerScriptableObject : AbstractStateTriggerScriptableObject
                     foreach (StatePriorityTagScriptableObject priorityTag in OverrideStates.Keys)
                     {
                         if (!actor.Moderator.DefinesState(priorityTag, OverrideStates[priorityTag]) && !FoceOverrideStates) continue;
-                        actor.Moderator.DefaultChangeState(priorityTag, OverrideStates[priorityTag]);
+
+                        ChangeState(actor.Moderator, priorityTag, OverrideStates[priorityTag], flag);
                     }
 
                     return true;
@@ -86,13 +93,10 @@ public class StateTriggerScriptableObject : AbstractStateTriggerScriptableObject
             foreach (StatePriorityTagScriptableObject priorityTag in OverrideStates.Keys)
             {
                 if (!overrideModerator.DefinesState(priorityTag, OverrideStates[priorityTag]) && !FoceOverrideStates) continue;
-                overrideModerator.ChangeState(priorityTag, OverrideStates[priorityTag]);
+                ChangeState(actor.Moderator, priorityTag, OverrideStates[priorityTag], flag);
             }
-                
-            // Any priorities in active moderator that aren't filled
-            // overrideModerator.FillEmptyStates(actor.Moderator);
-                
-            actor.Moderator.ImplementModeratorMeta(overrideModerator, ReEnterSameStates);
+            
+            actor.Moderator.ImplementModeratorMeta(overrideModerator, ReEnterSameStates, flag);
             return true;
         }
         
@@ -104,7 +108,8 @@ public class StateTriggerScriptableObject : AbstractStateTriggerScriptableObject
                 foreach (StatePriorityTagScriptableObject priorityTag in activeStates.Keys)
                 {
                     if (OverrideStates.Keys.Contains(priorityTag)) continue;
-                    actor.Moderator.InterruptChangeState(priorityTag, activeStates[priorityTag].StateData);
+                    
+                    ChangeState(actor.Moderator, priorityTag, activeStates[priorityTag].StateData, flag);
                 }
             }
             
@@ -112,7 +117,8 @@ public class StateTriggerScriptableObject : AbstractStateTriggerScriptableObject
             {
                 if (!actor.Moderator.DefinesState(priorityTag, OverrideStates[priorityTag]) && !FoceOverrideStates) continue;
                 if (OverrideStates[priorityTag] == activeStates[priorityTag].StateData && !ReEnterSameStates) continue; 
-                actor.Moderator.InterruptChangeState(priorityTag, OverrideStates[priorityTag], false);
+
+                ChangeState(actor.Moderator, priorityTag, OverrideStates[priorityTag], flag);
             }
 
             return true;
@@ -121,11 +127,21 @@ public class StateTriggerScriptableObject : AbstractStateTriggerScriptableObject
         if (ReEnterSameStates)
         {
             Dictionary<StatePriorityTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStates();
-            foreach (StatePriorityTagScriptableObject priorityTag in activeStates.Keys) actor.Moderator.InterruptChangeState(priorityTag, activeStates[priorityTag].StateData);
+            foreach (StatePriorityTagScriptableObject priorityTag in activeStates.Keys)
+            {
+                ChangeState(actor.Moderator, priorityTag, activeStates[priorityTag].StateData, flag);
+            }
             return true;
         }
 
         return false;
+    }
+
+    private void ChangeState(StateModerator moderator, StatePriorityTagScriptableObject priorityTag,
+        AbstractGameplayStateScriptableObject state, bool interrupts)
+    {
+        if (interrupts) moderator.InterruptChangeState(priorityTag, state);
+        else moderator.DefaultChangeState(priorityTag, state);
     }
     
     protected virtual void OnValidate()

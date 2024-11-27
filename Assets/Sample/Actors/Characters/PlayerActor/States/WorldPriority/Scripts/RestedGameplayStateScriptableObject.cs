@@ -34,7 +34,7 @@ public class RestedGameplayStateScriptableObject : AbstractPlayerGameplayStateSc
         }
         public override void Conclude()
         {
-            
+            base.Conclude();
         }
         public override void Exit()
         {

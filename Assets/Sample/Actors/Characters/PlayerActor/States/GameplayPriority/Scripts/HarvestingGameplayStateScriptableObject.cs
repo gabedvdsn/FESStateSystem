@@ -19,7 +19,6 @@ public class HarvestingGameplayStateScriptableObject : AbstractPlayerGameplaySta
         }
         public override void Enter()
         {
-            Debug.Log(Player);
             progress = 0f;
             UIManager.Instance.EnableProgressSlider("Harvesting");
             // Play harvesting animation
@@ -45,7 +44,7 @@ public class HarvestingGameplayStateScriptableObject : AbstractPlayerGameplaySta
         public override void Conclude()
         {
             // Collect harvesting rewards
-            State.Moderator.ReturnToInitial(StateData);
+            base.Conclude();
         }
         public override void Exit()
         {

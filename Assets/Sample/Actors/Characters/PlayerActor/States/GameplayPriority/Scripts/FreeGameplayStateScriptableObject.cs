@@ -33,7 +33,7 @@ public class FreeGameplayStateScriptableObject : AbstractPlayerGameplayStateScri
         }
         public override void Conclude()
         {
-            
+            base.Conclude();
         }
         public override void Exit()
         {

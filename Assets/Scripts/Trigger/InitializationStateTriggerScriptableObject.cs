@@ -10,7 +10,7 @@ public class InitializationStateTriggerScriptableObject : AbstractStateTriggerSc
     public StateModeratorScriptableObject InitialModerator;
     public SerializedDictionary<StatePriorityTagScriptableObject, AbstractGameplayStateScriptableObject> OverrideStates;
     
-    public override bool Activate(StateActor actor)
+    public override bool Activate(StateActor actor, bool flag)
     {
         actor.Moderator = InitialModerator.GenerateModerator(actor);
         

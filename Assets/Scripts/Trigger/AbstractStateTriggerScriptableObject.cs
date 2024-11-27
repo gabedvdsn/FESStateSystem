@@ -2,5 +2,5 @@
 
 public abstract class AbstractStateTriggerScriptableObject : ScriptableObject
 {
-    public abstract bool Activate(StateActor actor);
+    public abstract bool Activate(StateActor actor, bool flag);
 }

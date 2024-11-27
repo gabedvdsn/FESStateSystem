@@ -225,7 +225,8 @@ public class StateCreatorWindow : EditorWindow
         }}
         public override void Conclude()
         {{
-            
+            // Base implementation handles state transition
+            base.Conclude();
         }}
         public override void Exit()
         {{

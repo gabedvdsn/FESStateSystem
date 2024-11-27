@@ -48,8 +48,8 @@ public class CookingGameplayStateScriptableObject : AbstractPlayerGameplayStateS
         public override void Conclude()
         {
             // Collect cooking rewards
-
-            State.Moderator.ReturnToInitial(StateData);
+            
+            base.Conclude();
         }
         public override void Exit()
         {

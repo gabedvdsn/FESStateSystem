@@ -110,7 +110,7 @@ public class GameplayStateManager : MonoBehaviour
         SubscribedActors.Clear();
     }
 
-    private void DistributeInitialEnvironmentTriggers(StateIdentifierTagScriptableObject environmentIdentifier)
+    private void DistributeInitialEnvironmentTriggers(StateIdentifierTagScriptableObject environmentIdentifier, bool flag = true)
     {
         StateEnvironmentScriptableObject environment = GetStateEnvironment(environmentIdentifier);
         foreach (StateIdentifierTagScriptableObject actorTag in SubscribedActors.Keys)
@@ -118,52 +118,52 @@ public class GameplayStateManager : MonoBehaviour
             foreach (StateActor actor in SubscribedActors[actorTag])
             {
                 InitializationStateTriggerScriptableObject initialTrigger = environment.GetInitialStateTrigger(actor.GeneralIdentifier);
-                if (initialTrigger) initialTrigger.Activate(actor);
-                else FallbackInitializationTrigger.Activate(actor);
+                if (initialTrigger) initialTrigger.Activate(actor, flag);
+                else FallbackInitializationTrigger.Activate(actor, flag);
             }
         }
     }
 
-    private void DistributeIndividualEnvironmentTrigger(StateActor actor, StateIdentifierTagScriptableObject environmentIdentifier)
+    private void DistributeIndividualEnvironmentTrigger(StateActor actor, StateIdentifierTagScriptableObject environmentIdentifier, bool flag = true)
     {
         InitializationStateTriggerScriptableObject initialTrigger = GetStateEnvironment(environmentIdentifier).GetInitialStateTrigger(actor.GeneralIdentifier);
-        if (initialTrigger) initialTrigger.Activate(actor);
-        else FallbackInitializationTrigger.Activate(actor);
+        if (initialTrigger) initialTrigger.Activate(actor, flag);
+        else FallbackInitializationTrigger.Activate(actor, flag);
     }
     
     #endregion
     
     #region Trigger Runners
 
-    public void RunDefaultTrigger(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateTriggerScriptableObject trigger)
+    public void RunDefaultTrigger(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateTriggerScriptableObject trigger, bool flag = true)
     {
         if (!actorRetrieval.TryRetrieveActor(out StateActor actor)) return;
         
-        trigger.Activate(actor);
+        trigger.Activate(actor, flag);
     }
 
-    public void RunDefaultManyTrigger(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateTriggerScriptableObject trigger)
+    public void RunDefaultManyTrigger(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateTriggerScriptableObject trigger, bool flag = true)
     {
         if (!actorRetrieval.TryRetrieveManyActors(count, out List<StateActor> actors)) return;
         
-        foreach (StateActor actor in actors) trigger.Activate(actor);
+        foreach (StateActor actor in actors) trigger.Activate(actor, flag);
     }
     
-    public void RunActorSpecificTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateTriggerScriptableObject trigger) where T : StateActor
+    public void RunActorSpecificTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateTriggerScriptableObject trigger, bool flag = true) where T : StateActor
     {
         if (!actorRetrieval.TryRetrieveActor(out T actor)) return;
 
-        trigger.Activate(actor);
+        trigger.Activate(actor, flag);
     }
 
-    public void RunActorSpecificManyTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateTriggerScriptableObject trigger) where T : StateActor
+    public void RunActorSpecificManyTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateTriggerScriptableObject trigger, bool flag = true) where T : StateActor
     {
         if (!actorRetrieval.TryRetrieveManyActors(count, out List<T> actors)) return;
 
-        foreach (T actor in actors) trigger.Activate(actor);
+        foreach (T actor in actors) trigger.Activate(actor, flag);
     }
 
-    public void RunDefaultConditionalTrigger(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent)
+    public void RunDefaultConditionalTrigger(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent, bool flag = true)
     {
         if (!actorRetrieval.TryRetrieveActor(out StateActor actor))
         {
@@ -171,11 +171,11 @@ public class GameplayStateManager : MonoBehaviour
             return;
         }
 
-        if (conditionalTrigger.Activate(actor)) onTrueEvent?.Invoke(actor);
+        if (conditionalTrigger.Activate(actor, flag)) onTrueEvent?.Invoke(actor);
         else onFalseEvent?.Invoke(actor);
     }
 
-    public void RunDefaultManyConditionalTrigger(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent)
+    public void RunDefaultManyConditionalTrigger(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent, bool flag = true)
     {
         if (!actorRetrieval.TryRetrieveManyActors(count, out List<StateActor> actors))
         {
@@ -185,12 +185,12 @@ public class GameplayStateManager : MonoBehaviour
         
         foreach (StateActor actor in actors)
         {
-            if (conditionalTrigger.Activate(actor)) onTrueEvent?.Invoke(actor);
+            if (conditionalTrigger.Activate(actor, flag)) onTrueEvent?.Invoke(actor);
             else onFalseEvent?.Invoke(actor);
         }
     }
     
-    public void RunActorSpecificConditionalTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent) where T : StateActor
+    public void RunActorSpecificConditionalTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent, bool flag = true) where T : StateActor
     {
         if (!actorRetrieval.TryRetrieveActor(out T actor))
         {
@@ -198,10 +198,10 @@ public class GameplayStateManager : MonoBehaviour
             return;
         }
         
-        if (conditionalTrigger.Activate(actor)) onTrueEvent?.Invoke(actor);
+        if (conditionalTrigger.Activate(actor, flag)) onTrueEvent?.Invoke(actor);
         else onFalseEvent?.Invoke(actor);
     }
-    public void RunActorSpecificConditionalManyTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent) where T : StateActor
+    public void RunActorSpecificConditionalManyTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent, bool flag = true) where T : StateActor
     {
         if (!actorRetrieval.TryRetrieveManyActors(count, out List<T> actors))
         {
@@ -211,7 +211,7 @@ public class GameplayStateManager : MonoBehaviour
 
         foreach (T actor in actors)
         {
-            if (conditionalTrigger.Activate(actor)) onTrueEvent?.Invoke(actor);
+            if (conditionalTrigger.Activate(actor, flag)) onTrueEvent?.Invoke(actor);
             else onFalseEvent?.Invoke(actor);
         }
     }

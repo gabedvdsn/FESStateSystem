@@ -44,7 +44,7 @@ public class PlantingGameplayStateScriptableObject : AbstractPlayerGameplayState
         public override void Conclude()
         {
             // Plant plant
-            State.Moderator.ReturnToInitial(StateData);
+            base.Conclude();
         }
         public override void Exit()
         {

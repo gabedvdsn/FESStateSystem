@@ -32,7 +32,7 @@ public class IdleGameplayStateScriptableObject : AbstractPlayerGameplayStateScri
         }
         public override void Conclude()
         {
-            
+            base.Conclude();
         }
         public override void Exit()
         {
