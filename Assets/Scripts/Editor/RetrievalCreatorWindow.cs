@@ -93,29 +93,41 @@ public class RetrievalCreatorWindow : EditorWindow
 ";
         }
 
-        string internalLines = "";
+        string retrieveActor = "";
+        string retrieveManyActors = "";
         if (useExternalSource)
         {
-            internalLines += $@"if (!SourceRetrieval.TryRetrieveActor(out StateActor source)) return null;
+            retrieveActor += $@"if (!SourceRetrieval.TryRetrieveActor(out StateActor source)) return null;
+
+";
+            retrieveManyActors += $@"if (!SourceRetrieval.TryRetrieveManyActors(count, out List<StateActor> sources)) return null;
 
 ";
         }
 
         if (useExternalTarget)
         {
-            internalLines += $@"{(internalLines != string.Empty ? "\t\t" : "")}List<T> targets = GameplayStateManager.Instance.RetrieveActorsByTag<T>(TargetIdentifier);
+            retrieveActor += $@"{(retrieveActor != string.Empty ? "\t\t" : "")}List<T> targets = GameplayStateManager.Instance.RetrieveActorsByTag<T>(TargetIdentifier);
+        if (targets is null || targets.Count == 0) return null;
+
+";
+            retrieveManyActors += $@"{(retrieveActor != string.Empty ? "\t\t" : "")}List<T> targets = GameplayStateManager.Instance.RetrieveActorsByTag<T>(TargetIdentifier);
         if (targets is null || targets.Count == 0) return null;
 
 ";
         }
         else if (useExternalTargets)
         {
-            internalLines += $@"{(internalLines != string.Empty ? "\t\t" : "")}if (TargetIdentifiers is null || TargetIdentifiers.Count == 0) return null;
+            retrieveActor += $@"{(retrieveActor != string.Empty ? "\t\t" : "")}if (TargetIdentifiers is null || TargetIdentifiers.Count == 0) return null;
+
+";
+            retrieveManyActors += $@"{(retrieveActor != string.Empty ? "\t\t" : "")}if (TargetIdentifiers is null || TargetIdentifiers.Count == 0) return null;
 
 ";
         }
 
-        internalLines += $"{(internalLines != string.Empty ? "\t\t" : "")}throw new System.NotImplementedException();";
+        retrieveActor += $"{(retrieveActor != string.Empty ? "\t\t" : "")}throw new System.NotImplementedException();";
+        retrieveManyActors += $"{(retrieveManyActors != string.Empty ? "\t\t" : "")}throw new System.NotImplementedException();";
 
         string scriptTemplate = $@"using System.Collections.Generic;
 using UnityEngine;
@@ -124,59 +136,17 @@ using UnityEngine;
 public class {scriptName} : AbstractRetrieveStateActorScriptableObject
 {{
     {members}
-    public override bool TryRetrieveActor<T>(out T actor)
-    {{
-        try
-        {{
-            actor = Retrieve{retrievalName}Actor<T>();
-            return actor is not null;
-        }}
-        catch
-        {{
-            actor = null;
-            return false;
-        }}
-    }}
-    
-    public override bool TryRetrieveManyActors<T>(int count, out List<T> actors)
-    {{
-        try
-        {{
-            actors = RetrieveMany{retrievalName}Actors<T>(count);
-            return actors is not null && actors.Count > 0;
-        }}
-        catch
-        {{
-            actors = null;
-            return false;
-        }}
-    }}
-    
-    public override bool TryRetrieveAllActors<T>(out List<T> actors)
-    {{
-        try
-        {{
-            actors = RetrieveMany{retrievalName}Actors<T>(-1);
-            return actors is not null && actors.Count > 0;
-        }}
-        catch
-        {{
-            actors = null;
-            return false;
-        }}
-    }}
-    
     // Implement behaviour here
-    private T Retrieve{retrievalName}Actor<T>() where T : StateActor
+    protected override T RetrieveActor<T>()
     {{
-        {internalLines}
+        {retrieveActor}
     }}
 
     // Implement behaviour here
     // Such that count < 0 should retrieve all actors
-    private List<T> RetrieveMany{retrievalName}Actors<T>(int count) where T : StateActor
+    protected override List<T> RetrieveManyActors<T>(int count)
     {{
-        {internalLines}
+        {retrieveManyActors}
     }}  
     
 }}

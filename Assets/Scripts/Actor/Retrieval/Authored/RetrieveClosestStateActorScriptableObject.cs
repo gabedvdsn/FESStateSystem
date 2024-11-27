@@ -12,21 +12,7 @@ public class RetrieveClosestStateActorScriptableObject : AbstractRetrieveStateAc
     [Header("Target")]
     public StateIdentifierTagScriptableObject TargetTag;
     
-    public override bool TryRetrieveActor<T>(out T actor)
-    {
-        try
-        {
-            actor = RetrieveClosestActor<T>();
-            return actor is not null;
-        }
-        catch
-        {
-            actor = null;
-            return false;
-        }
-    }
-    
-    private T RetrieveClosestActor<T>() where T : StateActor
+    protected override T RetrieveActor<T>()
     {
         if (!SourceRetrieval.TryRetrieveActor(out StateActor source)) return null;
 
@@ -47,22 +33,8 @@ public class RetrieveClosestStateActorScriptableObject : AbstractRetrieveStateAc
 
         return closest;
     }
-    
-    public override bool TryRetrieveManyActors<T>(int count, out List<T> actors)
-    {
-        try
-        {
-            actors = RetrieveManyClosestActors<T>(count);
-            return actors is not null && actors.Count > 0;
-        }
-        catch
-        {
-            actors = null;
-            return false;
-        }
-    }
 
-    private List<T> RetrieveManyClosestActors<T>(int count) where T : StateActor
+    protected override List<T> RetrieveManyActors<T>(int count)
     {
         if (!SourceRetrieval.TryRetrieveActor(out StateActor source)) return null;
         
@@ -77,20 +49,5 @@ public class RetrieveClosestStateActorScriptableObject : AbstractRetrieveStateAc
             .Take(realCount)
             .ToList();
     }
-    
-    public override bool TryRetrieveAllActors<T>(out List<T> actors)
-    {
-        try
-        {
-            actors = RetrieveManyClosestActors<T>(-1);
-            return actors is not null && actors.Count > 0;
-        }
-        catch
-        {
-            actors = null;
-            return false;
-        }
-    }
-
     
 }

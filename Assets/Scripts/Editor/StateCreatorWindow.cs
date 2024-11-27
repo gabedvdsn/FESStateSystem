@@ -107,7 +107,7 @@ public class StateCreatorWindow : EditorWindow
         }
         
         actorTarget = EditorGUILayout.TextField("Actor Target", actorTarget);
-        string menuTarget = !string.IsNullOrEmpty(realStateName) ? $"{realStateName} State" : "";
+        string menuTarget = !string.IsNullOrEmpty(stateName) ? $"{stateName} State" : "";
         string menuPath = !isAbstract
             ? $"FESStates/Actor/{(!string.IsNullOrEmpty(actorTarget) ? $"{actorTarget}/{menuTarget}" : $"General/{menuTarget}")}"
             : "No menu path for abstract classes";

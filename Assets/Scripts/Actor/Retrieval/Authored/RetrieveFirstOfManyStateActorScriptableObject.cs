@@ -7,22 +7,8 @@ using UnityEngine;
 public class RetrieveFirstOfManyStateActorScriptableObject : AbstractRetrieveStateActorScriptableObject
 {
     public List<StateIdentifierTagScriptableObject> FirstTagInOrder;
-    
-    public override bool TryRetrieveActor<T>(out T actor)
-    {
-        try
-        {
-            actor = RetrieveFirstOfManyActor<T>();
-            return actor is not null;
-        }
-        catch
-        {
-            actor = null;
-            return false;
-        }
-    }
 
-    private T RetrieveFirstOfManyActor<T>() where T : StateActor
+    protected override T RetrieveActor<T>()
     {
         foreach (StateIdentifierTagScriptableObject actorTag in FirstTagInOrder)
         {
@@ -36,35 +22,7 @@ public class RetrieveFirstOfManyStateActorScriptableObject : AbstractRetrieveSta
         return null;
     }
 
-    public override bool TryRetrieveManyActors<T>(int count, out List<T> actors)
-    {
-        try
-        {
-            actors = RetrieveManyFirstOfManyActors<T>(count);
-            return actors is not null && actors.Count > 0;
-        }
-        catch
-        {
-            actors = null;
-            return false;
-        }
-    }
-    
-    public override bool TryRetrieveAllActors<T>(out List<T> actors)
-    {
-        try
-        {
-            actors = RetrieveManyFirstOfManyActors<T>(-1);
-            return actors is not null && actors.Count > 0;
-        }
-        catch
-        {
-            actors = null;
-            return false;
-        }
-    }
-
-    private List<T> RetrieveManyFirstOfManyActors<T>(int count) where T : StateActor
+    protected override List<T> RetrieveManyActors<T>(int count)
     {
         foreach (StateIdentifierTagScriptableObject actorTag in FirstTagInOrder)
         {

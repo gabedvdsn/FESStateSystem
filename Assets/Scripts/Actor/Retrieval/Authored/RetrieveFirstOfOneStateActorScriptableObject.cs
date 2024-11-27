@@ -6,48 +6,8 @@ using UnityEngine;
 public class RetrieveFirstOfOneStateActorScriptableObject : AbstractRetrieveStateActorScriptableObject
 {
     public StateIdentifierTagScriptableObject ActorTag;
-    
-    public override bool TryRetrieveActor<T>(out T actor)
-    {
-        try
-        {
-            actor = RetrieveFirstOfExactActor<T>();
-            return actor is not null;
-        }
-        catch
-        {
-            actor = null;
-            return false;
-        }
-    }
-    public override bool TryRetrieveManyActors<T>(int count, out List<T> actors)
-    {
-        try
-        {
-            actors = RetrieveManyFirstOfExactActor<T>(count);
-            return actors is not null && actors.Count > 0;
-        }
-        catch
-        {
-            actors = null;
-            return false;
-        }
-    }
-    public override bool TryRetrieveAllActors<T>(out List<T> actors)
-    {
-        try
-        {
-            actors = RetrieveManyFirstOfExactActor<T>(-1);
-            return actors is not null && actors.Count > 0;
-        }
-        catch
-        {
-            actors = null;
-            return false;
-        }
-    }
 
-    private T RetrieveFirstOfExactActor<T>() where T : StateActor
+    protected override T RetrieveActor<T>()
     {
         List<T> actors = GameplayStateManager.Instance.RetrieveActorsByTag<T>(ActorTag);
         if (actors is null || actors.Count == 0) return null;
@@ -55,7 +15,7 @@ public class RetrieveFirstOfOneStateActorScriptableObject : AbstractRetrieveStat
         return actors[0];
     }
 
-    private List<T> RetrieveManyFirstOfExactActor<T>(int count) where T : StateActor
+    protected override List<T> RetrieveManyActors<T>(int count)
     {
         List<T> actors = GameplayStateManager.Instance.RetrieveActorsByTag<T>(ActorTag);
         if (actors is null || actors.Count == 0) return null;

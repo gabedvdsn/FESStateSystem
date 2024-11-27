@@ -31,7 +31,7 @@ public class RetrieveSystemSpecificStateActorScriptableObject : AbstractRetrieve
         {
             if (SourceRetrieval) return SourceRetrieval.TryRetrieveActor(out actor) && ValidateSource(actor);
             
-            actor = RetrieveByAllActors<T>();
+            actor = RetrieveActor<T>();
             return actor is not null;
         }
         catch
@@ -54,6 +54,7 @@ public class RetrieveSystemSpecificStateActorScriptableObject : AbstractRetrieve
         {
             if (SourceRetrieval)
             {
+                
                 if (SourceRetrieval.TryRetrieveManyActors(count, out List<T> sources))
                 {
                     actors = ValidateSources(sources);
@@ -64,7 +65,7 @@ public class RetrieveSystemSpecificStateActorScriptableObject : AbstractRetrieve
                 return false;
             }
 
-            actors = RetrieveManyByAllActors<T>(count);
+            actors = RetrieveManyActors<T>(count);
             return actors is not null && actors.Count > 0;
         }
         catch
@@ -73,20 +74,22 @@ public class RetrieveSystemSpecificStateActorScriptableObject : AbstractRetrieve
             return false;
         }
     }
-    
-    /// <summary>
-    /// Try to retrieve all the source actors that align with LookFor parameters
-    /// </summary>
-    /// <param name="actors"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public override bool TryRetrieveAllActors<T>(out List<T> actors)
-    {
-        return TryRetrieveManyActors(-1, out actors);
-    }
 
-    private List<T> RetrieveManyByAllActors<T>(int count) where T : StateActor
+    protected override T RetrieveActor<T>()
+    {
+        Dictionary<StateIdentifierTagScriptableObject, List<StateActor>> allActors = GameplayStateManager.Instance.AllActors;
+        foreach (StateIdentifierTagScriptableObject actorTag in allActors.Keys)
+        {
+            foreach (StateActor actor in allActors[actorTag])
+            {
+                if (ValidateModerator(actor) && ValidateStates(actor)) return actor as T;
+            }
+        }
+
+        return null;
+    }
+    
+    protected override List<T> RetrieveManyActors<T>(int count)
     {
         Dictionary<StateIdentifierTagScriptableObject, List<StateActor>> allActors = GameplayStateManager.Instance.AllActors;
         List<T> actors = new List<T>();
@@ -109,25 +112,11 @@ public class RetrieveSystemSpecificStateActorScriptableObject : AbstractRetrieve
         return actors;
     }
 
-    private T RetrieveByAllActors<T>() where T : StateActor
-    {
-        Dictionary<StateIdentifierTagScriptableObject, List<StateActor>> allActors = GameplayStateManager.Instance.AllActors;
-        foreach (StateIdentifierTagScriptableObject actorTag in allActors.Keys)
-        {
-            foreach (StateActor actor in allActors[actorTag])
-            {
-                if (ValidateModerator(actor) && ValidateStates(actor)) return actor as T;
-            }
-        }
-
-        return null;
-    }
-
     private bool ValidateSource<T>(T source) where T : StateActor
     {
         return ValidateModerator(source) && ValidateStates(source);
     }
-
+    
     private List<T> ValidateSources<T>(List<T> sources) where T : StateActor
     {
         List<T> validated = new List<T>();
