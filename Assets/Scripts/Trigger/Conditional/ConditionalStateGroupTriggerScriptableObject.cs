@@ -15,21 +15,21 @@ namespace FESStateSystem
             return Conditionals.All(c => c.Activate(actor, flag));
         }
 
-        public override bool PreStateChangeActivate(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject newState)
+        public override bool PreStateChangeActivate(StateActor actor, StateContextTagScriptableObject contextTag, AbstractGameplayStateScriptableObject newState)
         {
             // The new newState should align with one of the conditionals
             // The other conditionals should hold true for active/stored states (depending on conditional)
-            return Conditionals.All(c => c.PreStateChangeActivate(actor, priorityTag, newState));
+            return Conditionals.All(c => c.PreStateChangeActivate(actor, contextTag, newState));
         }
 
-        public override Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> GetStates()
+        public override Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>> GetStates()
         {
-            Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> states =
-                new Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>>();
+            Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>> states =
+                new Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>>();
             foreach (AbstractStateConditionalTriggerScriptableObject conditional in Conditionals)
             {
-                Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> cStates = conditional.GetStates();
-                foreach (StatePriorityTagScriptableObject priorityTag in cStates.Keys)
+                Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>> cStates = conditional.GetStates();
+                foreach (StateContextTagScriptableObject priorityTag in cStates.Keys)
                 {
                     if (states.ContainsKey(priorityTag))
                     {

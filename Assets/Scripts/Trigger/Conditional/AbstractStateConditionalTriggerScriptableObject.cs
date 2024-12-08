@@ -8,9 +8,9 @@ namespace FESStateSystem
     {
         public bool FalseOnNullActor = true;
     
-        public abstract bool PreStateChangeActivate(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject newState);
+        public abstract bool PreStateChangeActivate(StateActor actor, StateContextTagScriptableObject contextTag, AbstractGameplayStateScriptableObject newState);
 
-        public abstract Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> GetStates();
+        public abstract Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>> GetStates();
 
         public abstract bool PreModeratorChangeActivate(StateModeratorScriptableObject moderator);
     }

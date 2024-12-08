@@ -12,7 +12,7 @@ namespace FESStateSystem
         private bool useExternalTarget;
         private bool useExternalTargets;
 
-        private string savePath = "Assets/Scripts/StateSystem/Retrievals";
+        private string savePath = "Assets/Scripts/AuthoredStateSystem/Retrievals";
 
         [MenuItem("StateSystem/Retrieval Creator")]
         public static void ShowWindow()
@@ -41,17 +41,18 @@ namespace FESStateSystem
             EditorGUILayout.TextField("", scriptName);
             EditorGUI.EndDisabledGroup();
 
-            EditorGUILayout.Space(10);
+            EditorGUILayout.Space(5);
 
             useExternalSource = EditorGUILayout.Toggle("Use External Source", useExternalSource);
             EditorGUILayout.Space(5);
             if (!useExternalTargets) useExternalTarget = EditorGUILayout.Toggle("Use External Target", useExternalTarget);
             if (!useExternalTarget) useExternalTargets = EditorGUILayout.Toggle("Use External Target List", useExternalTargets);
         
-            EditorGUILayout.Space(15);
-        
-            savePath = EditorGUILayout.TextField("Path", savePath);
+            EditorGUILayout.Space(10);
+            GUILayout.Label("Save Path", EditorStyles.boldLabel);
 
+            savePath = EditorGUILayout.TextField("Path", savePath);
+            EditorGUILayout.Space(15);
             if (File.Exists(Path.Combine(savePath + '/', scriptName + ".cs")))
             {
                 GUILayout.Label("Cannot create retrieval: This file already exists at this path.");

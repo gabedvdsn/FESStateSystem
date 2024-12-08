@@ -7,21 +7,14 @@ using UnityEngine;
 
 namespace FESStateSystem
 {
-    /// <summary>
-    /// Encapsulate some data S
-    /// </summary>
     public class PredicateCreatorWindow : EditorWindow
     {
         private string predicateName;
         private string scriptName;
         private string subclassName;
         private string assetMenuString;
-        private MonoScript nameSource;
 
-        private bool attachName;
-        private bool prefixSource = true;
-        
-        private string savePath = "Assets/Scripts/StateSystem/Predicates";
+        private string savePath = "Assets/Scripts/AuthoredStateSystem/Predicates";
 
         [MenuItem("StateSystem/Predicate Creator")]
         public static void ShowWindow()
@@ -33,49 +26,12 @@ namespace FESStateSystem
         {
             GUILayout.Label("Create a New Predicate", EditorStyles.boldLabel);
 
-            predicateName = EditorGUILayout.TextField("State Name", predicateName);
-        
-            nameSource = (MonoScript)EditorGUILayout.ObjectField(
-                "Relative Source", 
-                nameSource, 
-                typeof(MonoScript), 
-                false // Set to 'true' if you want to allow selecting objects from the scene
-            );
+            predicateName = EditorGUILayout.TextField("Predicate Name", predicateName);
 
             if (!string.IsNullOrEmpty(predicateName))
             {
                 scriptName = $"{predicateName}TransitionPredicateScriptableObject";
                 subclassName = $"{predicateName}TransitionPredicate";
-            }
-            
-            if (nameSource is not null && !string.IsNullOrEmpty(predicateName))
-            {
-                EditorGUI.indentLevel = 1;
-                attachName = EditorGUILayout.Toggle("Attach Name", attachName);
-                if (attachName)
-                {
-                    prefixSource = EditorGUILayout.Toggle("As Prefix", prefixSource);
-                }
-
-                if (attachName)
-                {
-                    string sourceName = nameSource.GetClass().ToString();
-                    sourceName = sourceName.Replace("Controller", "");
-                    sourceName = sourceName.Replace("System", "");
-                    sourceName = sourceName.Replace("Manager", "");
-                    sourceName = sourceName.Replace("Abstract", "");
-
-                    if (prefixSource)
-                    {
-                        scriptName = $"{sourceName}{predicateName}TransitionPredicateScriptableObject";
-                        subclassName = $"{sourceName}{predicateName}TransitionPredicate";
-                    }
-                    else
-                    {
-                        scriptName = $"{predicateName}{sourceName}TransitionPredicateScriptableObject";
-                        subclassName = $"{predicateName}{sourceName}TransitionPredicate";
-                    }
-                }
             }
 
             assetMenuString = $"FESState/Authored/State/Transition Predicate/{predicateName}";
@@ -88,7 +44,9 @@ namespace FESStateSystem
             EditorGUI.EndDisabledGroup();
         
             EditorGUILayout.Space(10);
-        
+            
+            GUILayout.Label("Save Path", EditorStyles.boldLabel);
+
             savePath = EditorGUILayout.TextField("Path", savePath);
         
             EditorGUILayout.Space(15);
@@ -103,38 +61,80 @@ namespace FESStateSystem
             }
             else if (GUILayout.Button("Create Predicate"))
             {
-                CreateStateScript();
+                CreatePredicateScript();
                 ResetStateStuff();
             }
         }
 
         private void ResetStateStuff()
         {
-            attachName = false;
-            prefixSource = true;
-            nameSource = null;
-            
+            predicateName = "";
             scriptName = "";
             subclassName = "";
         }
 
-        private void CreateStateScript()
+        private void CreatePredicateScript()
         {
             
             string scriptTemplate = $@"using UnityEngine;
 using FESStateSystem;
+using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = ""{assetMenuString}"")]
 public class {scriptName} : AbstractTransitionPredicateScriptableObject
 {{
-    public override AbstractTransitionPredicate<S> GeneratePredicate<S>(S source)
+    public override List<AbstractTransitionPredicate<S>> Generate<S>()
     {{
-        return new {subclassName}<S>(source);
+        return new List<AbstractTransitionPredicate<S>>()
+        {{
+            new {subclassName}<S>()
+        }};
     }}
 
     public class {subclassName}<S> : AbstractTransitionPredicate<S>
     {{
-        public {subclassName}(S source) : base(source)
+        public override bool Evaluate(S source)
+        {{
+            return true;
+        }}
+    }}
+}}
+
+";
+
+            string folderPath = savePath + "/";
+            string filePath = Path.Combine(folderPath, scriptName + ".cs");
+
+            // Ensure the directory exists
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            // Write the script to the file
+            File.WriteAllText(filePath, scriptTemplate);
+
+            // Refresh the Asset Database to show the new script
+            AssetDatabase.Refresh();
+        }
+
+        public static void CreatePredicate(string _predicateName, string _subclassName, string _scriptName, string _savePath = "Assets/Scripts/AuthoredStateSystem/Predicates")
+        {
+            string _assetMenuName = $"FESState/Authored/State/Predicate/{_predicateName}";
+            string scriptTemplate = $@"using UnityEngine;
+using FESStateSystem;
+
+[CreateAssetMenu(menuName = ""{_assetMenuName}"")]
+public class {_scriptName} : AbstractTransitionPredicateScriptableObject
+{{
+    public override AbstractTransitionPredicate<S> Generate<S>(S source)
+    {{
+        return new {_subclassName}<S>(source);
+    }}
+
+    public class {_subclassName}<S> : AbstractTransitionPredicate<S>
+    {{
+        public {_subclassName}(S source) : base(source)
         {{
         }}
         
@@ -147,8 +147,8 @@ public class {scriptName} : AbstractTransitionPredicateScriptableObject
 
 ";
 
-            string folderPath = savePath + "/";
-            string filePath = Path.Combine(folderPath, scriptName + ".cs");
+            string folderPath = _savePath + "/";
+            string filePath = Path.Combine(folderPath, _scriptName + ".cs");
 
             // Ensure the directory exists
             if (!Directory.Exists(folderPath))

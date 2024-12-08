@@ -8,27 +8,35 @@ namespace FESStateSystem
     [CreateAssetMenu(menuName = "FESState/State/Manifest")]
     public class GameplayStateManifestScriptableObject : ScriptableObject
     {
-        [Tooltip("The first entry for each priority tag is each priority's initial state.")]
-        [SerializedDictionary("Priority Tag", "Permitted States")]
-        public SerializedDictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>>
-            PriorityManifest;
+        [Tooltip("The first entry for each context tag is each context's initial state.")]
+        [SerializedDictionary("Context Tag", "Permitted States")]
+        public SerializedDictionary<StateContextTagScriptableObject, List<AbstractGameplayStateBehaviourScriptableObject>>
+            ContextManifest;
 
-        public StatePriorityTagScriptableObject[] Priorities => PriorityManifest.Keys.ToArray();
+        public StateContextTagScriptableObject[] Contexts => ContextManifest.Keys.ToArray();
 
-        public AbstractGameplayStateScriptableObject InitialState(StatePriorityTagScriptableObject priorityTag) =>
-            PriorityManifest[priorityTag][0];
+        public AbstractGameplayStateScriptableObject InitialState(StateContextTagScriptableObject contextTag) =>
+            ContextManifest[contextTag] != null && ContextManifest[contextTag].Count > 0 ? ContextManifest[contextTag][0].Initial() : null;
 
-        public List<AbstractGameplayStateScriptableObject> Get(StatePriorityTagScriptableObject priorityTag) =>
-            PriorityManifest[priorityTag];
+        public List<AbstractGameplayStateScriptableObject> Get(StateContextTagScriptableObject contextTag)
+        {
+            List<AbstractGameplayStateScriptableObject> states = new List<AbstractGameplayStateScriptableObject>();
+            foreach (AbstractGameplayStateBehaviourScriptableObject stateBehaviour in ContextManifest[contextTag])
+            {
+                states.AddRange(stateBehaviour.Get());
+            }
+
+            return states;
+        }
 
         public bool DefinesState(AbstractGameplayStateScriptableObject state)
         {
-            return Priorities.Any(p => PriorityManifest[p].Contains(state));
+            return Contexts.Any(context => ContextManifest[context].Any(stateBehaviour => stateBehaviour.Defines(state)));
         }
 
-        public bool DefinesState(StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject state)
+        public bool DefinesState(StateContextTagScriptableObject contextTag, AbstractGameplayStateScriptableObject state)
         {
-            return PriorityManifest[priorityTag].Contains(state);
+            return ContextManifest[contextTag].Any(stateBehaviour => stateBehaviour.Defines(state));
         }
 
     }

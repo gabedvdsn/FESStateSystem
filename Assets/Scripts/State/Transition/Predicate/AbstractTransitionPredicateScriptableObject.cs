@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace FESStateSystem
 {
@@ -7,6 +9,9 @@ namespace FESStateSystem
     /// </summary>
     public abstract class AbstractTransitionPredicateScriptableObject : ScriptableObject
     {
-        public abstract AbstractTransitionPredicate<S> GeneratePredicate<S>(S source);
+        [Tooltip("Allow as predicate for multiple transitions from the same state")]
+        public bool AllowForManyTransitions;
+
+        public abstract List<AbstractTransitionPredicate<S>> Generate<S>();
     }
 }

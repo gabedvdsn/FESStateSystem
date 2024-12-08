@@ -11,14 +11,19 @@ namespace FESStateSystem
     public class StateTransitionMatrixScriptableObject : ScriptableObject
     {
         [SerializedDictionary("From", "Transitions")]
-        public SerializedDictionary<AbstractGameplayStateScriptableObject, List<StateTransitionScriptableObject>> Transitions;
+        public SerializedDictionary<AbstractGameplayStateScriptableObject, StateTransitionData> Transitions;
 
         public StateTransitionMatrix<S> GenerateMatrix<S>(S source)
         {
-            Dictionary<AbstractGameplayStateScriptableObject, List<StateTransition<S>>> transitions = new Dictionary<AbstractGameplayStateScriptableObject, List<StateTransition<S>>>();
+            Dictionary<AbstractGameplayStateScriptableObject, LiveStateTransitionData<S>> transitions = new Dictionary<AbstractGameplayStateScriptableObject, LiveStateTransitionData<S>>();
             foreach (AbstractGameplayStateScriptableObject state in Transitions.Keys)
             {
-                transitions[state] = Transitions[state].Where(transition => transition != null).Select(transition => new StateTransition<S>(source, transition)).ToList();
+                transitions[state] = new LiveStateTransitionData<S>()
+                {
+                    Transitions =
+                        Transitions[state].TransitionData.Where(transition => transition != null).Select(transition => new StateTransition<S>(source, transition)).ToList(),
+                    Method = Transitions[state].TransitionMethod
+                };
             }
 
             return new StateTransitionMatrix<S>(transitions);
@@ -34,19 +39,19 @@ namespace FESStateSystem
                 HashSet<AbstractTransitionPredicateScriptableObject> seen = new HashSet<AbstractTransitionPredicateScriptableObject>();
                 List<int> duplicatePredicates = new List<int>();
 
-                for (int i = 0; i < Transitions[state].Count; i++)
+                for (int i = 0; i < Transitions[state].TransitionData.Count; i++)
                 {
-                    if (Transitions[state][i] is null) continue;
-                    if (!seen.Add(Transitions[state][i].Predicate))
+                    if (Transitions[state].TransitionData[i] is null) continue;
+                    if (!seen.Add(Transitions[state].TransitionData[i].Predicate) && !Transitions[state].TransitionData[i].Predicate.AllowForManyTransitions)
                     {
                         duplicatePredicates.Add(i);
-                        Debug.Log($"Found duplicate predicate for {Transitions[state][i].name}");
+                        Debug.Log($"Found duplicate predicate for {Transitions[state].TransitionData[i].name}");
                     }
                 }
 
                 foreach (int duplicate in duplicatePredicates)
                 {
-                    Transitions[state][duplicate] = null;
+                    Transitions[state].TransitionData[duplicate] = null;
                 }
             }
         }
@@ -58,49 +63,38 @@ namespace FESStateSystem
     /// <typeparam name="S">The Source type (e.g. Player, Weather, Camera) which is encapsulated by the predicate implementation.</typeparam>
     public class StateTransitionMatrix<S>
     {
-        private Dictionary<AbstractGameplayStateScriptableObject, List<StateTransition<S>>> matrix;
+        private Dictionary<AbstractGameplayStateScriptableObject, LiveStateTransitionData<S>> matrix;
 
-        public StateTransitionMatrix(Dictionary<AbstractGameplayStateScriptableObject, List<StateTransition<S>>> matrix)
+        public StateTransitionMatrix(Dictionary<AbstractGameplayStateScriptableObject, LiveStateTransitionData<S>> matrix)
         {
             this.matrix = matrix;
         }
-
-
-        public TransitionEvaluationData EvaluateTransitionsFor(AbstractGameplayStateScriptableObject activeState)
+        
+        public bool TryEvaluateTransitionsFor(AbstractGameplayStateScriptableObject activeState, out TransitionEvaluationResult result)
         {
-            if (!matrix.ContainsKey(activeState)) return new TransitionEvaluationData(false, null);
-            List<AbstractGameplayStateScriptableObject> successTargets = new List<AbstractGameplayStateScriptableObject>();
-            foreach (StateTransition<S> transition in matrix[activeState]) if (transition.EvaluatePredicate()) successTargets.Add(transition.BaseTransition.To);
-            return new TransitionEvaluationData(successTargets.Count > 0, successTargets);
-        }
-
-        public bool TryGetTransitionTo(AbstractGameplayStateScriptableObject fromState, AbstractGameplayStateScriptableObject toState, out StateTransition<S> transition)
-        {
-            transition = null;
-            if (!matrix.TryGetValue(fromState, out List<StateTransition<S>> transitions)) return false;
-            foreach (StateTransition<S> mTransition in transitions.Where(mTransition => mTransition.BaseTransition.To == toState))
+            if (!matrix.ContainsKey(activeState))
             {
-                transition = mTransition;
-                return true;
+                result = new TransitionEvaluationResult(false, null, TransitionEvaluationSelect.Any);
+                return false;
             }
 
-            return false;
-        }
-        
-        public bool SubscribeEventToEvaluate(AbstractGameplayStateScriptableObject fromState, AbstractGameplayStateScriptableObject toState, ref StateTransition<S>.EvaluateAction evaluateAction)
-        {
-            if (!TryGetTransitionTo(fromState, toState, out StateTransition<S> transition)) return false;
-            transition.SubscribeEvaluateEvent(ref evaluateAction);
-            return true;
+            List<AbstractGameplayStateScriptableObject> successTargets = new List<AbstractGameplayStateScriptableObject>();
+            foreach (StateTransition<S> transition in matrix[activeState].Transitions)
+            {
+                if (transition.EvaluatePredicate()) successTargets.Add(transition.BaseTransition.To);
+            }
+
+            result = new TransitionEvaluationResult(successTargets.Count > 0, successTargets, matrix[activeState].Method);
+            return result.Status;
         }
 
         public void LogMatrix()
         {
-            Debug.Log($"[ STATE TRANSITION MATRIX ]");
+            Debug.Log($"[ STATE TRANSITION MATRIX ] {typeof(S)}");
             foreach (AbstractGameplayStateScriptableObject state in matrix.Keys)
             {
-                Debug.Log($"\t[ FROM ] {state.name}");
-                foreach (StateTransition<S> transition in matrix[state])
+                Debug.Log($"\t[ FROM ] {state.name} [ BY ] {matrix[state].Method}");
+                foreach (StateTransition<S> transition in matrix[state].Transitions)
                 {
                     Debug.Log($"\t\t[ TO ] {transition.BaseTransition.To.name} [ ON ] {transition.BaseTransition.Predicate.name}");
                 }
@@ -108,20 +102,44 @@ namespace FESStateSystem
         }
     }
 
-    public struct TransitionEvaluationData
+    [Serializable]
+    public class StateTransitionData
+    {
+        [Tooltip("When multiple predicates evaluate to true, how should the system choose the state to transition to")]
+        public TransitionEvaluationSelect TransitionMethod = TransitionEvaluationSelect.First;
+        public List<StateTransitionScriptableObject> TransitionData;
+    }
+
+    public class LiveStateTransitionData<S>
+    {
+        public List<StateTransition<S>> Transitions;
+        public TransitionEvaluationSelect Method;
+    }
+
+    public struct TransitionEvaluationResult
     {
         public bool Status;
         public List<AbstractGameplayStateScriptableObject> SuccessfulTransitions;
+        public TransitionEvaluationSelect Method;
 
-        public TransitionEvaluationData(bool status, List<AbstractGameplayStateScriptableObject> successfulTransitions)
+        public TransitionEvaluationResult(bool status, List<AbstractGameplayStateScriptableObject> successfulTransitions, TransitionEvaluationSelect method)
         {
             Status = status;
             SuccessfulTransitions = successfulTransitions;
+            Method = method;
         }
 
         public AbstractGameplayStateScriptableObject First() => Status ? SuccessfulTransitions[0] : null;
         public AbstractGameplayStateScriptableObject Any() => Status ? SuccessfulTransitions.RandomChoice() : null;
         public AbstractGameplayStateScriptableObject Last() => Status ? SuccessfulTransitions.Last() : null;
+    }
+
+    public enum TransitionEvaluationSelect
+    {
+        First,
+        Any,
+        Last,
+        Select
     }
 
 }

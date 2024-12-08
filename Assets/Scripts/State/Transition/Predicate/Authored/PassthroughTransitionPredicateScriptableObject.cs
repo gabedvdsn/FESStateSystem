@@ -1,22 +1,23 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace FESStateSystem
 {
     [CreateAssetMenu(menuName = "FESState/State/Transition/Predicate/Passthrough")]
     public class PassthroughTransitionPredicateScriptableObject : AbstractTransitionPredicateScriptableObject
     {
-        public override AbstractTransitionPredicate<S> GeneratePredicate<S>(S source)
+        public override List<AbstractTransitionPredicate<S>> Generate<S>()
         {
-            return new PassthroughTransitionPredicate<S>(source);
+            return new List<AbstractTransitionPredicate<S>>()
+            {
+                new PassthroughTransitionPredicate<S>()
+            };
         }
 
         public class PassthroughTransitionPredicate<S> : AbstractTransitionPredicate<S>
         {
-            public PassthroughTransitionPredicate(S source) : base(source)
-            {
-            }
             
-            public override bool Evaluate()
+            public override bool Evaluate(S source)
             {
                 return true;
             }

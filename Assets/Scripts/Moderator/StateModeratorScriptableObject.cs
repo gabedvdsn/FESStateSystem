@@ -10,9 +10,9 @@ namespace FESStateSystem
     [CreateAssetMenu(menuName = "FESState/State/Moderator")]
     public class StateModeratorScriptableObject : ScriptableObject
     {
-        [Header("Priority")]
+        [FormerlySerializedAs("ModeratorPriority")] [Header("Priority")]
     
-        public StatePriorityTagScriptableObject ModeratorPriority;
+        public StateContextTagScriptableObject moderatorContext;
 
         [Header("States Manifest")] 
     

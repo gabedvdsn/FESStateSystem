@@ -1,15 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace FESStateSystem
 {
-    public abstract class AbstractGameplayStateScriptableObject : ScriptableObject
+    public abstract class AbstractGameplayStateScriptableObject : AbstractGameplayStateBehaviourScriptableObject
     {
         public AbstractGameplayStateScriptableObject Parent;
         public StateTriggerScriptableObject ConclusionTrigger;
-    
-        public abstract AbstractGameplayState GenerateState(StateActor actor);
+
+        [Space]
+
+        public bool CacheState;
+
+        public override AbstractGameplayStateScriptableObject Initial()
+        {
+            return this;
+        }
+
+        public override bool Defines(AbstractGameplayStateScriptableObject state)
+        {
+            return state == this;
+        }
+
+        public override List<AbstractGameplayStateScriptableObject> Get()
+        {
+            return new List<AbstractGameplayStateScriptableObject>()
+            {
+                this
+            };
+        }
 
         public bool IsDescendantOf(AbstractGameplayStateScriptableObject other)
         {

@@ -20,12 +20,12 @@ namespace FESStateSystem
 
         [Space] 
         public bool TryPreserveAllStates;
-        public List<StatePriorityTagScriptableObject> TryPreserveStates;
+        public List<StateContextTagScriptableObject> TryPreserveStates;
     
         [Header("States Trigger")]
     
         public bool FoceOverrideStates;
-        public SerializedDictionary<StatePriorityTagScriptableObject, AbstractGameplayStateScriptableObject> OverrideStates;
+        public SerializedDictionary<StateContextTagScriptableObject, AbstractGameplayStateScriptableObject> OverrideStates;
     
         [Header("Other")]
         
@@ -44,13 +44,13 @@ namespace FESStateSystem
             {
                 if (!ForceOverrideModerator)
                 {
-                    if (OverrideModerator.ModeratorPriority > actor.Moderator.BaseModerator.ModeratorPriority)
+                    if (OverrideModerator.moderatorContext > actor.Moderator.BaseModerator.moderatorContext)
                     {
                         // If no override states, we are done and return false (nothing was done)
                         if (OverrideStates is null) return false;
                 
                         // There are override states
-                        foreach (StatePriorityTagScriptableObject priorityTag in OverrideStates.Keys)
+                        foreach (StateContextTagScriptableObject priorityTag in OverrideStates.Keys)
                         {
                             if (!actor.Moderator.DefinesState(priorityTag, OverrideStates[priorityTag]) && !FoceOverrideStates) continue;
 
@@ -68,9 +68,9 @@ namespace FESStateSystem
 
                 if (TryPreserveAllStates)
                 {
-                    Dictionary<StatePriorityTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStates();
+                    Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithPriority();
                     // We want to preserve states at all priorities
-                    foreach (StatePriorityTagScriptableObject priorityTag in activeStates.Keys)
+                    foreach (StateContextTagScriptableObject priorityTag in activeStates.Keys)
                     {
                         // Ensure the override moderator defines the current state
                         if (!overrideModerator.DefinesState(priorityTag, activeStates[priorityTag].StateData)) continue;
@@ -82,7 +82,7 @@ namespace FESStateSystem
                 else if (TryPreserveStates.Count > 0)
                 {
                     // We want to preserve state(s) at some priorities
-                    foreach (StatePriorityTagScriptableObject priorityTag in TryPreserveStates)
+                    foreach (StateContextTagScriptableObject priorityTag in TryPreserveStates)
                     {
                         // Ensure the override moderator defines the current state
                         if (actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState state) && !overrideModerator.DefinesState(priorityTag, state.StateData)) continue;
@@ -92,7 +92,7 @@ namespace FESStateSystem
                     }
                 }
             
-                foreach (StatePriorityTagScriptableObject priorityTag in OverrideStates.Keys)
+                foreach (StateContextTagScriptableObject priorityTag in OverrideStates.Keys)
                 {
                     if (!overrideModerator.DefinesState(priorityTag, OverrideStates[priorityTag]) && !FoceOverrideStates) continue;
                     ChangeState(actor.Moderator, priorityTag, OverrideStates[priorityTag], flag);
@@ -104,10 +104,10 @@ namespace FESStateSystem
         
             if (OverrideStates is not null)
             {
-                Dictionary<StatePriorityTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStates();
+                Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithPriority();
                 if (ReEnterSameStates)
                 {
-                    foreach (StatePriorityTagScriptableObject priorityTag in activeStates.Keys)
+                    foreach (StateContextTagScriptableObject priorityTag in activeStates.Keys)
                     {
                         if (OverrideStates.Keys.Contains(priorityTag)) continue;
                     
@@ -115,7 +115,7 @@ namespace FESStateSystem
                     }
                 }
             
-                foreach (StatePriorityTagScriptableObject priorityTag in OverrideStates.Keys)
+                foreach (StateContextTagScriptableObject priorityTag in OverrideStates.Keys)
                 {
                     if (!actor.Moderator.DefinesState(priorityTag, OverrideStates[priorityTag]) && !FoceOverrideStates) continue;
                     if (OverrideStates[priorityTag] == activeStates[priorityTag].StateData && !ReEnterSameStates) continue; 
@@ -128,8 +128,8 @@ namespace FESStateSystem
         
             if (ReEnterSameStates)
             {
-                Dictionary<StatePriorityTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStates();
-                foreach (StatePriorityTagScriptableObject priorityTag in activeStates.Keys)
+                Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithPriority();
+                foreach (StateContextTagScriptableObject priorityTag in activeStates.Keys)
                 {
                     ChangeState(actor.Moderator, priorityTag, activeStates[priorityTag].StateData, flag);
                 }
@@ -139,11 +139,11 @@ namespace FESStateSystem
             return false;
         }
 
-        private void ChangeState(StateModerator moderator, StatePriorityTagScriptableObject priorityTag,
+        private void ChangeState(StateModerator moderator, StateContextTagScriptableObject contextTag,
             AbstractGameplayStateScriptableObject state, bool interrupts)
         {
-            if (interrupts) moderator.InterruptChangeState(priorityTag, state);
-            else moderator.DefaultChangeState(priorityTag, state);
+            if (interrupts) moderator.InterruptChangeState(contextTag, state);
+            else moderator.DefaultChangeState(contextTag, state);
         }
     
         protected virtual void OnValidate()

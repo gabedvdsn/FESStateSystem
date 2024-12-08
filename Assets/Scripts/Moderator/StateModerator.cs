@@ -8,8 +8,8 @@ namespace FESStateSystem
         public StateModeratorScriptableObject BaseModerator;
         public StateActor StateComponent;
 
-        private Dictionary<StatePriorityTagScriptableObject, GameplayStateMachine> PriorityStateMachines;
-        private Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayState>> StoredStates;
+        private Dictionary<StateContextTagScriptableObject, GameplayStateMachine> ContextStateMachines;
+        private Dictionary<StateContextTagScriptableObject, List<AbstractGameplayState>> CachedStates;
     
         public StateModerator(StateModeratorScriptableObject moderator, StateActor stateComponent)
         {
@@ -21,14 +21,14 @@ namespace FESStateSystem
 
         private void InitializeModeratorStates()
         {
-            StoredStates = new Dictionary<StatePriorityTagScriptableObject, List<AbstractGameplayState>>();
-            PriorityStateMachines = new Dictionary<StatePriorityTagScriptableObject, GameplayStateMachine>();
+            CachedStates = new Dictionary<StateContextTagScriptableObject, List<AbstractGameplayState>>();
+            ContextStateMachines = new Dictionary<StateContextTagScriptableObject, GameplayStateMachine>();
         
-            foreach (StatePriorityTagScriptableObject priorityTag in BaseModerator.Manifest.Priorities)
+            foreach (StateContextTagScriptableObject priorityTag in BaseModerator.Manifest.Contexts)
             {
-                PriorityStateMachines[priorityTag] = new GameplayStateMachine();
+                ContextStateMachines[priorityTag] = new GameplayStateMachine();
                 AbstractGameplayState initialState = CreateStoreInitializeGameplayState(priorityTag, BaseModerator.Manifest.InitialState(priorityTag));
-                PriorityStateMachines[priorityTag].Initialize(initialState);
+                ContextStateMachines[priorityTag].Initialize(initialState);
             
                 StateIsChanged(priorityTag, null, initialState);
             
@@ -43,37 +43,37 @@ namespace FESStateSystem
         /// <summary>
         /// Changes the active state under some priority tag. Mutually exclusive from InterruptChangeState()
         /// </summary>
-        /// <param name="priorityTag">The priority tag of the state to change.</param>
+        /// <param name="contextTag">The priority tag of the state to change.</param>
         /// <param name="newState">The state to change to.</param>
         /// <param name="onlyDefined">Disallow non-defined states.</param>
-        public void DefaultChangeState(StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject newState, bool onlyDefined = true)
+        public void DefaultChangeState(StateContextTagScriptableObject contextTag, AbstractGameplayStateScriptableObject newState, bool onlyDefined = true)
         {
-            if (!DefinesState(priorityTag, newState) && onlyDefined) return;
-            if (!TryGetStoredState(priorityTag, newState, out AbstractGameplayState state)) state = CreateStoreInitializeGameplayState(priorityTag, newState);
+            if (!DefinesState(contextTag, newState) && onlyDefined) return;
+            if (!TryGetCachedState(contextTag, newState, out AbstractGameplayState state)) state = CreateStoreInitializeGameplayState(contextTag, newState);
         
-            StateIsChanged(priorityTag, PriorityStateMachines[priorityTag].CurrentState, state);
-            PriorityStateMachines[priorityTag].ChangeState(state);
+            StateIsChanged(contextTag, ContextStateMachines[contextTag].CurrentState, state);
+            ContextStateMachines[contextTag].ChangeState(state);
         }
 
         /// <summary>
         /// Interrupts and changes the active state under some priority tag. Mutually exclusive from DefaultChangeState()
         /// </summary>
-        /// <param name="priorityTag">The priority tag of the state to change.</param>
+        /// <param name="contextTag">The priority tag of the state to change.</param>
         /// <param name="newState">The state to change to.</param>
         /// <param name="onlyDefined">Disallow non-defined states.</param>
-        public void InterruptChangeState(StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject newState, bool onlyDefined = true)
+        public void InterruptChangeState(StateContextTagScriptableObject contextTag, AbstractGameplayStateScriptableObject newState, bool onlyDefined = true)
         {
-            if (!DefinesState(priorityTag, newState) && onlyDefined) return;
-            if (!TryGetStoredState(priorityTag, newState, out AbstractGameplayState state)) state = CreateStoreInitializeGameplayState(priorityTag, newState);
+            if (!DefinesState(contextTag, newState) && onlyDefined) return;
+            if (!TryGetCachedState(contextTag, newState, out AbstractGameplayState state)) state = CreateStoreInitializeGameplayState(contextTag, newState);
         
-            StateIsChanged(priorityTag, PriorityStateMachines[priorityTag].CurrentState, state);
-            PriorityStateMachines[priorityTag].InterruptChangeState(state);
+            StateIsChanged(contextTag, ContextStateMachines[contextTag].CurrentState, state);
+            ContextStateMachines[contextTag].InterruptChangeState(state);
         }
 
-        private void StateIsChanged(StatePriorityTagScriptableObject priorityTag, AbstractGameplayState oldState, AbstractGameplayState newState)
+        private void StateIsChanged(StateContextTagScriptableObject contextTag, AbstractGameplayState oldState, AbstractGameplayState newState)
         {
             foreach (AbstractSystemChangeResponseScriptableObject systemChangeResponse in BaseModerator.Responders)
-                systemChangeResponse.OnStateChanged(StateComponent, priorityTag, oldState, newState);
+                systemChangeResponse.OnStateChanged(StateComponent, contextTag, oldState, newState);
         }
 
         private void ModeratorIsChanged(StateModeratorScriptableObject oldModerator, StateModeratorScriptableObject newModerator)
@@ -83,9 +83,9 @@ namespace FESStateSystem
 
         public void ReturnToInitial(AbstractGameplayStateScriptableObject sourceState)
         {
-            foreach (StatePriorityTagScriptableObject priorityTag in StoredStates.Keys)
+            foreach (StateContextTagScriptableObject priorityTag in CachedStates.Keys)
             {
-                if (StoredStates[priorityTag].Any(state => state.StateData == sourceState))
+                if (CachedStates[priorityTag].Any(state => state.StateData == sourceState))
                 {
                     DefaultChangeState(priorityTag, BaseModerator.Manifest.InitialState(priorityTag));
                     return;
@@ -93,29 +93,29 @@ namespace FESStateSystem
             }
         
             // Cannot find the sourceState, return all priorities to initial states (hard reset)
-            foreach (StatePriorityTagScriptableObject priorityTag in PriorityStateMachines.Keys)
+            foreach (StateContextTagScriptableObject priorityTag in ContextStateMachines.Keys)
             {
                 DefaultChangeState(priorityTag, BaseModerator.Manifest.InitialState(priorityTag));
             }
         }
 
-        public bool TryGetActiveStatePriority(AbstractGameplayStateScriptableObject state, out StatePriorityTagScriptableObject statePriorityTag)
+        public bool TryGetActiveStatePriority(AbstractGameplayStateScriptableObject state, out StateContextTagScriptableObject stateContextTag)
         {
-            statePriorityTag = null;
-            foreach (StatePriorityTagScriptableObject priorityTag in StoredStates.Keys.Where(priorityTag => StoredStates[priorityTag].Any(storedState => storedState.StateData == state)))
+            stateContextTag = null;
+            foreach (StateContextTagScriptableObject priorityTag in CachedStates.Keys.Where(priorityTag => CachedStates[priorityTag].Any(storedState => storedState.StateData == state)))
             {
-                statePriorityTag = priorityTag;
+                stateContextTag = priorityTag;
                 return true;
             }
 
             return false;
         }
 
-        public bool TryGetActiveState(StatePriorityTagScriptableObject priorityTag, out AbstractGameplayState state)
+        public bool TryGetActiveState(StateContextTagScriptableObject contextTag, out AbstractGameplayState state)
         {
             state = null;
-            if (!PriorityStateMachines.ContainsKey(priorityTag)) return false;
-            if (PriorityStateMachines.TryGetValue(priorityTag, out GameplayStateMachine stateMachine))
+            if (!ContextStateMachines.ContainsKey(contextTag)) return false;
+            if (ContextStateMachines.TryGetValue(contextTag, out GameplayStateMachine stateMachine))
             {
                 state = stateMachine.CurrentState;
                 return true;
@@ -124,11 +124,11 @@ namespace FESStateSystem
             return false;
         }
 
-        public bool TryGetStoredState(StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject sourceState, out AbstractGameplayState state)
+        public bool TryGetCachedState(StateContextTagScriptableObject contextTag, AbstractGameplayStateScriptableObject sourceState, out AbstractGameplayState state)
         {
             state = null;
-            if (!StoredStates.ContainsKey(priorityTag)) return false;
-            foreach (AbstractGameplayState storedState in StoredStates[priorityTag].Where(storedState => storedState.StateData == sourceState))
+            if (!CachedStates.ContainsKey(contextTag)) return false;
+            foreach (AbstractGameplayState storedState in CachedStates[contextTag].Where(storedState => storedState.StateData == sourceState))
             {
                 state = storedState;
                 return true;
@@ -137,12 +137,17 @@ namespace FESStateSystem
             return false;
         }
 
-        public Dictionary<StatePriorityTagScriptableObject, AbstractGameplayState> GetActiveStates()
+        public List<AbstractGameplayState> GetActiveStates()
         {
-            Dictionary<StatePriorityTagScriptableObject, AbstractGameplayState> activeStates = new Dictionary<StatePriorityTagScriptableObject, AbstractGameplayState>();
-            foreach (StatePriorityTagScriptableObject priorityTag in PriorityStateMachines.Keys)
+            return ContextStateMachines.Values.Select(machine => machine.CurrentState).ToList();
+        }
+
+        public Dictionary<StateContextTagScriptableObject, AbstractGameplayState> GetActiveStatesWithPriority()
+        {
+            Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = new Dictionary<StateContextTagScriptableObject, AbstractGameplayState>();
+            foreach (StateContextTagScriptableObject priorityTag in ContextStateMachines.Keys)
             {
-                activeStates[priorityTag] = PriorityStateMachines[priorityTag].CurrentState;
+                activeStates[priorityTag] = ContextStateMachines[priorityTag].CurrentState;
             }
 
             return activeStates;
@@ -150,38 +155,38 @@ namespace FESStateSystem
 
         public void RunStatesLogicUpdate()
         {
-            foreach(GameplayStateMachine stateMachine in PriorityStateMachines.Values) stateMachine.CurrentState.LogicUpdate();
+            foreach(GameplayStateMachine stateMachine in ContextStateMachines.Values) stateMachine.CurrentState.LogicUpdate();
         }
 
         public void RunStatesPhysicsUpdate()
         {
-            foreach(GameplayStateMachine stateMachine in PriorityStateMachines.Values) stateMachine.CurrentState.PhysicsUpdate();
+            foreach(GameplayStateMachine stateMachine in ContextStateMachines.Values) stateMachine.CurrentState.PhysicsUpdate();
         }
-    
-        public List<AbstractGameplayStateScriptableObject> GetStatesByPriority(StatePriorityTagScriptableObject priorityTag) => BaseModerator.Manifest.PriorityManifest.GetValueOrDefault(priorityTag);
-
-        public AbstractGameplayState CreateStoreInitializeGameplayState(StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject stateData)
+        
+        private AbstractGameplayState CreateStoreInitializeGameplayState(StateContextTagScriptableObject contextTag, AbstractGameplayStateScriptableObject stateData)
         {
-            if (TryGetStoredState(priorityTag, stateData, out AbstractGameplayState state)) return state;
-        
-            state = stateData.GenerateState(StateComponent);
+            if (TryGetCachedState(contextTag, stateData, out AbstractGameplayState state)) return state;
+            
+            state = stateData.GenerateState(StateComponent)[0];
             state.Initialize();
-        
-            if (!StoredStates.ContainsKey(priorityTag)) StoredStates[priorityTag] = new List<AbstractGameplayState>();
-            StoredStates[priorityTag].Add(state);
-        
+
+            if (!stateData.CacheState) return state;
+            
+            if (!CachedStates.ContainsKey(contextTag)) CachedStates[contextTag] = new List<AbstractGameplayState>();
+            CachedStates[contextTag].Add(state);
+
             return state;
         }
 
         public bool DefinesState(AbstractGameplayStateScriptableObject state) => BaseModerator.Manifest.DefinesState(state);
 
-        public bool DefinesState(StatePriorityTagScriptableObject priorityTag,
-            AbstractGameplayStateScriptableObject state) => BaseModerator.Manifest.DefinesState(priorityTag, state);
+        public bool DefinesState(StateContextTagScriptableObject contextTag,
+            AbstractGameplayStateScriptableObject state) => BaseModerator.Manifest.DefinesState(contextTag, state);
     
-        public static bool operator >(StateModerator self, StateModerator other) => self.BaseModerator.ModeratorPriority > other.BaseModerator.ModeratorPriority;
-        public static bool operator <(StateModerator self, StateModerator other) => self.BaseModerator.ModeratorPriority < other.BaseModerator.ModeratorPriority;
-        public static bool operator >=(StateModerator self, StateModerator other) => self.BaseModerator.ModeratorPriority >= other.BaseModerator.ModeratorPriority;
-        public static bool operator <=(StateModerator self, StateModerator other) => self.BaseModerator.ModeratorPriority <= other.BaseModerator.ModeratorPriority;
+        public static bool operator >(StateModerator self, StateModerator other) => self.BaseModerator.moderatorContext > other.BaseModerator.moderatorContext;
+        public static bool operator <(StateModerator self, StateModerator other) => self.BaseModerator.moderatorContext < other.BaseModerator.moderatorContext;
+        public static bool operator >=(StateModerator self, StateModerator other) => self.BaseModerator.moderatorContext >= other.BaseModerator.moderatorContext;
+        public static bool operator <=(StateModerator self, StateModerator other) => self.BaseModerator.moderatorContext <= other.BaseModerator.moderatorContext;
 
         public void ImplementModeratorMeta(MetaStateModerator metaModerator, bool reEnterSameStates, bool interrupts)
         {
@@ -195,19 +200,19 @@ namespace FESStateSystem
 
         private void ApplyMetaImplementation(MetaStateModerator metaModerator, bool reEnterSameStates, bool interrupts)
         {
-            foreach (StatePriorityTagScriptableObject priorityTag in metaModerator.InitialStates.Keys)
+            foreach (StateContextTagScriptableObject priorityTag in metaModerator.InitialStates.Keys)
             {
                 // Add state machines for new priority levels
-                if (!PriorityStateMachines.ContainsKey(priorityTag))
+                if (!ContextStateMachines.ContainsKey(priorityTag))
                 {
-                    PriorityStateMachines[priorityTag] = new GameplayStateMachine();
+                    ContextStateMachines[priorityTag] = new GameplayStateMachine();
                     AbstractGameplayState initialState = CreateStoreInitializeGameplayState(priorityTag, metaModerator.InitialStates[priorityTag]);
-                    PriorityStateMachines[priorityTag].Initialize(initialState);
+                    ContextStateMachines[priorityTag].Initialize(initialState);
                 }
                 // If the priority tag exists, handle changing state as necessary
                 else
                 {
-                    if (!reEnterSameStates && PriorityStateMachines[priorityTag].CurrentState.StateData == metaModerator.InitialStates[priorityTag]) continue;
+                    if (!reEnterSameStates && ContextStateMachines[priorityTag].CurrentState.StateData == metaModerator.InitialStates[priorityTag]) continue;
                     if (interrupts) InterruptChangeState(priorityTag, metaModerator.InitialStates[priorityTag]);
                     else DefaultChangeState(priorityTag, metaModerator.InitialStates[priorityTag]);
                 }
@@ -215,7 +220,7 @@ namespace FESStateSystem
                 // Store new states 
                 foreach (AbstractGameplayStateScriptableObject sourceState in metaModerator.BaseModerator.Manifest.Get(priorityTag))
                 {
-                    if (!TryGetStoredState(priorityTag, sourceState, out AbstractGameplayState _)) CreateStoreInitializeGameplayState(priorityTag, sourceState);
+                    if (!TryGetCachedState(priorityTag, sourceState, out AbstractGameplayState _)) CreateStoreInitializeGameplayState(priorityTag, sourceState);
                 }
             }
         }
@@ -224,18 +229,18 @@ namespace FESStateSystem
         {
         
             // Dump state machines for unused priority levels
-            List<StatePriorityTagScriptableObject> machinesToRemove = PriorityStateMachines.Keys.Where(priorityTag => !BaseModerator.Manifest.Priorities.Contains(priorityTag)).ToList();
-            foreach (StatePriorityTagScriptableObject priorityTag in machinesToRemove)
+            List<StateContextTagScriptableObject> machinesToRemove = ContextStateMachines.Keys.Where(priorityTag => !BaseModerator.Manifest.Contexts.Contains(priorityTag)).ToList();
+            foreach (StateContextTagScriptableObject priorityTag in machinesToRemove)
             {
-                PriorityStateMachines.Remove(priorityTag);
-                StoredStates.Remove(priorityTag);
+                ContextStateMachines.Remove(priorityTag);
+                CachedStates.Remove(priorityTag);
             }
 
             // Dump unusable states
-            foreach (StatePriorityTagScriptableObject priorityTag in StoredStates.Keys)
+            foreach (StateContextTagScriptableObject priorityTag in CachedStates.Keys)
             {
-                List<AbstractGameplayState> statesToRemove = StoredStates[priorityTag].Where(storedState => !DefinesState(priorityTag, storedState.StateData)).ToList();
-                foreach (AbstractGameplayState state in statesToRemove) StoredStates[priorityTag].Remove(state);
+                List<AbstractGameplayState> statesToRemove = CachedStates[priorityTag].Where(storedState => !DefinesState(priorityTag, storedState.StateData)).ToList();
+                foreach (AbstractGameplayState state in statesToRemove) CachedStates[priorityTag].Remove(state);
             }
         }
     
@@ -247,31 +252,31 @@ namespace FESStateSystem
         public class MetaStateModerator
         {
             public StateModeratorScriptableObject BaseModerator;
-            public Dictionary<StatePriorityTagScriptableObject, AbstractGameplayStateScriptableObject> InitialStates;
+            public Dictionary<StateContextTagScriptableObject, AbstractGameplayStateScriptableObject> InitialStates;
         
             public MetaStateModerator(StateModeratorScriptableObject baseModerator)
             {
                 BaseModerator = baseModerator;
             
-                InitialStates = new Dictionary<StatePriorityTagScriptableObject, AbstractGameplayStateScriptableObject>();
-                foreach (StatePriorityTagScriptableObject priorityTag in BaseModerator.Manifest.Priorities)
+                InitialStates = new Dictionary<StateContextTagScriptableObject, AbstractGameplayStateScriptableObject>();
+                foreach (StateContextTagScriptableObject priorityTag in BaseModerator.Manifest.Contexts)
                 {
                     InitialStates[priorityTag] = BaseModerator.Manifest.InitialState(priorityTag);
                 }
             }
 
-            public bool DefinesState(StatePriorityTagScriptableObject priorityTag,
-                AbstractGameplayStateScriptableObject state) => BaseModerator.Manifest.DefinesState(priorityTag, state);
-            public void ChangeState(StatePriorityTagScriptableObject priorityTag, AbstractGameplayStateScriptableObject newState)
+            public bool DefinesState(StateContextTagScriptableObject contextTag,
+                AbstractGameplayStateScriptableObject state) => BaseModerator.Manifest.DefinesState(contextTag, state);
+            public void ChangeState(StateContextTagScriptableObject contextTag, AbstractGameplayStateScriptableObject newState)
             {
-                InitialStates[priorityTag] = newState;
+                InitialStates[contextTag] = newState;
             }
             public void FillEmptyStates(StateModerator other)
             {
-                foreach (StatePriorityTagScriptableObject priorityTag in other.PriorityStateMachines.Keys)
+                foreach (StateContextTagScriptableObject priorityTag in other.ContextStateMachines.Keys)
                 {
                     if (InitialStates.Keys.Contains(priorityTag)) continue;
-                    InitialStates[priorityTag] = other.PriorityStateMachines[priorityTag].CurrentState.StateData;
+                    InitialStates[priorityTag] = other.ContextStateMachines[priorityTag].CurrentState.StateData;
                 }
             }
         }

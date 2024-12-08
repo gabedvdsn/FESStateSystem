@@ -1474,6 +1474,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TransitionMatrix: {fileID: 11400000, guid: 921257738c229304c8a8560794fd6e5a, type: 2}
+  Log: 1
 --- !u!1 &702755430
 GameObject:
   m_ObjectHideFlags: 0

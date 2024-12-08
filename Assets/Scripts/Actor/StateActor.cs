@@ -15,22 +15,31 @@ namespace FESStateSystem
 
         private DisableAction OnDisableEvent;
 
-        protected virtual void Awake()
+        private void Awake()
         {
             GameplayStateManager.Instance.SubscribeActor(this);
-        }
-    
-        protected virtual void Update()
-        {
-            Moderator?.RunStatesLogicUpdate();
-        }
-    
-        protected virtual void LateUpdate()
-        {
-            Moderator?.RunStatesPhysicsUpdate();
+            OnAwake();
         }
 
-        protected virtual void OnDisable()
+        protected virtual void OnAwake() { }
+    
+        private void Update()
+        {
+            Moderator?.RunStatesLogicUpdate();
+            OnUpdate();
+        }
+
+        protected virtual void OnUpdate() { }
+    
+        private void FixedUpdate()
+        {
+            Moderator?.RunStatesPhysicsUpdate();
+            OnFixedUpdate();
+        }
+        
+        protected virtual void OnFixedUpdate() { }
+
+        private void OnDisable()
         {
             OnDisableEvent?.Invoke();
         }

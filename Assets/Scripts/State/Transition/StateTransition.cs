@@ -1,24 +1,28 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace FESStateSystem
 {
     public class StateTransition<S>
     {
-        public delegate void EvaluateAction();
+        public delegate bool EvaluateAction();
 
         public StateTransitionScriptableObject BaseTransition;
 
-        private AbstractTransitionPredicate<S> Predicate;
+        protected List<AbstractTransitionPredicate<S>> Predicates;
+
+        protected S Source;
 
         public StateTransition(S source, StateTransitionScriptableObject transition)
         {
             BaseTransition = transition;
-            Predicate = BaseTransition.Predicate.GeneratePredicate(source);
+            Predicates = BaseTransition.Predicate.Generate<S>();
+            Source = source;
         }
 
         public bool EvaluatePredicate()
         {
-            return Predicate.Evaluate();
+            return Predicates.All(p => p.Evaluate(Source));
         }
 
         public void SubscribeEvaluateEvent(ref EvaluateAction evaluateDelegate)
@@ -31,9 +35,22 @@ namespace FESStateSystem
             evaluateDelegate -= TriggerEvaluate;
         }
         
-        protected virtual void TriggerEvaluate()
+        protected virtual bool TriggerEvaluate()
         {
-            
+            return false;
+        }
+    }
+
+    public class PlayerStateTransition : StateTransition<DemoPlayerController>
+    {
+
+        public PlayerStateTransition(DemoPlayerController source, StateTransitionScriptableObject transition) : base(source, transition)
+        {
+        }
+
+        protected override bool TriggerEvaluate()
+        {
+            return true;
         }
     }
 }

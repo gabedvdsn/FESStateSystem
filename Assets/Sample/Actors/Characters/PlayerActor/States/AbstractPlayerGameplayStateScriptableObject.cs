@@ -4,7 +4,7 @@ public abstract class AbstractPlayerGameplayStateScriptableObject : AbstractGame
 {
     public abstract class AbstractPlayerGameplayState : AbstractGameplayState
     {
-        public PlayerController Player;
+        public DemoPlayerController Player;
         
         public AbstractPlayerGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
         {
@@ -13,7 +13,7 @@ public abstract class AbstractPlayerGameplayStateScriptableObject : AbstractGame
         
         public override void Initialize()
         {
-            Player = State.GetComponent<PlayerController>();
+            Player = State.GetComponent<DemoPlayerController>();
         }
     }
 }

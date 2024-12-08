@@ -29,7 +29,7 @@ namespace FESStateSystem
             ModeratorChangeResponse(actor, oldModerator, newModerator);
         }
     
-        public void OnStateChanged(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayState oldState, AbstractGameplayState newState)
+        public void OnStateChanged(StateActor actor, StateContextTagScriptableObject contextTag, AbstractGameplayState oldState, AbstractGameplayState newState)
         {
             if (oldState?.StateData == newState.StateData && SkipChangeToSame) return;
         
@@ -40,7 +40,7 @@ namespace FESStateSystem
 
             if (ToConditional)
             {
-                if (!ToConditional.PreStateChangeActivate(actor, priorityTag, newState.StateData)) return;
+                if (!ToConditional.PreStateChangeActivate(actor, contextTag, newState.StateData)) return;
             }
         
             StateChangeResponse(actor, oldState, newState, FromConditional, ToConditional);

@@ -22,10 +22,10 @@ namespace FESStateSystem
         private MonoScript inheritsFromState;
         private Type inheritsBaseclass = typeof(AbstractGameplayStateScriptableObject);
         private bool isInheritable;
-    
+        
         private string actorTarget;
 
-        private string savePath = "Assets/Scripts/StateSystem/GameplayStates";
+        private string savePath = "Assets/Scripts/AuthoredStateSystem/GameplayStates";
 
         [MenuItem("StateSystem/State Creator")]
         public static void ShowWindow()
@@ -56,10 +56,11 @@ namespace FESStateSystem
                 }
             
                 string inheritedState = inheritsFromState.GetClass().ToString();
+                inheritedState = inheritedState.Split('.')[^1];
                 inheritedState = inheritedState.Replace("GameplayStateScriptableObject", "");
                 inheritedState = inheritedState.Replace("Abstract", "");
 
-                if (string.IsNullOrEmpty(actorTarget)) actorTarget = inheritedState;
+                actorTarget = inheritedState;
             
                 if (attachInherited)
                     realStateName = prefixInherited ? inheritedState + stateName : stateName + inheritedState;
@@ -104,7 +105,7 @@ namespace FESStateSystem
             EditorGUILayout.TextField("", scriptName);
             EditorGUILayout.TextField("", className);
             EditorGUI.EndDisabledGroup();
-        
+            
             EditorGUILayout.Space(10);
 
             try
@@ -126,8 +127,13 @@ namespace FESStateSystem
             {
                 isInheritable = false;
             }
-        
+            
+            EditorGUILayout.Space(10);
+            
+            GUILayout.Label("Asset Menu", EditorStyles.boldLabel);
+            
             actorTarget = EditorGUILayout.TextField("Actor Target", actorTarget);
+            
             string menuTarget = !string.IsNullOrEmpty(stateName) ? $"{stateName} State" : "";
             string menuPath = !isAbstract
                 ? $"FESStates/Actor/{(!string.IsNullOrEmpty(actorTarget) ? $"{actorTarget}/{menuTarget}" : $"General/{menuTarget}")}"
@@ -136,9 +142,13 @@ namespace FESStateSystem
             EditorGUILayout.TextField("", menuPath);
             EditorGUI.EndDisabledGroup();
         
+            EditorGUILayout.Space(10);
+            
+            GUILayout.Label("Save Path", EditorStyles.boldLabel);
             savePath = EditorGUILayout.TextField("Path", savePath);
         
             EditorGUILayout.Space(15);
+            
 
             if (File.Exists(Path.Combine(savePath + '/', scriptName + ".cs")))
             {

@@ -19,7 +19,7 @@ namespace FESStateSystem
 
         [Header("State")] 
         public bool ActiveStatesOnly = true;
-        public SerializedDictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> LookForState;
+        public SerializedDictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>> LookForState;
     
         /// <summary>
         /// Try to retrieve the source actor that aligns with LookFor parameters.
@@ -141,8 +141,8 @@ namespace FESStateSystem
         {
             if (ActiveStatesOnly)
             {
-                Dictionary<StatePriorityTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStates();
-                foreach (StatePriorityTagScriptableObject priorityTag in LookForState.Keys)
+                Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithPriority();
+                foreach (StateContextTagScriptableObject priorityTag in LookForState.Keys)
                 {
                     if (!activeStates.ContainsKey(priorityTag)) continue;
                     if (LookForState[priorityTag].All(s => s != activeStates[priorityTag].StateData)) return false;
@@ -150,7 +150,7 @@ namespace FESStateSystem
             }
             else
             {
-                foreach (StatePriorityTagScriptableObject priorityTag in LookForState.Keys)
+                foreach (StateContextTagScriptableObject priorityTag in LookForState.Keys)
                 {
                     if (!LookForState[priorityTag].All(s => actor.Moderator.DefinesState(priorityTag, s))) return false;
                 }

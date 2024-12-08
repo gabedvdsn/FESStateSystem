@@ -6,13 +6,6 @@ namespace FESStateSystem
 {
     public abstract class AbstractTransitionPredicate<S>
     {
-        protected S Source;
-        
-        protected AbstractTransitionPredicate(S source)
-        {
-            Source = source;
-        }
-
-        public abstract bool Evaluate();
+        public abstract bool Evaluate(S source);
     }
 }

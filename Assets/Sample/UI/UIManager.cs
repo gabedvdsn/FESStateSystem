@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using FESStateSystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -17,17 +18,17 @@ public class UIManager : MonoBehaviour
     
     public StateActor Actor;
     public TMP_Text WorldStateText;
-    public StatePriorityTagScriptableObject WorldPriority;
+    [FormerlySerializedAs("WorldPriority")] public StateContextTagScriptableObject worldContext;
     
     [Space]
     
     public TMP_Text GameplayStateText;
-    public StatePriorityTagScriptableObject GameplayPriority;
+    [FormerlySerializedAs("GameplayPriority")] public StateContextTagScriptableObject gameplayContext;
     
     [Space]
     
     public TMP_Text CharacterStateText;
-    public StatePriorityTagScriptableObject CharacterPriority;
+    [FormerlySerializedAs("CharacterPriority")] public StateContextTagScriptableObject characterContext;
     
     [Space]
     
@@ -64,8 +65,8 @@ public class UIManager : MonoBehaviour
 
         ModeratorText.text = Actor.Moderator.BaseModerator.name;
 
-        if (Actor.Moderator.TryGetActiveState(WorldPriority, out AbstractGameplayState worldState)) WorldStateText.text = $"World: {worldState.StateData.name}";
-        if (Actor.Moderator.TryGetActiveState(GameplayPriority, out AbstractGameplayState gameplayState)) GameplayStateText.text = $"Gameplay: {gameplayState.StateData.name}";
-        if (Actor.Moderator.TryGetActiveState(CharacterPriority, out AbstractGameplayState characterState)) CharacterStateText.text = $"Character: {characterState.StateData.name}";
+        if (Actor.Moderator.TryGetActiveState(worldContext, out AbstractGameplayState worldState)) WorldStateText.text = $"World: {worldState.StateData.name}";
+        if (Actor.Moderator.TryGetActiveState(gameplayContext, out AbstractGameplayState gameplayState)) GameplayStateText.text = $"Gameplay: {gameplayState.StateData.name}";
+        if (Actor.Moderator.TryGetActiveState(characterContext, out AbstractGameplayState characterState)) CharacterStateText.text = $"Character: {characterState.StateData.name}";
     }
 }
