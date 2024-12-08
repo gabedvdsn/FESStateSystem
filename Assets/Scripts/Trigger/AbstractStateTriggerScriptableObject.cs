@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
-public abstract class AbstractStateTriggerScriptableObject : ScriptableObject
+namespace FESStateSystem
 {
-    public abstract bool Activate(StateActor actor, bool flag);
+    public abstract class AbstractStateTriggerScriptableObject : ScriptableObject
+    {
+        public abstract bool Activate(StateActor actor, bool flag);
+    }
 }

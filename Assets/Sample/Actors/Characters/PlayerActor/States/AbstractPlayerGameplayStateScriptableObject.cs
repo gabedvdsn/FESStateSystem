@@ -1,4 +1,6 @@
-﻿public abstract class AbstractPlayerGameplayStateScriptableObject : AbstractGameplayStateScriptableObject
+﻿using FESStateSystem;
+
+public abstract class AbstractPlayerGameplayStateScriptableObject : AbstractGameplayStateScriptableObject
 {
     public abstract class AbstractPlayerGameplayState : AbstractGameplayState
     {

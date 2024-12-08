@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using FESStateSystem;
+using UnityEngine;
 
 [CreateAssetMenu(menuName = "FESState/Actor/Player/Walking State")]
 public class WalkingGameplayStateScriptableObject : AbstractPlayerGameplayStateScriptableObject

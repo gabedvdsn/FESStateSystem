@@ -1,51 +1,54 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
 
-public abstract class AbstractSystemChangeResponseScriptableObject : ScriptableObject
+namespace FESStateSystem
 {
-    public AbstractStateConditionalTriggerScriptableObject FromConditional;
-    public AbstractStateConditionalTriggerScriptableObject ToConditional;
-    
-    [Space]
-    
-    public bool SkipChangeToSame = true;
-
-    public void OnModeratorChanged(StateActor actor, StateModeratorScriptableObject oldModerator, StateModeratorScriptableObject newModerator)
+    public abstract class AbstractSystemChangeResponseScriptableObject : ScriptableObject
     {
-        if (oldModerator == newModerator && SkipChangeToSame) return;
-        
-        if (FromConditional)
-        {
-            if (!FromConditional.Activate(actor, true)) return;
-        }
-
-        if (ToConditional)
-        {
-            if (!ToConditional.PreModeratorChangeActivate(newModerator)) return;
-        }
-        
-        ModeratorChangeResponse(actor, oldModerator, newModerator);
-    }
+        public AbstractStateConditionalTriggerScriptableObject FromConditional;
+        public AbstractStateConditionalTriggerScriptableObject ToConditional;
     
-    public void OnStateChanged(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayState oldState, AbstractGameplayState newState)
-    {
-        if (oldState?.StateData == newState.StateData && SkipChangeToSame) return;
-        
-        if (FromConditional)
-        {
-            if (!FromConditional.Activate(actor, true)) return;
-        }
-
-        if (ToConditional)
-        {
-            if (!ToConditional.PreStateChangeActivate(actor, priorityTag, newState.StateData)) return;
-        }
-        
-        StateChangeResponse(actor, oldState, newState, FromConditional, ToConditional);
-        
-    }
-
-    protected abstract void ModeratorChangeResponse(StateActor actor, StateModeratorScriptableObject oldModerator, StateModeratorScriptableObject newModerator);
+        [Space]
     
-    protected abstract void StateChangeResponse(StateActor actor, AbstractGameplayState oldState, AbstractGameplayState newState, AbstractStateConditionalTriggerScriptableObject fromConditional, AbstractStateConditionalTriggerScriptableObject toConditional);
+        public bool SkipChangeToSame = true;
+
+        public void OnModeratorChanged(StateActor actor, StateModeratorScriptableObject oldModerator, StateModeratorScriptableObject newModerator)
+        {
+            if (oldModerator == newModerator && SkipChangeToSame) return;
+        
+            if (FromConditional)
+            {
+                if (!FromConditional.Activate(actor, true)) return;
+            }
+
+            if (ToConditional)
+            {
+                if (!ToConditional.PreModeratorChangeActivate(newModerator)) return;
+            }
+        
+            ModeratorChangeResponse(actor, oldModerator, newModerator);
+        }
+    
+        public void OnStateChanged(StateActor actor, StatePriorityTagScriptableObject priorityTag, AbstractGameplayState oldState, AbstractGameplayState newState)
+        {
+            if (oldState?.StateData == newState.StateData && SkipChangeToSame) return;
+        
+            if (FromConditional)
+            {
+                if (!FromConditional.Activate(actor, true)) return;
+            }
+
+            if (ToConditional)
+            {
+                if (!ToConditional.PreStateChangeActivate(actor, priorityTag, newState.StateData)) return;
+            }
+        
+            StateChangeResponse(actor, oldState, newState, FromConditional, ToConditional);
+        
+        }
+
+        protected abstract void ModeratorChangeResponse(StateActor actor, StateModeratorScriptableObject oldModerator, StateModeratorScriptableObject newModerator);
+    
+        protected abstract void StateChangeResponse(StateActor actor, AbstractGameplayState oldState, AbstractGameplayState newState, AbstractStateConditionalTriggerScriptableObject fromConditional, AbstractStateConditionalTriggerScriptableObject toConditional);
+    }
 }

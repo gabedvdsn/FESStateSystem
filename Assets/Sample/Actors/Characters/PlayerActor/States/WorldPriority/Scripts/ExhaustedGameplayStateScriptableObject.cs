@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using FESStateSystem;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "FESState/Actor/Player/Exhausted State")]

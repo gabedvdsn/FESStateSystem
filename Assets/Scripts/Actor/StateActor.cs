@@ -3,30 +3,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StateActor : MonoBehaviour
+namespace FESStateSystem
 {
-    public StateIdentifierTagScriptableObject GeneralIdentifier;
+    public class StateActor : MonoBehaviour
+    {
+        public StateIdentifierTagScriptableObject GeneralIdentifier;
     
-    public StateModerator Moderator;
+        public StateModerator Moderator;
 
-    protected virtual void Awake()
-    {
-        GameplayStateManager.Instance.SubscribeActor(this);
-    }
+        public delegate void DisableAction();
+
+        private DisableAction OnDisableEvent;
+
+        protected virtual void Awake()
+        {
+            GameplayStateManager.Instance.SubscribeActor(this);
+        }
     
-    protected virtual void Update()
-    {
-        Moderator?.RunStatesLogicUpdate();
-    }
+        protected virtual void Update()
+        {
+            Moderator?.RunStatesLogicUpdate();
+        }
     
-    protected virtual void LateUpdate()
-    {
-        Moderator?.RunStatesPhysicsUpdate();
-    }
+        protected virtual void LateUpdate()
+        {
+            Moderator?.RunStatesPhysicsUpdate();
+        }
 
-    protected virtual void OnDestroy()
-    {
-        GameplayStateManager.Instance.UnsubscribeActor(this);
-    }
+        protected virtual void OnDisable()
+        {
+            OnDisableEvent?.Invoke();
+        }
 
+        protected virtual void OnDestroy()
+        {
+            GameplayStateManager.Instance.UnsubscribeActor(this);
+        }
+
+    }
 }

@@ -1,41 +1,44 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class AbstractRetrieveStateActorScriptableObject : ScriptableObject
+namespace FESStateSystem
 {
-    public virtual bool TryRetrieveActor<T>(out T actor) where T : StateActor
+    public abstract class AbstractRetrieveStateActorScriptableObject : ScriptableObject
     {
-        try
+        public virtual bool TryRetrieveActor<T>(out T actor) where T : StateActor
         {
-            actor = RetrieveActor<T>();
-            return actor is not null;
+            try
+            {
+                actor = RetrieveActor<T>();
+                return actor is not null;
+            }
+            catch
+            {
+                actor = null;
+                return false;
+            }
         }
-        catch
-        {
-            actor = null;
-            return false;
-        }
-    }
 
-    public virtual bool TryRetrieveManyActors<T>(int count, out List<T> actors) where T : StateActor
-    {
-        try
+        public virtual bool TryRetrieveManyActors<T>(int count, out List<T> actors) where T : StateActor
         {
-            actors = RetrieveManyActors<T>(count);
-            return actors is not null && actors.Count > 0;
+            try
+            {
+                actors = RetrieveManyActors<T>(count);
+                return actors is not null && actors.Count > 0;
+            }
+            catch
+            {
+                actors = null;
+                return false;
+            }
         }
-        catch
+
+        public virtual bool TryRetrieveAllActors<T>(out List<T> actors) where T : StateActor
         {
-            actors = null;
-            return false;
+            return TryRetrieveManyActors(-1, out actors);
         }
-    }
 
-    public virtual bool TryRetrieveAllActors<T>(out List<T> actors) where T : StateActor
-    {
-        return TryRetrieveManyActors(-1, out actors);
+        protected abstract T RetrieveActor<T>() where T : StateActor;
+        protected abstract List<T> RetrieveManyActors<T>(int count) where T : StateActor;
     }
-
-    protected abstract T RetrieveActor<T>() where T : StateActor;
-    protected abstract List<T> RetrieveManyActors<T>(int count) where T : StateActor;
 }

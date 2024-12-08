@@ -4,14 +4,17 @@ using AYellowpaper.SerializedCollections;
 using JetBrains.Annotations;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "FESState/State/Environment")]
-public class StateEnvironmentScriptableObject : ScriptableObject
+namespace FESStateSystem
 {
-    [SerializedDictionary("General Identifier Tag", "Initial State Trigger")]
-    [SerializeField] private SerializedDictionary<StateIdentifierTagScriptableObject, InitializationStateTriggerScriptableObject> GeneralIdentifierInitialStateTriggers;
-
-    public InitializationStateTriggerScriptableObject GetInitialStateTrigger(StateIdentifierTagScriptableObject GeneralIdentifierTag)
+    [CreateAssetMenu(menuName = "FESState/State/Environment")]
+    public class StateEnvironmentScriptableObject : ScriptableObject
     {
-        return GeneralIdentifierInitialStateTriggers.TryGetValue(GeneralIdentifierTag, out InitializationStateTriggerScriptableObject initialTrigger) ? initialTrigger : null;
+        [SerializedDictionary("General Identifier Tag", "Initial State Trigger")]
+        [SerializeField] private SerializedDictionary<StateIdentifierTagScriptableObject, InitializationStateTriggerScriptableObject> GeneralIdentifierInitialStateTriggers;
+
+        public InitializationStateTriggerScriptableObject GetInitialStateTrigger(StateIdentifierTagScriptableObject GeneralIdentifierTag)
+        {
+            return GeneralIdentifierInitialStateTriggers.TryGetValue(GeneralIdentifierTag, out InitializationStateTriggerScriptableObject initialTrigger) ? initialTrigger : null;
+        }
     }
 }

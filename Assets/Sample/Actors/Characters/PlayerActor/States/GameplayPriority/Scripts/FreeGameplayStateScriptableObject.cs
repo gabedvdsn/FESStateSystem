@@ -1,4 +1,5 @@
 ﻿
+using FESStateSystem;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "FESState/Actor/Player/Free State")]

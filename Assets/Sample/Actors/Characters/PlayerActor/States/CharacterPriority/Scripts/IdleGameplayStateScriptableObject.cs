@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using FESStateSystem;
+using UnityEngine;
 
 [CreateAssetMenu(menuName = "FESState/Actor/Player/Idle State")]
 public class IdleGameplayStateScriptableObject : AbstractPlayerGameplayStateScriptableObject

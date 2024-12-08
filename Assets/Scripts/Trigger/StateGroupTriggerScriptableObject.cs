@@ -2,13 +2,16 @@
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "FESState/Trigger/State Trigger Group")]
-public class StateGroupTriggerScriptableObject : AbstractStateTriggerScriptableObject
+namespace FESStateSystem
 {
-    public List<StateTriggerScriptableObject> Triggers;
-    
-    public override bool Activate(StateActor actor, bool flag)
+    [CreateAssetMenu(menuName = "FESState/Trigger/State Trigger Group")]
+    public class StateGroupTriggerScriptableObject : AbstractStateTriggerScriptableObject
     {
-        return Triggers.All(t => t.Activate(actor, flag));
+        public List<StateTriggerScriptableObject> Triggers;
+    
+        public override bool Activate(StateActor actor, bool flag)
+        {
+            return Triggers.All(t => t.Activate(actor, flag));
+        }
     }
 }

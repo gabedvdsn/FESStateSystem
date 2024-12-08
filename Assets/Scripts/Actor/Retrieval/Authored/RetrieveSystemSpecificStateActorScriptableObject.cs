@@ -4,162 +4,165 @@ using System.Linq;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "FESState/Retrieval/System Specific")]
-public class RetrieveSystemSpecificStateActorScriptableObject : AbstractRetrieveStateActorScriptableObject
+namespace FESStateSystem
 {
-    [Header("Source Retrieval [Can Be Null]")] 
-    
-    [Tooltip("If null, retrieves the first actor that fits criteria from every subscribed actor. Be careful about infinite retrieval cycles.")]
-    public AbstractRetrieveStateActorScriptableObject SourceRetrieval;
-
-    [Header("Moderator")]
-    public List<StateModeratorScriptableObject> LookForModerator;
-
-    [Header("State")] 
-    public bool ActiveStatesOnly = true;
-    public SerializedDictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> LookForState;
-    
-    /// <summary>
-    /// Try to retrieve the source actor that aligns with LookFor parameters.
-    /// </summary>
-    /// <param name="actor"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public override bool TryRetrieveActor<T>(out T actor)
+    [CreateAssetMenu(menuName = "FESState/Retrieval/System Specific")]
+    public class RetrieveSystemSpecificStateActorScriptableObject : AbstractRetrieveStateActorScriptableObject
     {
-        try
-        {
-            if (SourceRetrieval) return SourceRetrieval.TryRetrieveActor(out actor) && ValidateSource(actor);
-            
-            actor = RetrieveActor<T>();
-            return actor is not null;
-        }
-        catch
-        {
-            actor = null;
-            return false;
-        }
-    }
+        [Header("Source Retrieval [Can Be Null]")] 
+    
+        [Tooltip("If null, retrieves the first actor that fits criteria from every subscribed actor. Be careful about infinite retrieval cycles.")]
+        public AbstractRetrieveStateActorScriptableObject SourceRetrieval;
 
-    /// <summary>
-    /// Try to retrieve the many source actors that align with LookFor parameters.
-    /// </summary>
-    /// <param name="count"></param>
-    /// <param name="actors"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public override bool TryRetrieveManyActors<T>(int count, out List<T> actors)
-    {
-        try
+        [Header("Moderator")]
+        public List<StateModeratorScriptableObject> LookForModerator;
+
+        [Header("State")] 
+        public bool ActiveStatesOnly = true;
+        public SerializedDictionary<StatePriorityTagScriptableObject, List<AbstractGameplayStateScriptableObject>> LookForState;
+    
+        /// <summary>
+        /// Try to retrieve the source actor that aligns with LookFor parameters.
+        /// </summary>
+        /// <param name="actor"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public override bool TryRetrieveActor<T>(out T actor)
         {
-            if (SourceRetrieval)
+            try
             {
-                
-                if (SourceRetrieval.TryRetrieveManyActors(count, out List<T> sources))
+                if (SourceRetrieval) return SourceRetrieval.TryRetrieveActor(out actor) && ValidateSource(actor);
+            
+                actor = RetrieveActor<T>();
+                return actor is not null;
+            }
+            catch
+            {
+                actor = null;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Try to retrieve the many source actors that align with LookFor parameters.
+        /// </summary>
+        /// <param name="count"></param>
+        /// <param name="actors"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public override bool TryRetrieveManyActors<T>(int count, out List<T> actors)
+        {
+            try
+            {
+                if (SourceRetrieval)
                 {
-                    actors = ValidateSources(sources);
-                    return actors.Count > 0;
+                
+                    if (SourceRetrieval.TryRetrieveManyActors(count, out List<T> sources))
+                    {
+                        actors = ValidateSources(sources);
+                        return actors.Count > 0;
+                    }
+
+                    actors = null;
+                    return false;
                 }
 
+                actors = RetrieveManyActors<T>(count);
+                return actors is not null && actors.Count > 0;
+            }
+            catch
+            {
                 actors = null;
                 return false;
             }
-
-            actors = RetrieveManyActors<T>(count);
-            return actors is not null && actors.Count > 0;
         }
-        catch
-        {
-            actors = null;
-            return false;
-        }
-    }
 
-    protected override T RetrieveActor<T>()
-    {
-        Dictionary<StateIdentifierTagScriptableObject, List<StateActor>> allActors = GameplayStateManager.Instance.AllActors;
-        foreach (StateIdentifierTagScriptableObject actorTag in allActors.Keys)
+        protected override T RetrieveActor<T>()
         {
-            foreach (StateActor actor in allActors[actorTag])
+            Dictionary<StateIdentifierTagScriptableObject, List<StateActor>> allActors = GameplayStateManager.Instance.AllActors;
+            foreach (StateIdentifierTagScriptableObject actorTag in allActors.Keys)
             {
-                if (ValidateModerator(actor) && ValidateStates(actor)) return actor as T;
-            }
-        }
-
-        return null;
-    }
-    
-    protected override List<T> RetrieveManyActors<T>(int count)
-    {
-        Dictionary<StateIdentifierTagScriptableObject, List<StateActor>> allActors = GameplayStateManager.Instance.AllActors;
-        List<T> actors = new List<T>();
-        int realCount = count < 0 ? allActors.Sum(kvp => kvp.Value.Count) : count;
-        int activeCount = 0;
-        
-        foreach (StateIdentifierTagScriptableObject actorTag in allActors.Keys)
-        {
-            foreach (StateActor actor in allActors[actorTag])
-            {
-                if (activeCount >= realCount) return actors;
-                if (ValidateSource(actor))
+                foreach (StateActor actor in allActors[actorTag])
                 {
-                    actors.Add(actor as T);
-                    activeCount += 1;
+                    if (ValidateModerator(actor) && ValidateStates(actor)) return actor as T;
                 }
             }
+
+            return null;
         }
-
-        return actors;
-    }
-
-    private bool ValidateSource<T>(T source) where T : StateActor
-    {
-        return ValidateModerator(source) && ValidateStates(source);
-    }
     
-    private List<T> ValidateSources<T>(List<T> sources) where T : StateActor
-    {
-        List<T> validated = new List<T>();
-        foreach (T source in sources)
+        protected override List<T> RetrieveManyActors<T>(int count)
         {
-            if (ValidateSource(source)) validated.Add(source);
+            Dictionary<StateIdentifierTagScriptableObject, List<StateActor>> allActors = GameplayStateManager.Instance.AllActors;
+            List<T> actors = new List<T>();
+            int realCount = count < 0 ? allActors.Sum(kvp => kvp.Value.Count) : count;
+            int activeCount = 0;
+        
+            foreach (StateIdentifierTagScriptableObject actorTag in allActors.Keys)
+            {
+                foreach (StateActor actor in allActors[actorTag])
+                {
+                    if (activeCount >= realCount) return actors;
+                    if (ValidateSource(actor))
+                    {
+                        actors.Add(actor as T);
+                        activeCount += 1;
+                    }
+                }
+            }
+
+            return actors;
         }
 
-        return validated;
-    }
+        private bool ValidateSource<T>(T source) where T : StateActor
+        {
+            return ValidateModerator(source) && ValidateStates(source);
+        }
     
-    private bool ValidateModerator(StateActor actor)
-    {
-        if (LookForModerator is not null && LookForModerator.Count > 0) return LookForModerator.Any(m => actor.Moderator.BaseModerator == m);
-
-        return true;
-    }
-
-    private bool ValidateStates(StateActor actor)
-    {
-        if (ActiveStatesOnly)
+        private List<T> ValidateSources<T>(List<T> sources) where T : StateActor
         {
-            Dictionary<StatePriorityTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStates();
-            foreach (StatePriorityTagScriptableObject priorityTag in LookForState.Keys)
+            List<T> validated = new List<T>();
+            foreach (T source in sources)
             {
-                if (!activeStates.ContainsKey(priorityTag)) continue;
-                if (LookForState[priorityTag].All(s => s != activeStates[priorityTag].StateData)) return false;
+                if (ValidateSource(source)) validated.Add(source);
             }
+
+            return validated;
         }
-        else
+    
+        private bool ValidateModerator(StateActor actor)
         {
-            foreach (StatePriorityTagScriptableObject priorityTag in LookForState.Keys)
-            {
-                if (!LookForState[priorityTag].All(s => actor.Moderator.DefinesState(priorityTag, s))) return false;
-            }
+            if (LookForModerator is not null && LookForModerator.Count > 0) return LookForModerator.Any(m => actor.Moderator.BaseModerator == m);
+
+            return true;
         }
 
-        return true;
+        private bool ValidateStates(StateActor actor)
+        {
+            if (ActiveStatesOnly)
+            {
+                Dictionary<StatePriorityTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStates();
+                foreach (StatePriorityTagScriptableObject priorityTag in LookForState.Keys)
+                {
+                    if (!activeStates.ContainsKey(priorityTag)) continue;
+                    if (LookForState[priorityTag].All(s => s != activeStates[priorityTag].StateData)) return false;
+                }
+            }
+            else
+            {
+                foreach (StatePriorityTagScriptableObject priorityTag in LookForState.Keys)
+                {
+                    if (!LookForState[priorityTag].All(s => actor.Moderator.DefinesState(priorityTag, s))) return false;
+                }
+            }
 
-    }
+            return true;
 
-    private void OnValidate()
-    {
-        if (SourceRetrieval == this) SourceRetrieval = null;
+        }
+
+        private void OnValidate()
+        {
+            if (SourceRetrieval == this) SourceRetrieval = null;
+        }
     }
 }

@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(menuName = "FESState/State/Tag/Identifier")]
-public class StateIdentifierTagScriptableObject : ScriptableObject
+namespace FESStateSystem
 {
-    public string Name;
+    [CreateAssetMenu(menuName = "FESState/State/Tag/Identifier")]
+    public class StateIdentifierTagScriptableObject : ScriptableObject
+    {
+        public string Name;
+    }
 }

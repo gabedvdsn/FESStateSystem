@@ -3,28 +3,31 @@ using AYellowpaper.SerializedCollections;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-[CreateAssetMenu(menuName = "FESState/Trigger/Initialization Trigger")]
-public class InitializationStateTriggerScriptableObject : AbstractStateTriggerScriptableObject
+namespace FESStateSystem
 {
-    [Header("Initialization")]
-    public StateModeratorScriptableObject InitialModerator;
-    public SerializedDictionary<StatePriorityTagScriptableObject, AbstractGameplayStateScriptableObject> OverrideStates;
-    
-    public override bool Activate(StateActor actor, bool flag)
+    [CreateAssetMenu(menuName = "FESState/Trigger/Initialization Trigger")]
+    public class InitializationStateTriggerScriptableObject : AbstractStateTriggerScriptableObject
     {
-        actor.Moderator = InitialModerator.GenerateModerator(actor);
-        
-        foreach (StatePriorityTagScriptableObject priorityTag in OverrideStates.Keys)
+        [Header("Initialization")]
+        public StateModeratorScriptableObject InitialModerator;
+        public SerializedDictionary<StatePriorityTagScriptableObject, AbstractGameplayStateScriptableObject> OverrideStates;
+    
+        public override bool Activate(StateActor actor, bool flag)
         {
-            if (!actor.Moderator.DefinesState(priorityTag, OverrideStates[priorityTag])) continue;
-            actor.Moderator.DefaultChangeState(priorityTag, OverrideStates[priorityTag]);
-        }
+            actor.Moderator = InitialModerator.GenerateModerator(actor);
+        
+            foreach (StatePriorityTagScriptableObject priorityTag in OverrideStates.Keys)
+            {
+                if (!actor.Moderator.DefinesState(priorityTag, OverrideStates[priorityTag])) continue;
+                actor.Moderator.DefaultChangeState(priorityTag, OverrideStates[priorityTag]);
+            }
 
-        return true;
-    }
+            return true;
+        }
     
-    protected void OnValidate()
-    {
-        if (!InitialModerator) throw new Exception("Initialization State Trigger must define Override Moderator");
+        protected void OnValidate()
+        {
+            if (!InitialModerator) throw new Exception("Initialization State Trigger must define Override Moderator");
+        }
     }
 }

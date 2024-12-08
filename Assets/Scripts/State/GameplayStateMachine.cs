@@ -2,27 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class GameplayStateMachine
+namespace FESStateSystem
 {
-    public AbstractGameplayState CurrentState;
-
-    public void Initialize(AbstractGameplayState initialState)
+    public class GameplayStateMachine
     {
-        CurrentState = initialState;
-        initialState.Enter();
-    }
+        public AbstractGameplayState CurrentState;
 
-    public void ChangeState(AbstractGameplayState newState)
-    {
-        CurrentState.Exit();
-        CurrentState = newState;
-        CurrentState.Enter();
-    }
+        public void Initialize(AbstractGameplayState initialState)
+        {
+            CurrentState = initialState;
+            initialState.Enter();
+        }
 
-    public void InterruptChangeState(AbstractGameplayState newState)
-    {
-        CurrentState.Interrupt();
-        ChangeState(newState);
+        public void ChangeState(AbstractGameplayState newState)
+        {
+            CurrentState.Exit();
+            CurrentState = newState;
+            CurrentState.Enter();
+        }
+
+        public void InterruptChangeState(AbstractGameplayState newState)
+        {
+            CurrentState.Interrupt();
+            ChangeState(newState);
+        }
     }
 }
