@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace FESStateSystem
 {
-    [CreateAssetMenu(menuName = "FESState/System Change Response/Debug")]
+    [CreateAssetMenu(menuName = "FESState/State/System Change Response/Debug")]
     public class DebugSystemChangeResponse : AbstractSystemChangeResponseScriptableObject
     {
         protected override void ModeratorChangeResponse(StateActor actor, StateModeratorScriptableObject oldModerator, StateModeratorScriptableObject newModerator)

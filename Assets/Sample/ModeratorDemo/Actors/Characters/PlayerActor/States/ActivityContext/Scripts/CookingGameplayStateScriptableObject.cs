@@ -1,65 +1,65 @@
 using System.Collections;
 using System.Collections.Generic;
-using FESStateSystem;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "FESState/Actor/Player/Cooking State")]
-public class CookingGameplayStateScriptableObject : AbstractPlayerGameplayStateScriptableObject
+namespace FESStateSystem.ModeratorDemo
 {
-    public override List<AbstractGameplayState> GenerateStates(StateActor actor)
+    public class CookingGameplayStateScriptableObject : AbstractPlayerGameplayStateScriptableObject
     {
-        return new List<AbstractGameplayState>()
+        public override List<AbstractGameplayState> GenerateStates(StateActor actor)
         {
-            new CookingGameplayState(this, actor)
-        };
-    }
-    
-    public class CookingGameplayState : AbstractPlayerGameplayState
-    {
-        private float progress;
-        private float speed = .75f;
-        
-        public CookingGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
-        {
-        }
-
-        public override void Enter()
-        {
-            progress = 0f;
-            UIManager.Instance.EnableProgressSlider("Cooking");
-            // Play cooking animation
-        }
-        public override void LogicUpdate()
-        {
-            UIManager.Instance.SetProgressSliderValue(progress);
-            progress += speed * Time.deltaTime;
-            if (progress >= 1f)
+            return new List<AbstractGameplayState>()
             {
-                Conclude();
+                new CookingGameplayState(this, actor)
+            };
+        }
+    
+        public class CookingGameplayState : AbstractPlayerGameplayState
+        {
+            private float progress;
+            private float speed = .75f;
+        
+            public CookingGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
+            {
             }
-            // Run cooking progress bar
-        }
-        public override void PhysicsUpdate()
-        {
-            // Nothing needed
-        }
+
+            public override void Enter()
+            {
+                progress = 0f;
+                UIManager.Instance.EnableProgressSlider("Cooking");
+                // Play cooking animation
+            }
+            public override void LogicUpdate()
+            {
+                UIManager.Instance.SetProgressSliderValue(progress);
+                progress += speed * Time.deltaTime;
+                if (progress >= 1f)
+                {
+                    Conclude();
+                }
+                // Run cooking progress bar
+            }
+            public override void PhysicsUpdate()
+            {
+                // Nothing needed
+            }
         
-        public override void Interrupt()
-        {
-            // Don't collect cooking rewards
-        }
+            public override void Interrupt()
+            {
+                // Don't collect cooking rewards
+            }
         
-        public override void Conclude()
-        {
-            // Collect cooking rewards
+            public override void Conclude()
+            {
+                // Collect cooking rewards
             
-            base.Conclude();
-        }
-        public override void Exit()
-        {
-            UIManager.Instance.DisableProgressSlider();
-            // Exit cooking animation
+                base.Conclude();
+            }
+            public override void Exit()
+            {
+                UIManager.Instance.DisableProgressSlider();
+                // Exit cooking animation
+            }
         }
     }
 }
-

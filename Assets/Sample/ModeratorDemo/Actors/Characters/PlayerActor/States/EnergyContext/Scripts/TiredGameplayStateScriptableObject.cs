@@ -1,48 +1,49 @@
 using System.Collections;
 using System.Collections.Generic;
-using FESStateSystem;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "FESState/Actor/Player/Tired State")]
-public class TiredGameplayStateScriptableObject : AbstractPlayerGameplayStateScriptableObject
+namespace FESStateSystem.ModeratorDemo
 {
-    public override List<AbstractGameplayState> GenerateStates(StateActor actor)
+    public class TiredGameplayStateScriptableObject : AbstractPlayerGameplayStateScriptableObject
     {
-        return new List<AbstractGameplayState>()
+        public override List<AbstractGameplayState> GenerateStates(StateActor actor)
         {
-            new TiredGameplayState(this, actor)
-        };
-    }
+            return new List<AbstractGameplayState>()
+            {
+                new TiredGameplayState(this, actor)
+            };
+        }
     
-    public class TiredGameplayState : AbstractPlayerGameplayState
-    {
+        public class TiredGameplayState : AbstractPlayerGameplayState
+        {
 
-        public TiredGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
-        {
-        }
-        public override void Enter()
-        {
+            public TiredGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor) : base(stateData, actor)
+            {
+            }
+            public override void Enter()
+            {
             
-        }
-        public override void LogicUpdate()
-        {
+            }
+            public override void LogicUpdate()
+            {
             
-        }
-        public override void PhysicsUpdate()
-        {
+            }
+            public override void PhysicsUpdate()
+            {
             
-        }
-        public override void Interrupt()
-        {
+            }
+            public override void Interrupt()
+            {
             
-        }
-        public override void Conclude()
-        {
-            base.Conclude();
-        }
-        public override void Exit()
-        {
+            }
+            public override void Conclude()
+            {
+                base.Conclude();
+            }
+            public override void Exit()
+            {
             
+            }
         }
     }
 }
