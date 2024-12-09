@@ -26,19 +26,20 @@ namespace FESStateSystem
         {
             Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>> states =
                 new Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>>();
+            
             foreach (AbstractStateConditionalTriggerScriptableObject conditional in Conditionals)
             {
                 Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>> cStates = conditional.GetStates();
-                foreach (StateContextTagScriptableObject priorityTag in cStates.Keys)
+                foreach (StateContextTagScriptableObject contextTag in cStates.Keys)
                 {
-                    if (states.ContainsKey(priorityTag))
+                    if (states.ContainsKey(contextTag))
                     {
-                        foreach (AbstractGameplayStateScriptableObject state in cStates[priorityTag].Where(state => !states[priorityTag].Contains(state)))
+                        foreach (AbstractGameplayStateScriptableObject state in cStates[contextTag].Where(state => !states[contextTag].Contains(state)))
                         {
-                            states[priorityTag].Add(state);
+                            states[contextTag].Add(state);
                         }
                     }
-                    else states[priorityTag] = cStates[priorityTag];
+                    else states[contextTag] = cStates[contextTag];
                 }
             }
 

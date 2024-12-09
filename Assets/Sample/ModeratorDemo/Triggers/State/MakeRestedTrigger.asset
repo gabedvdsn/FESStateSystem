@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c0689f9f8f42264fb27d403156ce74c, type: 3}
   m_Name: MakeRestedTrigger
   m_EditorClassIdentifier: 
-  ForceOverride: 0
-  ReEnterSameStates: 0
+  ForceOverrideModerator: 0
   OverrideModerator: {fileID: 0}
+  TryPreserveAllStates: 0
   TryPreserveStates: []
+  FoceOverrideStates: 0
   OverrideStates:
     _serializedList:
-    - Key: {fileID: 11400000, guid: 9978f5e125a0d874faa134abd9f79174, type: 2}
+    - Key: {fileID: 11400000, guid: 5be2b7c35712b6f40a35ba73eec68126, type: 2}
       Value: {fileID: 11400000, guid: 9c5f7f36438791c408e9d43ae5e88818, type: 2}
+  ReEnterSameStates: 0

@@ -16,10 +16,9 @@ MonoBehaviour:
   LookForModerators: []
   LookForStates:
     _serializedList:
-    - Key: {fileID: 11400000, guid: 9978f5e125a0d874faa134abd9f79174, type: 2}
+    - Key: {fileID: 11400000, guid: 5be2b7c35712b6f40a35ba73eec68126, type: 2}
       Value:
       - {fileID: 11400000, guid: 412fc579b57d9d54994bcc5f4ac0ea31, type: 2}
-  LookForAny: 1
   ActiveStatesOnly: 1
   AllowDescendants: 0
   AllowRelations: 0

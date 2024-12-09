@@ -9,8 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58891ca6340a4fcf87e380065546eadf, type: 3}
-  m_Name: RetrieveFarthestPlantFromActor
+  m_Script: {fileID: 11500000, guid: de11ce58b15e22f45b2deae6cf3e1b50, type: 3}
+  m_Name: PlayerHomeState
   m_EditorClassIdentifier: 
-  SourceRetrieval: {fileID: 11400000, guid: 30a01a2144385cf40ad98361b4c9656d, type: 2}
-  TargetTag: {fileID: 11400000, guid: 0b280ee1afce6da4dafaee1890bc08af, type: 2}
+  Parent: {fileID: 0}
+  OnConcludeTrigger: {fileID: 0}
+  CacheState: 0
+  SelectionPriority: 0

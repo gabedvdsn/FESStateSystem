@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ffb57d0b01bd094dacded974e66dee7, type: 3}
-  m_Name: CompleteWorldStates
+  m_Script: {fileID: 11500000, guid: b809cd7d299a4212b9ce4430d015c561, type: 3}
+  m_Name: AllEnergyStatesGroup
   m_EditorClassIdentifier: 
   States:
   - {fileID: 11400000, guid: 4205b694c46372248b1e967771abc7ab, type: 2}

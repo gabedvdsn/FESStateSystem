@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: FarmActivityStatesGroup
   m_EditorClassIdentifier: 
   States:
-  - {fileID: 11400000, guid: 283a02be010c49540a00cd123763c6b4, type: 2}
   - {fileID: 11400000, guid: b26ad38133bc80f408e82e79dc7e10d9, type: 2}
   - {fileID: 11400000, guid: c78b5767e5e9e7e45b3f9ded1f15a81a, type: 2}
   - {fileID: 11400000, guid: 4333dc51d32ef634f8c62c375b52cffc, type: 2}

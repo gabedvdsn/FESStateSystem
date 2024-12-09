@@ -9,16 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7253ef45fe0245208d6d11fa2d5dbe9c, type: 3}
-  m_Name: HarvestingConditionTrigger
+  m_Script: {fileID: 11500000, guid: 6c0689f9f8f42264fb27d403156ce74c, type: 3}
+  m_Name: MakeCookingTrigger
   m_EditorClassIdentifier: 
-  FalseOnNullActor: 1
-  LookForModerators: []
-  LookForStates:
+  OverrideModerator: {fileID: 0}
+  TryPreserveAllStates: 0
+  TryPreserveStates: []
+  ForceOverrideStates: 0
+  OverrideStates:
     _serializedList:
     - Key: {fileID: 11400000, guid: 27db2071ebb61f74caaacb5070adf7a3, type: 2}
-      Value:
-      - {fileID: 11400000, guid: b26ad38133bc80f408e82e79dc7e10d9, type: 2}
-  ActiveStatesOnly: 1
-  AllowDescendants: 0
-  AllowRelations: 0
+      Value: {fileID: 11400000, guid: 6a9e7995d561b304c97dda9674356e1e, type: 2}
+  ReEnterSameStates: 0

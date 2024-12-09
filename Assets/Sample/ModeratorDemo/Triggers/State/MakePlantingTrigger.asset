@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c0689f9f8f42264fb27d403156ce74c, type: 3}
-  m_Name: EnterHarvestingTrigger
+  m_Name: MakePlantingTrigger
   m_EditorClassIdentifier: 
-  ForceOverride: 0
-  ReEnterSameStates: 0
   OverrideModerator: {fileID: 0}
+  TryPreserveAllStates: 0
   TryPreserveStates: []
+  ForceOverrideStates: 0
   OverrideStates:
     _serializedList:
-    - Key: {fileID: 11400000, guid: 5be2b7c35712b6f40a35ba73eec68126, type: 2}
-      Value: {fileID: 11400000, guid: b26ad38133bc80f408e82e79dc7e10d9, type: 2}
+    - Key: {fileID: 11400000, guid: 27db2071ebb61f74caaacb5070adf7a3, type: 2}
+      Value: {fileID: 11400000, guid: 4333dc51d32ef634f8c62c375b52cffc, type: 2}
+  ReEnterSameStates: 0

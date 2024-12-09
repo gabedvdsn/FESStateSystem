@@ -142,17 +142,17 @@ namespace FESStateSystem
             if (ActiveStatesOnly)
             {
                 Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithPriority();
-                foreach (StateContextTagScriptableObject priorityTag in LookForState.Keys)
+                foreach (StateContextTagScriptableObject contextTag in LookForState.Keys)
                 {
-                    if (!activeStates.ContainsKey(priorityTag)) continue;
-                    if (LookForState[priorityTag].All(s => s != activeStates[priorityTag].StateData)) return false;
+                    if (!activeStates.ContainsKey(contextTag)) continue;
+                    if (LookForState[contextTag].All(s => s != activeStates[contextTag].StateData)) return false;
                 }
             }
             else
             {
-                foreach (StateContextTagScriptableObject priorityTag in LookForState.Keys)
+                foreach (StateContextTagScriptableObject contextTag in LookForState.Keys)
                 {
-                    if (!LookForState[priorityTag].All(s => actor.Moderator.DefinesState(priorityTag, s))) return false;
+                    if (!LookForState[contextTag].All(s => actor.Moderator.DefinesState(contextTag, s))) return false;
                 }
             }
 

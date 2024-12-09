@@ -1,19 +1,11 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using AYellowpaper.SerializedCollections;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace FESStateSystem
 {
     [CreateAssetMenu(menuName = "FESState/State/Moderator")]
     public class StateModeratorScriptableObject : ScriptableObject
     {
-        [Header("Context")]
-    
-        public StateContextTagScriptableObject ModeratorContext;
-
         [Header("States Manifest")] 
     
         public GameplayStateManifestScriptableObject Manifest;

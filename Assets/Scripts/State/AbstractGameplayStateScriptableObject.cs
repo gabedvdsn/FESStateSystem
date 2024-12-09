@@ -19,12 +19,6 @@ namespace FESStateSystem
         [Header("Transition Behaviour")]
         public int SelectionPriority = 0;
 
-
-        public override AbstractGameplayStateScriptableObject Initial()
-        {
-            return this;
-        }
-
         public override bool Defines(AbstractGameplayStateScriptableObject state)
         {
             return state == this;

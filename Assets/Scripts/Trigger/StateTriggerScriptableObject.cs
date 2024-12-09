@@ -15,16 +15,16 @@ namespace FESStateSystem
     public class StateTriggerScriptableObject : AbstractStateTriggerScriptableObject
     {
         [Header("Moderator Trigger")]
-        public bool ForceOverrideModerator;
         public StateModeratorScriptableObject OverrideModerator;
 
         [Space] 
+        
         public bool TryPreserveAllStates;
         public List<StateContextTagScriptableObject> TryPreserveStates;
     
-        [Header("States Trigger")]
+        [FormerlySerializedAs("FoceOverrideStates")] [Header("States Trigger")]
     
-        public bool FoceOverrideStates;
+        public bool ForceOverrideStates;
         public SerializedDictionary<StateContextTagScriptableObject, AbstractGameplayStateScriptableObject> OverrideStates;
     
         [Header("Other")]
@@ -42,60 +42,35 @@ namespace FESStateSystem
             // We want to change the actor's state moderator
             if (OverrideModerator)
             {
-                if (!ForceOverrideModerator)
-                {
-                    if (OverrideModerator.ModeratorContext > actor.Moderator.BaseModerator.ModeratorContext)
-                    {
-                        // If no override states, we are done and return false (nothing was done)
-                        if (OverrideStates is null) return false;
-                
-                        // There are override states
-                        foreach (StateContextTagScriptableObject priorityTag in OverrideStates.Keys)
-                        {
-                            if (!actor.Moderator.DefinesState(priorityTag, OverrideStates[priorityTag]) && !FoceOverrideStates) continue;
-
-                            ChangeState(actor.Moderator, priorityTag, OverrideStates[priorityTag], flag);
-                        }
-
-                        return true;
-                    }
-
-                    if (OverrideModerator == actor.Moderator.BaseModerator) return false;
-                }
-            
                 // Let's implement the override moderator
-                StateModerator.MetaStateModerator overrideModerator = StateModerator.GenerateMeta(OverrideModerator);
+                StateModerator.StateModeratorMeta overrideModerator = StateModerator.GenerateMeta(OverrideModerator);
 
                 if (TryPreserveAllStates)
                 {
                     Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithPriority();
                     // We want to preserve states at all priorities
-                    foreach (StateContextTagScriptableObject priorityTag in activeStates.Keys)
+                    foreach (StateContextTagScriptableObject contextTag in activeStates.Keys)
                     {
                         // Ensure the override moderator defines the current state
-                        if (!overrideModerator.DefinesState(priorityTag, activeStates[priorityTag].StateData)) continue;
-                        // Ensure we want to re-enter that state
-                        if (!ReEnterSameStates) continue;
-                        overrideModerator.ChangeState(priorityTag, activeStates[priorityTag].StateData);
+                        if (!overrideModerator.DefinesState(contextTag, activeStates[contextTag].StateData)) continue;
+                        overrideModerator.ChangeInitialState(contextTag, activeStates[contextTag].StateData);
                     }
                 }
                 else if (TryPreserveStates.Count > 0)
                 {
                     // We want to preserve state(s) at some priorities
-                    foreach (StateContextTagScriptableObject priorityTag in TryPreserveStates)
+                    foreach (StateContextTagScriptableObject contextTag in TryPreserveStates)
                     {
                         // Ensure the override moderator defines the current state
-                        if (actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState state) && !overrideModerator.DefinesState(priorityTag, state.StateData)) continue;
-                        // Ensure we want to re-enter that state
-                        if (!ReEnterSameStates) continue;
-                        overrideModerator.ChangeState(priorityTag, state.StateData);
+                        if (actor.Moderator.TryGetActiveState(contextTag, out AbstractGameplayState state) && !overrideModerator.DefinesState(contextTag, state.StateData)) continue;
+                        overrideModerator.ChangeInitialState(contextTag, state.StateData);
                     }
                 }
             
-                foreach (StateContextTagScriptableObject priorityTag in OverrideStates.Keys)
+                foreach (StateContextTagScriptableObject contextTag in OverrideStates.Keys)
                 {
-                    if (!overrideModerator.DefinesState(priorityTag, OverrideStates[priorityTag]) && !FoceOverrideStates) continue;
-                    ChangeState(actor.Moderator, priorityTag, OverrideStates[priorityTag], flag);
+                    if (!overrideModerator.DefinesState(contextTag, OverrideStates[contextTag]) && !ForceOverrideStates) continue;
+                    overrideModerator.ChangeInitialState(contextTag, OverrideStates[contextTag]);
                 }
             
                 actor.Moderator.ImplementModeratorMeta(overrideModerator, ReEnterSameStates, flag);
@@ -107,20 +82,20 @@ namespace FESStateSystem
                 Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithPriority();
                 if (ReEnterSameStates)
                 {
-                    foreach (StateContextTagScriptableObject priorityTag in activeStates.Keys)
+                    foreach (StateContextTagScriptableObject contextTag in activeStates.Keys)
                     {
-                        if (OverrideStates.Keys.Contains(priorityTag)) continue;
+                        if (OverrideStates.Keys.Contains(contextTag)) continue;
                     
-                        ChangeState(actor.Moderator, priorityTag, activeStates[priorityTag].StateData, flag);
+                        ChangeState(actor.Moderator, contextTag, activeStates[contextTag].StateData, flag);
                     }
                 }
             
-                foreach (StateContextTagScriptableObject priorityTag in OverrideStates.Keys)
+                foreach (StateContextTagScriptableObject contextTag in OverrideStates.Keys)
                 {
-                    if (!actor.Moderator.DefinesState(priorityTag, OverrideStates[priorityTag]) && !FoceOverrideStates) continue;
-                    if (OverrideStates[priorityTag] == activeStates[priorityTag].StateData && !ReEnterSameStates) continue; 
+                    if (!actor.Moderator.DefinesState(contextTag, OverrideStates[contextTag]) && !ForceOverrideStates) continue;
+                    if (OverrideStates[contextTag] == activeStates[contextTag].StateData && !ReEnterSameStates) continue; 
 
-                    ChangeState(actor.Moderator, priorityTag, OverrideStates[priorityTag], flag);
+                    ChangeState(actor.Moderator, contextTag, OverrideStates[contextTag], flag);
                 }
 
                 return true;
@@ -129,9 +104,9 @@ namespace FESStateSystem
             if (ReEnterSameStates)
             {
                 Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithPriority();
-                foreach (StateContextTagScriptableObject priorityTag in activeStates.Keys)
+                foreach (StateContextTagScriptableObject contextTag in activeStates.Keys)
                 {
-                    ChangeState(actor.Moderator, priorityTag, activeStates[priorityTag].StateData, flag);
+                    ChangeState(actor.Moderator, contextTag, activeStates[contextTag].StateData, flag);
                 }
                 return true;
             }
@@ -142,8 +117,8 @@ namespace FESStateSystem
         private void ChangeState(StateModerator moderator, StateContextTagScriptableObject contextTag,
             AbstractGameplayStateScriptableObject state, bool interrupts)
         {
-            if (interrupts) moderator.InterruptChangeState(contextTag, state);
-            else moderator.DefaultChangeState(contextTag, state);
+            if (interrupts) moderator.InterruptChangeState(contextTag, state, !ForceOverrideStates);
+            else moderator.DefaultChangeState(contextTag, state, !ForceOverrideStates);
         }
     
         protected virtual void OnValidate()

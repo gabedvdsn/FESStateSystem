@@ -20,12 +20,6 @@ namespace FESStateSystem
             return states;
         }
 
-        public override AbstractGameplayStateScriptableObject Initial()
-        {
-            if (States is null || States.Count == 0) return null;
-            return States[0].Initial();
-        }
-
         public override bool Defines(AbstractGameplayStateScriptableObject state)
         {
             return States.Contains(state);

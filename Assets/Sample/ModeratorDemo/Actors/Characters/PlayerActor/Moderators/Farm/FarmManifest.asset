@@ -12,12 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d45c99dd5e73462cad04ac9eeda36d8f, type: 3}
   m_Name: FarmManifest
   m_EditorClassIdentifier: 
+  InitialStates:
+    _serializedList:
+    - Key: {fileID: 11400000, guid: 9978f5e125a0d874faa134abd9f79174, type: 2}
+      Value: {fileID: 11400000, guid: a58d7c40c3b3f5a4684be5ef02eb6165, type: 2}
+    - Key: {fileID: 11400000, guid: 5be2b7c35712b6f40a35ba73eec68126, type: 2}
+      Value: {fileID: 11400000, guid: 9c5f7f36438791c408e9d43ae5e88818, type: 2}
+    - Key: {fileID: 11400000, guid: 27db2071ebb61f74caaacb5070adf7a3, type: 2}
+      Value: {fileID: 11400000, guid: c78b5767e5e9e7e45b3f9ded1f15a81a, type: 2}
   ContextManifest:
     _serializedList:
     - Key: {fileID: 11400000, guid: 9978f5e125a0d874faa134abd9f79174, type: 2}
       Value:
-      - {fileID: 0}
+      - {fileID: 11400000, guid: a58d7c40c3b3f5a4684be5ef02eb6165, type: 2}
     - Key: {fileID: 11400000, guid: 5be2b7c35712b6f40a35ba73eec68126, type: 2}
-      Value: []
+      Value:
+      - {fileID: 11400000, guid: d49e5baad656779429de748aa44ea98e, type: 2}
     - Key: {fileID: 11400000, guid: 27db2071ebb61f74caaacb5070adf7a3, type: 2}
-      Value: []
+      Value:
+      - {fileID: 11400000, guid: 3db832eb4617ba34290a2056df9ed822, type: 2}

@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: KitchenActivityStatesGroup
   m_EditorClassIdentifier: 
   States:
-  - {fileID: 11400000, guid: 6a9e7995d561b304c97dda9674356e1e, type: 2}
-  - {fileID: 11400000, guid: 283a02be010c49540a00cd123763c6b4, type: 2}
   - {fileID: 11400000, guid: c78b5767e5e9e7e45b3f9ded1f15a81a, type: 2}
+  - {fileID: 11400000, guid: 6a9e7995d561b304c97dda9674356e1e, type: 2}
   - {fileID: 11400000, guid: 83c2d90a8ce703c45938147457d73c73, type: 2}

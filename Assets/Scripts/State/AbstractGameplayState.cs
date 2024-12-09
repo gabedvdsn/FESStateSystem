@@ -6,12 +6,15 @@ namespace FESStateSystem
     {
         public AbstractGameplayStateScriptableObject StateData;
         public StateActor State;
+        public StateContextTagScriptableObject LiveContext;
     
         protected AbstractGameplayState(AbstractGameplayStateScriptableObject stateData, StateActor actor)
         {
             StateData = stateData;
             State = actor;
         }
+
+        public void ProvideContext(StateContextTagScriptableObject context) => LiveContext = context;
 
         /// <summary>
         ///  Called once when the state is created by the moderator, or when a new moderator is implemented.
@@ -44,7 +47,7 @@ namespace FESStateSystem
         public virtual void Conclude()
         {
             if (StateData.OnConcludeTrigger) StateData.OnConcludeTrigger.Activate(State, false);
-            else State.Moderator.ReturnToInitial(StateData);
+            else State.Moderator.ReturnContextToInitial(this);
         }
     
         /// <summary>

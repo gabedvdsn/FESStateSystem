@@ -25,12 +25,11 @@ namespace FESStateSystem
             else
             {
                 if (oldState is null || actor.Moderator is null) fromStates = new();
-                else if (!actor.Moderator.TryGetActiveStatePriority(oldState.StateData, out StateContextTagScriptableObject priorityTag)) fromStates = new();
                 else
                 {
                     fromStates = new Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>>()
                     {
-                        { priorityTag, new List<AbstractGameplayStateScriptableObject>() { oldState.StateData } }
+                        { oldState.LiveContext, new List<AbstractGameplayStateScriptableObject>() { oldState.StateData } }
                     };
                 }
             }
@@ -39,32 +38,31 @@ namespace FESStateSystem
             else
             {
                 if (newState is null || actor.Moderator is null) toStates = new();
-                else if (!actor.Moderator.TryGetActiveStatePriority(newState.StateData, out StateContextTagScriptableObject priorityTag)) toStates = new();
                 else
                 {
                     toStates = new Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>>()
                     {
-                        { priorityTag, new List<AbstractGameplayStateScriptableObject>() { newState.StateData } }
+                        { newState.LiveContext, new List<AbstractGameplayStateScriptableObject>() { newState.StateData } }
                     };
                 }
             }
         
             // Priority tags unique to fromState
-            foreach (StateContextTagScriptableObject priorityTag in fromStates.Keys.Where(p => !toStates.ContainsKey(p)))
+            foreach (StateContextTagScriptableObject contextTag in fromStates.Keys.Where(contextTag => !toStates.ContainsKey(contextTag)))
             {
-                foreach (AbstractGameplayStateScriptableObject state in fromStates[priorityTag]) message += $"\n\t[ {priorityTag.Priority} ] FROM {state.name}";
+                foreach (AbstractGameplayStateScriptableObject state in fromStates[contextTag]) message += $"\n\t[ {contextTag.Priority} ] FROM {state.name}";
             }
         
             // Priority tags at intersection of fromState and toState
-            foreach (StateContextTagScriptableObject priorityTag in fromStates.Keys.Where(p => toStates.ContainsKey(p)))
+            foreach (StateContextTagScriptableObject contextTag in fromStates.Keys.Where(contextTag => toStates.ContainsKey(contextTag)))
             {
-                message += $"\n\t[ {priorityTag.Priority} ] FROM {fromStates[priorityTag][0].name} TO {toStates[priorityTag][0].name}";
+                message += $"\n\t[ {contextTag.Priority} ] FROM {fromStates[contextTag][0].name} TO {toStates[contextTag][0].name}";
             }
 
             // Priority tags unique to toState
-            foreach (StateContextTagScriptableObject priorityTag in toStates.Keys.Where(p => !fromStates.ContainsKey(p)))
+            foreach (StateContextTagScriptableObject contextTag in toStates.Keys.Where(contextTag => !fromStates.ContainsKey(contextTag)))
             {
-                foreach (AbstractGameplayStateScriptableObject state in toStates[priorityTag]) message += $"\n\t[ {priorityTag.Priority} ] TO {state.name}";
+                foreach (AbstractGameplayStateScriptableObject state in toStates[contextTag]) message += $"\n\t[ {contextTag.Priority} ] TO {state.name}";
             }
         
             Debug.Log(message);

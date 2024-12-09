@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 41ccd66db374c474f861b84d5d27bd51, type: 3}
-  m_Name: New Farm Gameplay State Scriptable Object
+  m_Name: PlayerFarmState
   m_EditorClassIdentifier: 
-  Priority: 0
   Parent: {fileID: 0}
-  ConclusionTrigger: {fileID: 0}
+  OnConcludeTrigger: {fileID: 0}
   CacheState: 0
+  SelectionPriority: 0

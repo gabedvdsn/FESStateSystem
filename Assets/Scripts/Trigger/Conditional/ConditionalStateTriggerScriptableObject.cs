@@ -14,7 +14,7 @@ namespace FESStateSystem
     
         [Header("States")]
     
-        public SerializedDictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>> LookForStates;
+        public SerializedDictionary<StateContextTagScriptableObject, List<AbstractGameplayStateBehaviourScriptableObject>> LookForStates;
         
         public bool ActiveStatesOnly = true;
         public bool AllowDescendants;
@@ -32,42 +32,46 @@ namespace FESStateSystem
             if (LookForModerators.Count > 0 && !LookForModerators.Contains(actor.Moderator.BaseModerator)) return false;
 
             bool status = LookForStates.Count == 0;
-        
-            foreach (StateContextTagScriptableObject priorityTag in LookForStates.Keys.Where(priorityTag => LookForStates[priorityTag].Count != 0))
+
+            foreach (StateContextTagScriptableObject contextTag in LookForStates.Keys.Where(contextTag => LookForStates[contextTag].Count != 0))
             {
-                if (ActiveStatesOnly)
+                if (AllowRelations)
                 {
-                    if (AllowRelations)
-                    {
-                        status = actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState state) && LookForStates[priorityTag].Any(state.StateData.IsRelatedTo);
-                    }
-                    if (AllowDescendants && !status)
-                    {
-                        status = actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState state) && LookForStates[priorityTag].Any(state.StateData.IsDescendantOf);
-                    }
-                    if (!status)
-                    {
-                        status = actor.Moderator.TryGetActiveState(priorityTag, out AbstractGameplayState state) && LookForStates[priorityTag].Contains(state.StateData);
-                    }
+                    status = actor.Moderator.TryGetActiveState(contextTag, out AbstractGameplayState state) &&
+                             LookForStates[contextTag].Any(stateBehaviour => stateBehaviour.Get().Any(lState => lState.IsRelatedTo(state.StateData)));
+                    // status = actor.Moderator.TryGetActiveState(contextTag, out AbstractGameplayState state) && LookForStates[contextTag].Any(state.StateData.IsRelatedTo);
                 }
-                else
+
+                if (AllowDescendants && !status)
                 {
-                    status = LookForStates[priorityTag].Any(state => actor.Moderator.TryGetCachedState(priorityTag, state, out _));
+                    status = actor.Moderator.TryGetActiveState(contextTag, out AbstractGameplayState state) &&
+                             LookForStates[contextTag].Any(stateBehaviour => stateBehaviour.Get().Any(lState => lState.IsDescendantOf(state.StateData)));
+                }
+
+                if (!status)
+                {
+                    status = actor.Moderator.TryGetActiveState(contextTag, out AbstractGameplayState state) && LookForStates[contextTag].Contains(state.StateData);
+                }
+
+                // If status and we don't want to check cached states then continue
+                // This solves the edge case wherein undefined active states are not cached
+                if (ActiveStatesOnly || status) continue;
                 
-                    if (status) continue;
-                    
-                    // LookForStates were not found in stored states, let's check relations & descendents of stored states
-                    if (AllowRelations)
-                    {
-                        status = LookForStates[priorityTag].Any(state =>
-                            actor.Moderator.TryGetCachedState(priorityTag, state, out AbstractGameplayState storedState) && state.IsRelatedTo(storedState.StateData));
-                    }
-                    
-                    if (AllowDescendants && !status)
-                    {
-                        status = LookForStates[priorityTag].Any(state =>
-                            actor.Moderator.TryGetCachedState(priorityTag, state, out AbstractGameplayState storedState) && state.IsDescendantOf(storedState.StateData));
-                    }
+                status = LookForStates[contextTag].Any(stateBehaviour => stateBehaviour.Get().Any(state => actor.Moderator.TryGetCachedState(contextTag, state, out _)));
+                
+                // LookForStates were not found in cached states, let's check relations & descendents of cached states
+                if (AllowRelations && !status)
+                {
+                    status = LookForStates[contextTag].Any(stateBehaviour =>
+                        stateBehaviour.Get().Any(state =>
+                            actor.Moderator.TryGetCachedState(contextTag, state, out AbstractGameplayState storedState) && state.IsRelatedTo(storedState.StateData)));
+                }
+
+                if (AllowDescendants && !status)
+                {
+                    status = LookForStates[contextTag].Any(stateBehaviour =>
+                        stateBehaviour.Get().Any(state =>
+                            actor.Moderator.TryGetCachedState(contextTag, state, out AbstractGameplayState storedState) && state.IsDescendantOf(storedState.StateData)));
                 }
             }
 
@@ -88,27 +92,38 @@ namespace FESStateSystem
             bool status = false;
             if (AllowRelations)
             {
-                status = LookForStates[contextTag].Any(newState.IsRelatedTo);
+                status = LookForStates[contextTag].Any(stateBehaviour => stateBehaviour.Get().Any(state => state.IsRelatedTo(newState)));
             }
             if (AllowDescendants && !status)
             {
-                status = LookForStates[contextTag].Any(newState.IsDescendantOf);
+                status = LookForStates[contextTag].Any(stateBehaviour => stateBehaviour.Get().Any(state => state.IsRelatedTo(newState)));
             }
             if (!status)
             {
                 status = LookForStates[contextTag].Contains(newState);
             }
 
-            // If we haven't found the newState in LookFor and !ActiveStatesOnly, let's check to see if the LookFor states exist in Stored States
+            // If we haven't found the newState in LookFor and !ActiveStatesOnly, let's check to see if the LookFor states exist in cached States
             if (!status && !ActiveStatesOnly)
             {
-                status = LookForStates[contextTag].Any(s => actor.Moderator.TryGetCachedState(contextTag, s, out AbstractGameplayState _));
+                status = LookForStates[contextTag].Any(stateBehaviour => stateBehaviour.Get().Any(state => actor.Moderator.TryGetCachedState(contextTag, state, out AbstractGameplayState _)));
             }
 
             return status;
         }
-    
-        public override Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>> GetStates() => LookForStates;
+
+        public override Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>> GetStates()
+        {
+            Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>> states =
+                new Dictionary<StateContextTagScriptableObject, List<AbstractGameplayStateScriptableObject>>();
+            foreach (StateContextTagScriptableObject contextTag in LookForStates.Keys)
+            {
+                states[contextTag] = new List<AbstractGameplayStateScriptableObject>();
+                foreach (AbstractGameplayStateBehaviourScriptableObject stateBehaviour in LookForStates[contextTag]) states[contextTag].AddRange(stateBehaviour.Get());
+            }
+
+            return states;
+        }
 
         public override bool PreModeratorChangeActivate(StateModeratorScriptableObject moderator)
         {

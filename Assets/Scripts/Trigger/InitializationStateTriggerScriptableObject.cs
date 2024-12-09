@@ -16,10 +16,10 @@ namespace FESStateSystem
         {
             actor.Moderator = InitialModerator.GenerateModerator(actor);
         
-            foreach (StateContextTagScriptableObject priorityTag in OverrideStates.Keys)
+            foreach (StateContextTagScriptableObject contextTag in OverrideStates.Keys)
             {
-                if (!actor.Moderator.DefinesState(priorityTag, OverrideStates[priorityTag])) continue;
-                actor.Moderator.DefaultChangeState(priorityTag, OverrideStates[priorityTag]);
+                if (!actor.Moderator.DefinesState(contextTag, OverrideStates[contextTag])) continue;
+                actor.Moderator.DefaultChangeState(contextTag, OverrideStates[contextTag]);
             }
 
             return true;
