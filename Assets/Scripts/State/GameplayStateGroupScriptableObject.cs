@@ -9,12 +9,12 @@ namespace FESStateSystem
     {
         public List<AbstractGameplayStateBehaviourScriptableObject> States;
         
-        public override List<AbstractGameplayState> GenerateState(StateActor actor)
+        public override List<AbstractGameplayState> GenerateStates(StateActor actor)
         {
             List<AbstractGameplayState> states = new List<AbstractGameplayState>();
             foreach (AbstractGameplayStateBehaviourScriptableObject state in States)
             {
-                states.AddRange(state.GenerateState(actor));
+                states.AddRange(state.GenerateStates(actor));
             }
 
             return states;

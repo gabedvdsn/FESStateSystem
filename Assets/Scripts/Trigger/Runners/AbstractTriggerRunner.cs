@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace FESStateSystem
 {
@@ -10,5 +12,6 @@ namespace FESStateSystem
         public abstract void RunMany(int count = -1, bool flag = true);
         public abstract void RunMany(List<StateActor> actors, bool flag = true);
         public abstract void RunAll(bool flag = true);
+        
     }
 }

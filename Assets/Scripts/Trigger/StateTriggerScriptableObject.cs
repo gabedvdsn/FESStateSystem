@@ -11,7 +11,7 @@ using UnityEngine.Serialization;
 
 namespace FESStateSystem
 {
-    [CreateAssetMenu(menuName = "FESState/Trigger/State Trigger")]
+    [CreateAssetMenu(menuName = "FESState/Trigger/State Trigger", fileName = "StateTrigger")]
     public class StateTriggerScriptableObject : AbstractStateTriggerScriptableObject
     {
         [Header("Moderator Trigger")]
@@ -44,7 +44,7 @@ namespace FESStateSystem
             {
                 if (!ForceOverrideModerator)
                 {
-                    if (OverrideModerator.moderatorContext > actor.Moderator.BaseModerator.moderatorContext)
+                    if (OverrideModerator.ModeratorContext > actor.Moderator.BaseModerator.ModeratorContext)
                     {
                         // If no override states, we are done and return false (nothing was done)
                         if (OverrideStates is null) return false;

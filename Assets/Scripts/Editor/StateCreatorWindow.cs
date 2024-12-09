@@ -15,11 +15,11 @@ namespace FESStateSystem
         private string scriptName;
         private string className;
         private bool attachInherited = false;
-        private bool prefixInherited = false;
+        private bool prefixInherited = true;
         private bool encapsulateField = false;
         private MonoScript encapsulates;
     
-        private MonoScript inheritsFromState;
+        private MonoScript inheritsFromState = null;
         private Type inheritsBaseclass = typeof(AbstractGameplayStateScriptableObject);
         private bool isInheritable;
         
@@ -169,6 +169,9 @@ namespace FESStateSystem
         {
             inheritsFromState = null;
             isInheritable = false;
+
+            attachInherited = false;
+            prefixInherited = true;
     
             stateName = "";
             realStateName = "";
@@ -181,13 +184,13 @@ namespace FESStateSystem
 
         private void CreateStateScript()
         {
-            string inheritedFrom = inheritsFromState is not null
+            string inheritedFrom = isInheritable && inheritsFromState is not null
                 ? inheritsFromState.GetClass().ToString()
                 : "AbstractGameplayStateScriptableObject";
             string subInheritedFrom = inheritsFromState is not null
                 ? inheritedFrom.Replace("ScriptableObject", "") : "AbstractGameplayState";
             string menuTarget = !string.IsNullOrEmpty(actorTarget) ? $"{actorTarget}/{stateName} State" : $"General/{stateName} State";
-            string header = isAbstract ? "" : $"[CreateAssetMenu(menuName = \"FESState/Authored/Actor/{menuTarget}\")]";
+            string header = isAbstract ? "" : $"[CreateAssetMenu(menuName = \"FESState/Authored/State/{menuTarget}\", fileName = \"{realStateName}State\")]";
             string abstractTag = isAbstract ? "abstract " : "";
 
             string encapsulatesName = "";
@@ -206,9 +209,12 @@ namespace FESStateSystem
 
             string scriptableObjectInternals = !isAbstract
                 ? $@"
-    public override AbstractGameplayState GenerateState(StateActor actor)
+    public override List<AbstractGameplayState> GenerateStates(StateActor actor)
     {{
-        return new {className}(this, actor);
+        return new List<AbstractGameplayState>()
+        {{
+            new {className}(this, actor)
+        }};
     }}
 "
                 : "";
@@ -253,6 +259,7 @@ namespace FESStateSystem
 ";
         
             string scriptTemplate = $@"using UnityEngine;
+using System.Collections.Generic;
 using FESStateSystem;
 
 {header}

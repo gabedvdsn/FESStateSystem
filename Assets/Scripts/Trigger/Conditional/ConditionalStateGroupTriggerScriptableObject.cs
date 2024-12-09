@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace FESStateSystem
 {
-    [CreateAssetMenu(menuName = "FESState/Trigger/Conditional Trigger Group")]
+    [CreateAssetMenu(menuName = "FESState/Trigger/Conditional Trigger Group", fileName = "ConditionalTriggerGroup")]
     public class ConditionalStateGroupTriggerScriptableObject : AbstractStateConditionalTriggerScriptableObject
     {
         public List<AbstractStateConditionalTriggerScriptableObject> Conditionals;

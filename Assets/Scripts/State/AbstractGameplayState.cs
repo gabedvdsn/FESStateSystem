@@ -43,7 +43,7 @@ namespace FESStateSystem
         /// </summary>
         public virtual void Conclude()
         {
-            if (StateData.ConclusionTrigger) StateData.ConclusionTrigger.Activate(State, false);
+            if (StateData.OnConcludeTrigger) StateData.OnConcludeTrigger.Activate(State, false);
             else State.Moderator.ReturnToInitial(StateData);
         }
     

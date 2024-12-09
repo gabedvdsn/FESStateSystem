@@ -32,6 +32,5 @@ namespace FESStateSystem
             if (!ActorRetrieval.TryRetrieveManyActors(-1, out List<StateActor> actors)) return;
             GameplayStateManager.Instance.RunDefaultManyTrigger(actors, Trigger, flag);
         }
-        
     }
 }

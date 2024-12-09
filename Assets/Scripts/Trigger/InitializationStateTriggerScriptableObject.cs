@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 
 namespace FESStateSystem
 {
-    [CreateAssetMenu(menuName = "FESState/Trigger/Initialization Trigger")]
+    [CreateAssetMenu(menuName = "FESState/Trigger/Initialization Trigger", fileName = "InitializationTrigger")]
     public class InitializationStateTriggerScriptableObject : AbstractStateTriggerScriptableObject
     {
         [Header("Initialization")]

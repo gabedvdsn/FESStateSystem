@@ -88,16 +88,7 @@ using FESStateSystem;
 [RequireComponent(typeof({sourceName}))]
 public class {scriptName} : AbstractStateTransitionComponent<{sourceName}>
 {{
-    public override void InitializeMatrix()
-    {{
-        Matrix = TransitionMatrix.GenerateMatrix(GetComponent<{sourceName}>());
-        if (Log) Matrix.LogMatrix();
-    }}
 
-    protected override AbstractGameplayStateScriptableObject GetSelectTransition(StateContextTagScriptableObject contextTag, TransitionEvaluationResult result)
-    {{
-        return base.GetSelectTransition(contextTag, result);
-    }}
 }}
 
 ";

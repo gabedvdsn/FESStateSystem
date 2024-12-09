@@ -167,7 +167,7 @@ namespace FESStateSystem
         {
             if (TryGetCachedState(contextTag, stateData, out AbstractGameplayState state)) return state;
             
-            state = stateData.GenerateState(StateComponent)[0];
+            state = stateData.GenerateStates(StateComponent)[0];
             state.Initialize();
 
             if (!stateData.CacheState) return state;
@@ -183,10 +183,10 @@ namespace FESStateSystem
         public bool DefinesState(StateContextTagScriptableObject contextTag,
             AbstractGameplayStateScriptableObject state) => BaseModerator.Manifest.DefinesState(contextTag, state);
     
-        public static bool operator >(StateModerator self, StateModerator other) => self.BaseModerator.moderatorContext > other.BaseModerator.moderatorContext;
-        public static bool operator <(StateModerator self, StateModerator other) => self.BaseModerator.moderatorContext < other.BaseModerator.moderatorContext;
-        public static bool operator >=(StateModerator self, StateModerator other) => self.BaseModerator.moderatorContext >= other.BaseModerator.moderatorContext;
-        public static bool operator <=(StateModerator self, StateModerator other) => self.BaseModerator.moderatorContext <= other.BaseModerator.moderatorContext;
+        public static bool operator >(StateModerator self, StateModerator other) => self.BaseModerator.ModeratorContext > other.BaseModerator.ModeratorContext;
+        public static bool operator <(StateModerator self, StateModerator other) => self.BaseModerator.ModeratorContext < other.BaseModerator.ModeratorContext;
+        public static bool operator >=(StateModerator self, StateModerator other) => self.BaseModerator.ModeratorContext >= other.BaseModerator.ModeratorContext;
+        public static bool operator <=(StateModerator self, StateModerator other) => self.BaseModerator.ModeratorContext <= other.BaseModerator.ModeratorContext;
 
         public void ImplementModeratorMeta(MetaStateModerator metaModerator, bool reEnterSameStates, bool interrupts)
         {

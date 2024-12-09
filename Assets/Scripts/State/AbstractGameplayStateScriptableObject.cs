@@ -2,17 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace FESStateSystem
 {
     public abstract class AbstractGameplayStateScriptableObject : AbstractGameplayStateBehaviourScriptableObject
     {
+        [Header("Gameplay State")] 
         public AbstractGameplayStateScriptableObject Parent;
-        public StateTriggerScriptableObject ConclusionTrigger;
+        public StateTriggerScriptableObject OnConcludeTrigger;
 
         [Space]
 
         public bool CacheState;
+        
+        [Header("Transition Behaviour")]
+        public int SelectionPriority = 0;
+
 
         public override AbstractGameplayStateScriptableObject Initial()
         {

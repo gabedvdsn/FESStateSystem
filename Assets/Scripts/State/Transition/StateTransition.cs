@@ -10,19 +10,16 @@ namespace FESStateSystem
         public StateTransitionScriptableObject BaseTransition;
 
         protected List<AbstractTransitionPredicate<S>> Predicates;
-
-        protected S Source;
-
-        public StateTransition(S source, StateTransitionScriptableObject transition)
+        
+        public StateTransition(StateTransitionScriptableObject transition)
         {
             BaseTransition = transition;
             Predicates = BaseTransition.Predicate.Generate<S>();
-            Source = source;
         }
 
-        public bool EvaluatePredicate()
+        public bool EvaluatePredicate(S source)
         {
-            return Predicates.All(p => p.Evaluate(Source));
+            return Predicates.All(p => p.Evaluate(source));
         }
 
         public void SubscribeEvaluateEvent(ref EvaluateAction evaluateDelegate)
@@ -38,19 +35,6 @@ namespace FESStateSystem
         protected virtual bool TriggerEvaluate()
         {
             return false;
-        }
-    }
-
-    public class PlayerStateTransition : StateTransition<DemoPlayerController>
-    {
-
-        public PlayerStateTransition(DemoPlayerController source, StateTransitionScriptableObject transition) : base(source, transition)
-        {
-        }
-
-        protected override bool TriggerEvaluate()
-        {
-            return true;
         }
     }
 }
