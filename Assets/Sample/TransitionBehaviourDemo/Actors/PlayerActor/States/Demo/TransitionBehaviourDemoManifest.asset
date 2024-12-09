@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d45c99dd5e73462cad04ac9eeda36d8f, type: 3}
+  m_Name: TransitionBehaviourDemoManifest
+  m_EditorClassIdentifier: 
+  InitialStates:
+    _serializedList:
+    - Key: {fileID: 11400000, guid: 5be2b7c35712b6f40a35ba73eec68126, type: 2}
+      Value: {fileID: 11400000, guid: 9c5f7f36438791c408e9d43ae5e88818, type: 2}
+    - Key: {fileID: 11400000, guid: 27db2071ebb61f74caaacb5070adf7a3, type: 2}
+      Value: {fileID: 11400000, guid: 9c5f7f36438791c408e9d43ae5e88818, type: 2}
+  ContextManifest:
+    _serializedList:
+    - Key: {fileID: 11400000, guid: 5be2b7c35712b6f40a35ba73eec68126, type: 2}
+      Value:
+      - {fileID: 11400000, guid: 412fc579b57d9d54994bcc5f4ac0ea31, type: 2}
+      - {fileID: 11400000, guid: 9c5f7f36438791c408e9d43ae5e88818, type: 2}
+      - {fileID: 11400000, guid: 4205b694c46372248b1e967771abc7ab, type: 2}
+    - Key: {fileID: 11400000, guid: 27db2071ebb61f74caaacb5070adf7a3, type: 2}
+      Value:
+      - {fileID: 11400000, guid: 412fc579b57d9d54994bcc5f4ac0ea31, type: 2}
+      - {fileID: 11400000, guid: 9c5f7f36438791c408e9d43ae5e88818, type: 2}
+      - {fileID: 11400000, guid: 4205b694c46372248b1e967771abc7ab, type: 2}
+  LogValidationErrors: 0

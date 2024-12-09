@@ -16,6 +16,10 @@ namespace FESStateSystem
         [SerializedDictionary("Context Tag", "Permitted States")]
         public SerializedDictionary<StateContextTagScriptableObject, List<AbstractGameplayStateBehaviourScriptableObject>>
             ContextManifest;
+        
+        [Space]
+        
+        public bool LogValidationErrors;
 
         public StateContextTagScriptableObject[] Contexts => ContextManifest.Keys.ToArray();
 
@@ -44,6 +48,8 @@ namespace FESStateSystem
 
         private void OnValidate()
         {
+            if (!LogValidationErrors) return;
+            
             foreach (StateContextTagScriptableObject contextTag in InitialStates.Keys)
             {
                 if (!ContextManifest.ContainsKey(contextTag)) throw new Exception($"[ {name} ] Initial state context {contextTag.name} is missing from manifest");

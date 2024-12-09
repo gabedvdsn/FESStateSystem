@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4c84219a74440f39acf83b3f681b18a, type: 3}
-  m_Name: FallbackInitializationTrigger
+  m_Script: {fileID: 11500000, guid: c6c34b96d782b3843abd9993ff85f56f, type: 3}
+  m_Name: TransitionBehaviourDemoModerator
   m_EditorClassIdentifier: 
-  InitialModerator: {fileID: 11400000, guid: 6cf9eb13522cc6242bd4afbe6a1aa613, type: 2}
-  OverrideStates:
-    _serializedList: []
+  Manifest: {fileID: 11400000, guid: 8ed4679a0fbb1bc42a6a5dd8bfdf7f9a, type: 2}
+  Responders:
+  - {fileID: 11400000, guid: 401fc6b9a95792546a1666d96696c7ef, type: 2}

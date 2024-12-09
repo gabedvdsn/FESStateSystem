@@ -6,16 +6,11 @@ namespace FESStateSystem.TransitionBehaviourDemo
 {
     public class DemoPlayerController : MonoBehaviour
     {
-        // Start is called before the first frame update
-        void Start()
-        {
-        
-        }
+        public float Energy = 100f;
 
-        // Update is called once per frame
-        void Update()
+        public void ChangeEnergy(float delta)
         {
-        
+            Energy = Mathf.Clamp(Energy + delta, 0, 100);
         }
     }
 }
