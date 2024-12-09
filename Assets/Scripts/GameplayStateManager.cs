@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using AYellowpaper.SerializedCollections;
-using Unity.VisualScripting;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 namespace FESStateSystem
 {
@@ -137,87 +134,31 @@ namespace FESStateSystem
     
         #region Trigger Runners
 
-        public void RunDefaultTrigger(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateTriggerScriptableObject trigger, bool flag = true)
+        public void RunDefaultTrigger(StateActor actor, AbstractStateTriggerScriptableObject trigger, bool flag = true)
         {
-            if (!actorRetrieval.TryRetrieveActor(out StateActor actor)) return;
-        
             trigger.Activate(actor, flag);
         }
 
-        public void RunDefaultManyTrigger(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateTriggerScriptableObject trigger, bool flag = true)
+        public void RunDefaultManyTrigger(List<StateActor> actors, AbstractStateTriggerScriptableObject trigger, bool flag = true)
         {
-            if (!actorRetrieval.TryRetrieveManyActors(count, out List<StateActor> actors)) return;
-        
             foreach (StateActor actor in actors) trigger.Activate(actor, flag);
         }
-    
-        public void RunActorSpecificTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateTriggerScriptableObject trigger, bool flag = true) where T : StateActor
+        
+        public void RunDefaultConditionalTrigger(StateActor actor, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent, bool flag = true)
         {
-            if (!actorRetrieval.TryRetrieveActor(out T actor)) return;
-
-            trigger.Activate(actor, flag);
-        }
-
-        public void RunActorSpecificManyTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateTriggerScriptableObject trigger, bool flag = true) where T : StateActor
-        {
-            if (!actorRetrieval.TryRetrieveManyActors(count, out List<T> actors)) return;
-
-            foreach (T actor in actors) trigger.Activate(actor, flag);
-        }
-
-        public void RunDefaultConditionalTrigger(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent, bool flag = true)
-        {
-            if (!actorRetrieval.TryRetrieveActor(out StateActor actor))
-            {
-                if (conditionalTrigger.FalseOnNullActor) onFalseEvent?.Invoke(actor);
-                return;
-            }
-
             if (conditionalTrigger.Activate(actor, flag)) onTrueEvent?.Invoke(actor);
             else onFalseEvent?.Invoke(actor);
         }
 
-        public void RunDefaultManyConditionalTrigger(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent, bool flag = true)
+        public void RunDefaultManyConditionalTrigger(List<StateActor> actors, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent, bool flag = true)
         {
-            if (!actorRetrieval.TryRetrieveManyActors(count, out List<StateActor> actors))
-            {
-                if (conditionalTrigger.FalseOnNullActor) onFalseEvent?.Invoke(null);
-                return;
-            }
-        
             foreach (StateActor actor in actors)
             {
                 if (conditionalTrigger.Activate(actor, flag)) onTrueEvent?.Invoke(actor);
                 else onFalseEvent?.Invoke(actor);
             }
         }
-    
-        public void RunActorSpecificConditionalTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent, bool flag = true) where T : StateActor
-        {
-            if (!actorRetrieval.TryRetrieveActor(out T actor))
-            {
-                if (conditionalTrigger.FalseOnNullActor) onFalseEvent?.Invoke(null);
-                return;
-            }
         
-            if (conditionalTrigger.Activate(actor, flag)) onTrueEvent?.Invoke(actor);
-            else onFalseEvent?.Invoke(actor);
-        }
-        public void RunActorSpecificConditionalManyTrigger<T>(AbstractRetrieveStateActorScriptableObject actorRetrieval, int count, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent, bool flag = true) where T : StateActor
-        {
-            if (!actorRetrieval.TryRetrieveManyActors(count, out List<T> actors))
-            {
-                if (conditionalTrigger.FalseOnNullActor) onFalseEvent?.Invoke(null);
-                return;
-            }
-
-            foreach (T actor in actors)
-            {
-                if (conditionalTrigger.Activate(actor, flag)) onTrueEvent?.Invoke(actor);
-                else onFalseEvent?.Invoke(actor);
-            }
-        }
-    
         #endregion
 
         public StateEnvironmentScriptableObject GetStateEnvironment(StateIdentifierTagScriptableObject StateEnvironmentIdentifier)

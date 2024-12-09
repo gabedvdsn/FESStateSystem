@@ -8,32 +8,30 @@ namespace FESStateSystem
         public AbstractRetrieveStateActorScriptableObject ActorRetrieval;
         public StateTriggerScriptableObject Trigger;
 
-        public override void RunDefault()
+        public override void RunDefault(bool flag = true)
         {
-            GameplayStateManager.Instance.RunDefaultTrigger(ActorRetrieval, Trigger);
+            if (!ActorRetrieval.TryRetrieveActor(out StateActor actor)) return;
+            GameplayStateManager.Instance.RunDefaultTrigger(actor, Trigger, flag);
         }
 
-        public override void RunDefaultMany(int count = -1)
+        public override void RunDefault(StateActor actor, bool flag = true) => GameplayStateManager.Instance.RunDefaultTrigger(actor, Trigger, flag);
+
+        public override void RunDefaultMany(int count = -1, bool flag = true)
         {
-            GameplayStateManager.Instance.RunDefaultManyTrigger(ActorRetrieval, count, Trigger);
-        }
-        public override void RunDefaultAll()
-        {
-            GameplayStateManager.Instance.RunDefaultManyTrigger(ActorRetrieval, -1, Trigger);
+            if (!ActorRetrieval.TryRetrieveManyActors(count, out List<StateActor> actors)) return;
+            GameplayStateManager.Instance.RunDefaultManyTrigger(actors, Trigger, flag);
         }
 
-        public override void RunActorSpecific<T>()
+        public override void RunDefaultMany(List<StateActor> actors, bool flag = true)
         {
-            GameplayStateManager.Instance.RunActorSpecificTrigger<T>(ActorRetrieval, Trigger);
+            GameplayStateManager.Instance.RunDefaultManyTrigger(actors, Trigger, flag);
         }
-
-        public override void RunActorSpecificMany<T>(int count = -1)
+        
+        public override void RunDefaultAll(bool flag = true)
         {
-            GameplayStateManager.Instance.RunActorSpecificManyTrigger<T>(ActorRetrieval, count, Trigger);
+            if (!ActorRetrieval.TryRetrieveManyActors(-1, out List<StateActor> actors)) return;
+            GameplayStateManager.Instance.RunDefaultManyTrigger(actors, Trigger, flag);
         }
-        public override void RunActorSpecificAll<T>()
-        {
-            GameplayStateManager.Instance.RunActorSpecificManyTrigger<T>(ActorRetrieval, -1, Trigger);
-        }
+        
     }
 }

@@ -13,34 +13,46 @@ namespace FESStateSystem
         public UnityEvent<StateActor> OnTrueEvent;
         public UnityEvent<StateActor> OnFalseEvent;
 
-        public override void RunDefault()
+        public override void RunDefault(bool flag = true)
         {
-            GameplayStateManager.Instance.RunDefaultConditionalTrigger(ActorRetrieval, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
+            if (!ActorRetrieval.TryRetrieveActor(out StateActor actor))
+            {
+                if (ConditionalTrigger.FalseOnNullActor) OnFalseEvent?.Invoke(actor);
+                return;
+            }
+            GameplayStateManager.Instance.RunDefaultConditionalTrigger(actor, ConditionalTrigger, OnTrueEvent, OnFalseEvent, flag);
         }
-        public override void RunDefaultMany(int count = -1)
+        
+        public override void RunDefault(StateActor actor, bool flag = true)
         {
-            GameplayStateManager.Instance.RunDefaultManyConditionalTrigger(ActorRetrieval, count, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
+            GameplayStateManager.Instance.RunDefaultConditionalTrigger(actor, ConditionalTrigger, OnTrueEvent, OnFalseEvent, flag);
         }
-        public override void RunDefaultAll()
+        
+        public override void RunDefaultMany(int count = -1, bool flag = true)
         {
-            GameplayStateManager.Instance.RunDefaultManyConditionalTrigger(ActorRetrieval, -1, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
+            if (!ActorRetrieval.TryRetrieveManyActors(count, out List<StateActor> actors))
+            {
+                if (ConditionalTrigger.FalseOnNullActor) OnFalseEvent?.Invoke(null);
+                return;
+            }
+            GameplayStateManager.Instance.RunDefaultManyConditionalTrigger(actors, ConditionalTrigger, OnTrueEvent, OnFalseEvent, flag);
         }
-    
-        public override void RunActorSpecific<T>()
+        
+        public override void RunDefaultMany(List<StateActor> actors, bool flag = true)
         {
-            GameplayStateManager.Instance.RunActorSpecificConditionalTrigger<T>(ActorRetrieval, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
+            GameplayStateManager.Instance.RunDefaultManyConditionalTrigger(actors, ConditionalTrigger, OnTrueEvent, OnFalseEvent, flag);
         }
-        public override void RunActorSpecificMany<T>(int count = -1)
+        
+        public override void RunDefaultAll(bool flag = true)
         {
-            GameplayStateManager.Instance.RunActorSpecificConditionalManyTrigger<T>(ActorRetrieval, count, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
+            if (!ActorRetrieval.TryRetrieveManyActors(-1, out List<StateActor> actors))
+            {
+                if (ConditionalTrigger.FalseOnNullActor) OnFalseEvent?.Invoke(null);
+                return;
+            }
+            GameplayStateManager.Instance.RunDefaultManyConditionalTrigger(actors, ConditionalTrigger, OnTrueEvent, OnFalseEvent, flag);
         }
-        public override void RunActorSpecificAll<T>()
-        {
-            GameplayStateManager.Instance.RunActorSpecificConditionalManyTrigger<T>(ActorRetrieval, -1, ConditionalTrigger, OnTrueEvent, OnFalseEvent);
-        }
-
-
+        
         public void LogFeedback(string message) => Debug.Log(message);
-        public void LogActorConditional(StateActor actor) => Debug.Log($"[{actor.name}] {ConditionalTrigger.name}");
     }
 }
