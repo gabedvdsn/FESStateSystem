@@ -13,7 +13,7 @@ namespace FESStateSystem
         public UnityEvent<StateActor> OnTrueEvent;
         public UnityEvent<StateActor> OnFalseEvent;
 
-        public override void RunDefault(bool flag = true)
+        public override void Run(bool flag = true)
         {
             if (!ActorRetrieval.TryRetrieveActor(out StateActor actor))
             {
@@ -23,12 +23,12 @@ namespace FESStateSystem
             GameplayStateManager.Instance.RunDefaultConditionalTrigger(actor, ConditionalTrigger, OnTrueEvent, OnFalseEvent, flag);
         }
         
-        public override void RunDefault(StateActor actor, bool flag = true)
+        public override void Run(StateActor actor, bool flag = true)
         {
             GameplayStateManager.Instance.RunDefaultConditionalTrigger(actor, ConditionalTrigger, OnTrueEvent, OnFalseEvent, flag);
         }
         
-        public override void RunDefaultMany(int count = -1, bool flag = true)
+        public override void RunMany(int count = -1, bool flag = true)
         {
             if (!ActorRetrieval.TryRetrieveManyActors(count, out List<StateActor> actors))
             {
@@ -38,12 +38,12 @@ namespace FESStateSystem
             GameplayStateManager.Instance.RunDefaultManyConditionalTrigger(actors, ConditionalTrigger, OnTrueEvent, OnFalseEvent, flag);
         }
         
-        public override void RunDefaultMany(List<StateActor> actors, bool flag = true)
+        public override void RunMany(List<StateActor> actors, bool flag = true)
         {
             GameplayStateManager.Instance.RunDefaultManyConditionalTrigger(actors, ConditionalTrigger, OnTrueEvent, OnFalseEvent, flag);
         }
         
-        public override void RunDefaultAll(bool flag = true)
+        public override void RunAll(bool flag = true)
         {
             if (!ActorRetrieval.TryRetrieveManyActors(-1, out List<StateActor> actors))
             {

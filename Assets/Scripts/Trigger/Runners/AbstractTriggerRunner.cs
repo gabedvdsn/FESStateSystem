@@ -5,10 +5,10 @@ namespace FESStateSystem
 {
     public abstract class AbstractTriggerRunner : MonoBehaviour
     {
-        public abstract void RunDefault(bool flag = true);
-        public abstract void RunDefault(StateActor actor, bool flag = true);
-        public abstract void RunDefaultMany(int count = -1, bool flag = true);
-        public abstract void RunDefaultMany(List<StateActor> actors, bool flag = true);
-        public abstract void RunDefaultAll(bool flag = true);
+        public abstract void Run(bool flag = true);
+        public abstract void Run(StateActor actor, bool flag = true);
+        public abstract void RunMany(int count = -1, bool flag = true);
+        public abstract void RunMany(List<StateActor> actors, bool flag = true);
+        public abstract void RunAll(bool flag = true);
     }
 }
