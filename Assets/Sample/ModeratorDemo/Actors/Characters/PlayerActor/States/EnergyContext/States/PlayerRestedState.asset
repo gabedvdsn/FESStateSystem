@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cbdc26b5647782439914060abd2aa7d, type: 3}
   m_Name: PlayerRestedState
   m_EditorClassIdentifier: 
-  PassiveStateBehaviours: []
+  Parent: {fileID: 0}
+  OnConcludeTrigger: {fileID: 0}
+  CacheState: 1
+  SelectionPriority: 0

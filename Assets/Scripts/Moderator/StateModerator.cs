@@ -129,7 +129,7 @@ namespace FESStateSystem
             return ContextStateMachines.Values.Select(machine => machine.CurrentState).ToList();
         }
 
-        public Dictionary<StateContextTagScriptableObject, AbstractGameplayState> GetActiveStatesWithPriority()
+        public Dictionary<StateContextTagScriptableObject, AbstractGameplayState> GetActiveStatesWithContext()
         {
             Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = new Dictionary<StateContextTagScriptableObject, AbstractGameplayState>();
             foreach (StateContextTagScriptableObject contextTag in ContextStateMachines.Keys)

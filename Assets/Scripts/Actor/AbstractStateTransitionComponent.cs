@@ -46,7 +46,7 @@ namespace FESStateSystem
 
         public void RunAll(bool interruptStateChange = true)
         {
-            System.Collections.Generic.Dictionary<StateContextTagScriptableObject, AbstractGameplayState> states = State.Moderator.GetActiveStatesWithPriority();
+            System.Collections.Generic.Dictionary<StateContextTagScriptableObject, AbstractGameplayState> states = State.Moderator.GetActiveStatesWithContext();
             foreach (StateContextTagScriptableObject contextTag in states.Keys)
             {
                 if (!Matrix.TryEvaluateTransitionsFor(states[contextTag].StateData, out TransitionEvaluationResult result)) continue;

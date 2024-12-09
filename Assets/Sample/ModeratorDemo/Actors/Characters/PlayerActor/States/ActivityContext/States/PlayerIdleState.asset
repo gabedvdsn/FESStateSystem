@@ -12,3 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ca5dd4fd42d49bca1faa48b6d3c006f, type: 3}
   m_Name: PlayerIdleState
   m_EditorClassIdentifier: 
+  Parent: {fileID: 0}
+  OnConcludeTrigger: {fileID: 0}
+  CacheState: 1
+  SelectionPriority: 0

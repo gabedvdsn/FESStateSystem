@@ -12,3 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ba6ab6bdb2f4d74842310cca0e78e74, type: 3}
   m_Name: PlayerWalkingState
   m_EditorClassIdentifier: 
+  Parent: {fileID: 0}
+  OnConcludeTrigger: {fileID: 0}
+  CacheState: 1
+  SelectionPriority: 0

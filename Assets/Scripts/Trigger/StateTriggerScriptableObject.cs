@@ -26,6 +26,7 @@ namespace FESStateSystem
     
         public bool ForceOverrideStates;
         public SerializedDictionary<StateContextTagScriptableObject, AbstractGameplayStateScriptableObject> OverrideStates;
+        public bool ReEnterSameOverrideStates;
     
         [Header("Other")]
         
@@ -39,6 +40,8 @@ namespace FESStateSystem
         /// <returns></returns>
         public override bool Activate(StateActor actor, bool flag)
         {
+            if (actor is null) return false;
+            
             // We want to change the actor's state moderator
             if (OverrideModerator)
             {
@@ -47,7 +50,7 @@ namespace FESStateSystem
 
                 if (TryPreserveAllStates)
                 {
-                    Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithPriority();
+                    Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithContext();
                     // We want to preserve states at all priorities
                     foreach (StateContextTagScriptableObject contextTag in activeStates.Keys)
                     {
@@ -79,7 +82,8 @@ namespace FESStateSystem
         
             if (OverrideStates is not null)
             {
-                Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithPriority();
+                Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithContext();
+                
                 if (ReEnterSameStates)
                 {
                     foreach (StateContextTagScriptableObject contextTag in activeStates.Keys)
@@ -89,11 +93,11 @@ namespace FESStateSystem
                         ChangeState(actor.Moderator, contextTag, activeStates[contextTag].StateData, flag);
                     }
                 }
-            
+                
                 foreach (StateContextTagScriptableObject contextTag in OverrideStates.Keys)
                 {
                     if (!actor.Moderator.DefinesState(contextTag, OverrideStates[contextTag]) && !ForceOverrideStates) continue;
-                    if (OverrideStates[contextTag] == activeStates[contextTag].StateData && !ReEnterSameStates) continue; 
+                    if (OverrideStates[contextTag] == activeStates[contextTag].StateData && !ReEnterSameOverrideStates) continue; 
 
                     ChangeState(actor.Moderator, contextTag, OverrideStates[contextTag], flag);
                 }
@@ -103,7 +107,7 @@ namespace FESStateSystem
         
             if (ReEnterSameStates)
             {
-                Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithPriority();
+                Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithContext();
                 foreach (StateContextTagScriptableObject contextTag in activeStates.Keys)
                 {
                     ChangeState(actor.Moderator, contextTag, activeStates[contextTag].StateData, flag);

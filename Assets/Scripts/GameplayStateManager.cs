@@ -144,18 +144,18 @@ namespace FESStateSystem
             foreach (StateActor actor in actors) trigger.Activate(actor, flag);
         }
         
-        public void RunDefaultConditionalTrigger(StateActor actor, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent, bool flag = true)
+        public void RunDefaultConditionalTrigger(StateActor actor, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, PostConditionalEvent onTrueEvent, PostConditionalEvent onFalseEvent, bool flag = true)
         {
-            if (conditionalTrigger.Activate(actor, flag)) onTrueEvent?.Invoke(actor);
-            else onFalseEvent?.Invoke(actor);
+            if (conditionalTrigger.Activate(actor, flag)) onTrueEvent?.Run(actor, flag);
+            else onFalseEvent?.Event?.Invoke(actor);
         }
 
-        public void RunDefaultManyConditionalTrigger(List<StateActor> actors, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, UnityEvent<StateActor> onTrueEvent, UnityEvent<StateActor> onFalseEvent, bool flag = true)
+        public void RunDefaultManyConditionalTrigger(List<StateActor> actors, AbstractStateConditionalTriggerScriptableObject conditionalTrigger, PostConditionalEvent onTrueEvent, PostConditionalEvent onFalseEvent, bool flag = true)
         {
             foreach (StateActor actor in actors)
             {
-                if (conditionalTrigger.Activate(actor, flag)) onTrueEvent?.Invoke(actor);
-                else onFalseEvent?.Invoke(actor);
+                if (conditionalTrigger.Activate(actor, flag)) onTrueEvent?.Run(actor, flag);
+                else onFalseEvent?.Run(actor, flag);
             }
         }
         

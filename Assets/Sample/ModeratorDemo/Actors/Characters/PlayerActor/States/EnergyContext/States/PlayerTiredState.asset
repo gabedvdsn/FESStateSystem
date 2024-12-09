@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50eb14697bbcf9f4fb4cb1442f3cd099, type: 3}
   m_Name: PlayerTiredState
   m_EditorClassIdentifier: 
-  PassiveStateBehaviours: []
+  Parent: {fileID: 0}
+  OnConcludeTrigger: {fileID: 0}
+  CacheState: 1
+  SelectionPriority: 0

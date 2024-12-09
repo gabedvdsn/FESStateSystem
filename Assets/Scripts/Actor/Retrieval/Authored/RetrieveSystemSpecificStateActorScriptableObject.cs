@@ -141,7 +141,7 @@ namespace FESStateSystem
         {
             if (ActiveStatesOnly)
             {
-                Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithPriority();
+                Dictionary<StateContextTagScriptableObject, AbstractGameplayState> activeStates = actor.Moderator.GetActiveStatesWithContext();
                 foreach (StateContextTagScriptableObject contextTag in LookForState.Keys)
                 {
                     if (!activeStates.ContainsKey(contextTag)) continue;

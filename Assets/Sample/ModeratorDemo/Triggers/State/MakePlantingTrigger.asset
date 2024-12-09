@@ -20,4 +20,5 @@ MonoBehaviour:
     _serializedList:
     - Key: {fileID: 11400000, guid: 27db2071ebb61f74caaacb5070adf7a3, type: 2}
       Value: {fileID: 11400000, guid: 4333dc51d32ef634f8c62c375b52cffc, type: 2}
+  ReEnterSameOverrideStates: 1
   ReEnterSameStates: 0
