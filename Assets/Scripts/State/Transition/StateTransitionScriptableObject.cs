@@ -8,5 +8,9 @@ namespace FESStateSystem
     {
         public AbstractTransitionPredicateScriptableObject Predicate;
         public AbstractGameplayStateScriptableObject To;
+        
+        [Space]
+        
+        public bool StateChangeInterrupts;
     }
 }

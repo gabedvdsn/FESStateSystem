@@ -7,20 +7,20 @@ namespace FESStateSystem
     public class StateModerator
     {
         public StateModeratorScriptableObject BaseModerator;
-        public StateActor StateComponent;
+        public StateActor Actor;
 
         private Dictionary<StateContextTagScriptableObject, GameplayStateMachine> ContextStateMachines;
         private Dictionary<StateContextTagScriptableObject, List<AbstractGameplayState>> CachedStates;
     
-        public StateModerator(StateModeratorScriptableObject moderator, StateActor stateComponent)
+        public StateModerator(StateModeratorScriptableObject moderator, StateActor actor)
         {
             BaseModerator = moderator;
-            StateComponent = stateComponent;
+            Actor = actor;
         
-            InitializeModeratorStates();
+            Initialize();
         }
 
-        private void InitializeModeratorStates()
+        private void Initialize()
         {
             CachedStates = new Dictionary<StateContextTagScriptableObject, List<AbstractGameplayState>>();
             ContextStateMachines = new Dictionary<StateContextTagScriptableObject, GameplayStateMachine>();
@@ -28,7 +28,7 @@ namespace FESStateSystem
             foreach (StateContextTagScriptableObject contextTag in BaseModerator.Manifest.Contexts)
             {
                 ContextStateMachines[contextTag] = new GameplayStateMachine();
-                AbstractGameplayState initialState = CreateStoreInitializeGameplayState(contextTag, BaseModerator.Manifest.InitialState(contextTag));
+                AbstractGameplayState initialState = CreateGameplayState(contextTag, BaseModerator.Manifest.InitialState(contextTag));
                 ContextStateMachines[contextTag].Initialize(initialState);
             
                 StateIsChanged(contextTag, null, initialState);
@@ -36,7 +36,7 @@ namespace FESStateSystem
                 foreach (AbstractGameplayStateScriptableObject state in BaseModerator.Manifest.Get(contextTag))
                 {
                     if (state == initialState.StateData) continue;
-                    CreateStoreInitializeGameplayState(contextTag, state);
+                    CreateGameplayState(contextTag, state);
                 }
             }
         }
@@ -50,7 +50,7 @@ namespace FESStateSystem
         public void DefaultChangeState(StateContextTagScriptableObject contextTag, AbstractGameplayStateScriptableObject newState, bool onlyDefined = true)
         {
             if (!DefinesState(contextTag, newState) && onlyDefined) return;
-            if (!TryGetCachedState(contextTag, newState, out AbstractGameplayState state)) state = CreateStoreInitializeGameplayState(contextTag, newState);
+            if (!TryGetCachedState(contextTag, newState, out AbstractGameplayState state)) state = CreateGameplayState(contextTag, newState);
         
             StateIsChanged(contextTag, ContextStateMachines[contextTag].CurrentState, state);
             ContextStateMachines[contextTag].ChangeState(state);
@@ -65,7 +65,7 @@ namespace FESStateSystem
         public void InterruptChangeState(StateContextTagScriptableObject contextTag, AbstractGameplayStateScriptableObject newState, bool onlyDefined = true)
         {
             if (!DefinesState(contextTag, newState) && onlyDefined) return;
-            if (!TryGetCachedState(contextTag, newState, out AbstractGameplayState state)) state = CreateStoreInitializeGameplayState(contextTag, newState);
+            if (!TryGetCachedState(contextTag, newState, out AbstractGameplayState state)) state = CreateGameplayState(contextTag, newState);
         
             StateIsChanged(contextTag, ContextStateMachines[contextTag].CurrentState, state);
             ContextStateMachines[contextTag].InterruptChangeState(state);
@@ -74,12 +74,12 @@ namespace FESStateSystem
         private void StateIsChanged(StateContextTagScriptableObject contextTag, AbstractGameplayState oldState, AbstractGameplayState newState)
         {
             foreach (AbstractSystemChangeResponseScriptableObject systemChangeResponse in BaseModerator.Responders)
-                systemChangeResponse.OnStateChanged(StateComponent, contextTag, oldState, newState);
+                systemChangeResponse.OnStateChanged(Actor, contextTag, oldState, newState);
         }
 
         private void ModeratorIsChanged(StateModeratorScriptableObject oldModerator, StateModeratorScriptableObject newModerator)
         {
-            foreach (AbstractSystemChangeResponseScriptableObject moderatorChangeBehaviour in BaseModerator.Responders) moderatorChangeBehaviour.OnModeratorChanged(StateComponent, oldModerator, newModerator);
+            foreach (AbstractSystemChangeResponseScriptableObject moderatorChangeBehaviour in BaseModerator.Responders) moderatorChangeBehaviour.OnModeratorChanged(Actor, oldModerator, newModerator);
         }
         
         public void ReturnContextToInitial(AbstractGameplayState state)
@@ -150,11 +150,17 @@ namespace FESStateSystem
             foreach(GameplayStateMachine stateMachine in ContextStateMachines.Values) stateMachine.CurrentState.PhysicsUpdate();
         }
         
-        private AbstractGameplayState CreateStoreInitializeGameplayState(StateContextTagScriptableObject contextTag, AbstractGameplayStateScriptableObject stateData)
+        /// <summary>
+        /// Creates a gameplay state under the specified context tag, and caches it if applicable.
+        /// </summary>
+        /// <param name="contextTag">The context tag under which to store the state</param>
+        /// <param name="stateData">The state to create</param>
+        /// <returns></returns>
+        private AbstractGameplayState CreateGameplayState(StateContextTagScriptableObject contextTag, AbstractGameplayStateScriptableObject stateData)
         {
             if (TryGetCachedState(contextTag, stateData, out AbstractGameplayState state)) return state;
             
-            state = stateData.GenerateStates(StateComponent)[0];
+            state = stateData.GenerateStates(Actor)[0];
             state.ProvideContext(contextTag);
             state.Initialize();
 
@@ -190,7 +196,7 @@ namespace FESStateSystem
                 if (!ContextStateMachines.ContainsKey(contextTag))
                 {
                     ContextStateMachines[contextTag] = new GameplayStateMachine();
-                    AbstractGameplayState initialState = CreateStoreInitializeGameplayState(contextTag, moderatorMeta.InitialStates[contextTag]);
+                    AbstractGameplayState initialState = CreateGameplayState(contextTag, moderatorMeta.InitialStates[contextTag]);
                     ContextStateMachines[contextTag].Initialize(initialState);
                 }
                 // If the priority tag exists, handle changing state as necessary
@@ -206,7 +212,7 @@ namespace FESStateSystem
                 // Store new states 
                 foreach (AbstractGameplayStateScriptableObject sourceState in moderatorMeta.BaseModerator.Manifest.Get(contextTag))
                 {
-                    if (!TryGetCachedState(contextTag, sourceState, out AbstractGameplayState _)) CreateStoreInitializeGameplayState(contextTag, sourceState);
+                    if (!TryGetCachedState(contextTag, sourceState, out AbstractGameplayState _)) CreateGameplayState(contextTag, sourceState);
                 }
             }
         }

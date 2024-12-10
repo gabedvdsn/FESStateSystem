@@ -6,6 +6,6 @@ namespace FESStateSystem
 {
     public abstract class AbstractTransitionPredicate<S>
     {
-        public abstract bool Evaluate(S source);
+        public abstract bool Evaluate(S source, StateActor actor);
     }
 }

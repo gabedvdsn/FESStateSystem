@@ -34,7 +34,8 @@ namespace FESStateSystem
 
         private Dictionary<StateIdentifierTagScriptableObject, List<StateActor>> SubscribedActors = new();
         public Dictionary<StateIdentifierTagScriptableObject, List<StateActor>> AllActors => SubscribedActors;
-    
+        private List<ITransitionBehaviourConduit> ActiveConduits;
+        
         private bool Initialized;
 
         private void Awake()
@@ -61,7 +62,7 @@ namespace FESStateSystem
         
             if (Initialized)
             {
-                DistributeIndividualEnvironmentTrigger(actor, DefaultStateEnvironmentIdentifier);
+                DistributeEnvironmentInitializationTrigger(actor, DefaultStateEnvironmentIdentifier);
             }
         }
 
@@ -94,22 +95,18 @@ namespace FESStateSystem
     
         public void PerformInitialDistribution(StateIdentifierTagScriptableObject environmentIdentifier)
         {
-            DistributeInitialEnvironmentTriggers(environmentIdentifier);
+            DistributeAllEnvironmentInitializationTriggers(environmentIdentifier);
             Initialized = true;
         }
 
-        public void Reset()
+        
+        
+        private StateEnvironmentScriptableObject GetStateEnvironment(StateIdentifierTagScriptableObject StateEnvironmentIdentifier)
         {
-            Initialized = false;
-            foreach (StateIdentifierTagScriptableObject actorTag in SubscribedActors.Keys)
-            {
-                foreach (StateActor actor in SubscribedActors[actorTag]) Destroy(actor.gameObject);
-            }
-
-            SubscribedActors.Clear();
+            return StateEnvironments.TryGetValue(StateEnvironmentIdentifier, out StateEnvironmentScriptableObject stateEnvironment) ? stateEnvironment : StateEnvironments[DefaultStateEnvironmentIdentifier];
         }
 
-        private void DistributeInitialEnvironmentTriggers(StateIdentifierTagScriptableObject environmentIdentifier, bool flag = true)
+        private void DistributeAllEnvironmentInitializationTriggers(StateIdentifierTagScriptableObject environmentIdentifier, bool flag = true)
         {
             StateEnvironmentScriptableObject environment = GetStateEnvironment(environmentIdentifier);
             foreach (StateIdentifierTagScriptableObject actorTag in SubscribedActors.Keys)
@@ -123,7 +120,7 @@ namespace FESStateSystem
             }
         }
 
-        private void DistributeIndividualEnvironmentTrigger(StateActor actor, StateIdentifierTagScriptableObject environmentIdentifier, bool flag = true)
+        private void DistributeEnvironmentInitializationTrigger(StateActor actor, StateIdentifierTagScriptableObject environmentIdentifier, bool flag = true)
         {
             InitializationStateTriggerScriptableObject initialTrigger = GetStateEnvironment(environmentIdentifier).GetInitialStateTrigger(actor.GeneralIdentifier);
             if (initialTrigger) initialTrigger.Activate(actor, flag);
@@ -160,10 +157,24 @@ namespace FESStateSystem
         }
         
         #endregion
+        
+        #region Conduits
 
-        public StateEnvironmentScriptableObject GetStateEnvironment(StateIdentifierTagScriptableObject StateEnvironmentIdentifier)
+        public void RegisterConduit(ITransitionBehaviourConduit conduit)
         {
-            return StateEnvironments.TryGetValue(StateEnvironmentIdentifier, out StateEnvironmentScriptableObject stateEnvironment) ? stateEnvironment : StateEnvironments[DefaultStateEnvironmentIdentifier];
+            if (ActiveConduits is null) ActiveConduits = new List<ITransitionBehaviourConduit>();
+            ActiveConduits.Add(conduit);
+        }
+        
+        #endregion
+
+        private void OnDisable()
+        {
+            if (ActiveConduits is null) return;
+            foreach (ITransitionBehaviourConduit conduit in ActiveConduits)
+            {
+                conduit.Clean();
+            }
         }
 
         private void OnValidate()

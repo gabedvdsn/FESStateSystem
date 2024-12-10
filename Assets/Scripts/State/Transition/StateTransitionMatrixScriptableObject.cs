@@ -12,8 +12,9 @@ namespace FESStateSystem
     {
         [SerializedDictionary("From", "Transitions")]
         public SerializedDictionary<AbstractGameplayStateScriptableObject, StateTransitionData> Transitions;
+        public bool OnlyDefinedStates = true;
 
-        public StateTransitionMatrix<S> GenerateMatrix<S>(S source)
+        public StateTransitionMatrix<S> GenerateMatrix<S>(S source, StateActor actor) where S : MonoBehaviour
         {
             Dictionary<AbstractGameplayStateScriptableObject, LiveStateTransitionData<S>> transitions = new Dictionary<AbstractGameplayStateScriptableObject, LiveStateTransitionData<S>>();
             foreach (AbstractGameplayStateScriptableObject state in Transitions.Keys)
@@ -21,12 +22,12 @@ namespace FESStateSystem
                 transitions[state] = new LiveStateTransitionData<S>()
                 {
                     Transitions =
-                        Transitions[state].TransitionData.Where(transition => transition != null).Select(transition => new StateTransition<S>(transition)).ToList(),
+                        Transitions[state].TransitionData.Where(transition => transition != null).Select(StateTransition<S>.Generate).ToList(),
                     Method = Transitions[state].TransitionMethod
                 };
             }
 
-            return new StateTransitionMatrix<S>(source, transitions);
+            return new StateTransitionMatrix<S>(source, actor, transitions);
         }
 
         private void OnValidate()
@@ -61,35 +62,57 @@ namespace FESStateSystem
     /// Represents an edge within a state transition graph.
     /// </summary>
     /// <typeparam name="S">The Source type (e.g. Player, Weather, Camera) which is encapsulated by the predicate implementation.</typeparam>
-    public class StateTransitionMatrix<S>
+    public class StateTransitionMatrix<S> where S : MonoBehaviour
     {
         private Dictionary<AbstractGameplayStateScriptableObject, LiveStateTransitionData<S>> Matrix;
         private S Source;
+        private StateActor Actor;
 
-        public StateTransitionMatrix(S source, Dictionary<AbstractGameplayStateScriptableObject, LiveStateTransitionData<S>> matrix)
+        public StateTransitionMatrix(S source, StateActor actor, Dictionary<AbstractGameplayStateScriptableObject, LiveStateTransitionData<S>> matrix)
         {
             Source = source;
             Matrix = matrix;
+            Actor = actor;
         }
         
         public bool TryEvaluateTransitionsFor(AbstractGameplayStateScriptableObject activeState, out TransitionEvaluationResult result)
         {
             if (!Matrix.ContainsKey(activeState))
             {
-                result = new TransitionEvaluationResult(false, null, TransitionSelectionMethod.Any);
+                result = TransitionEvaluationResult.NullResult();
                 return false;
             }
 
             List<AbstractGameplayStateScriptableObject> successTargets = new List<AbstractGameplayStateScriptableObject>();
             foreach (StateTransition<S> transition in Matrix[activeState].Transitions)
             {
-                if (transition.EvaluatePredicate(Source)) successTargets.Add(transition.BaseTransition.To);
+                if (transition.EvaluatePredicate(Source, Actor)) successTargets.Add(transition.BaseTransition.To);
             }
 
             result = new TransitionEvaluationResult(successTargets.Count > 0, successTargets, Matrix[activeState].Method);
             return result.Status;
         }
 
+        public bool TryEvaluateSingleTransition(StateTransition<S> transition, out TransitionEvaluationResult result)
+        {
+            if (transition.EvaluatePredicate(Source, Actor))
+            {
+                result = new TransitionEvaluationResult()
+                {
+                    Status = true,
+                    SuccessfulTransitions = new List<AbstractGameplayStateScriptableObject>()
+                    {
+                        transition.BaseTransition.To
+                    },
+                    Method = TransitionSelectionMethod.First
+                };
+                return true;
+            }
+
+            result = TransitionEvaluationResult.NullResult();
+            return false;
+        }
+        
         public void LogMatrix()
         {
             Debug.Log($"[ STATE TRANSITION MATRIX ] {typeof(S)}");
@@ -112,7 +135,7 @@ namespace FESStateSystem
         public List<StateTransitionScriptableObject> TransitionData;
     }
 
-    public class LiveStateTransitionData<S>
+    public class LiveStateTransitionData<S> where S : MonoBehaviour
     {
         public List<StateTransition<S>> Transitions;
         public TransitionSelectionMethod Method;
@@ -136,6 +159,11 @@ namespace FESStateSystem
         public AbstractGameplayStateScriptableObject Last => Status ? SuccessfulTransitions.Last() : null;
         public AbstractGameplayStateScriptableObject HighestPriority => Status ? SuccessfulTransitions.OrderByDescending(state => state.SelectionPriority).FirstOrDefault() : null;
         public AbstractGameplayStateScriptableObject LowestPriority => Status ? SuccessfulTransitions.OrderBy(state => state.SelectionPriority).FirstOrDefault() : null;
+
+        public static TransitionEvaluationResult NullResult()
+        {
+            return new TransitionEvaluationResult(false, null, TransitionSelectionMethod.Any);
+        }
     }
 
     public enum TransitionSelectionMethod
@@ -145,6 +173,7 @@ namespace FESStateSystem
         Last,
         HighPriority,
         LowPriority
+        
     }
 
 }

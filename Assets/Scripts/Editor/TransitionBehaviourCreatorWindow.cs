@@ -86,7 +86,7 @@ namespace FESStateSystem
 using FESStateSystem;
 
 [RequireComponent(typeof({sourceName}))]
-public class {scriptName} : AbstractStateTransitionComponent<{sourceName}>
+public class {scriptName} : AbstractStateTransitionBehaviourComponent<{sourceName}>
 {{
 
 }}

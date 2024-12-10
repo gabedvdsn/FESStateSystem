@@ -14,10 +14,9 @@ namespace FESStateSystem
             };
         }
 
-        public class PassthroughTransitionPredicate<S> : AbstractTransitionPredicate<S>
+        private class PassthroughTransitionPredicate<S> : AbstractTransitionPredicate<S>
         {
-            
-            public override bool Evaluate(S source)
+            public override bool Evaluate(S source, StateActor actor)
             {
                 return true;
             }

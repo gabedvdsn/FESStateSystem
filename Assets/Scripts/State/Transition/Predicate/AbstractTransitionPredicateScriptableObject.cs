@@ -12,6 +12,6 @@ namespace FESStateSystem
         [Tooltip("Allow as predicate for multiple transitions from the same state")]
         public bool AllowForManyTransitions;
 
-        public abstract List<AbstractTransitionPredicate<S>> Generate<S>();
+        public abstract List<AbstractTransitionPredicate<S>> Generate<S>() where S : MonoBehaviour;
     }
 }

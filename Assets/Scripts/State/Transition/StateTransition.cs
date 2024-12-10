@@ -1,40 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace FESStateSystem
 {
-    public class StateTransition<S>
+    public class StateTransition<S> where S : MonoBehaviour
     {
-        public delegate bool EvaluateAction();
+        public readonly StateTransitionScriptableObject BaseTransition;
 
-        public StateTransitionScriptableObject BaseTransition;
-
-        protected List<AbstractTransitionPredicate<S>> Predicates;
+        private readonly List<AbstractTransitionPredicate<S>> Predicates;
         
-        public StateTransition(StateTransitionScriptableObject transition)
+        private StateTransition(StateTransitionScriptableObject transitionData)
         {
-            BaseTransition = transition;
+            BaseTransition = transitionData;
             Predicates = BaseTransition.Predicate.Generate<S>();
         }
 
-        public bool EvaluatePredicate(S source)
+        public bool EvaluatePredicate(S source, StateActor actor)
         {
-            return Predicates.All(p => p.Evaluate(source));
+            return Predicates.All(p => p.Evaluate(source, actor));
         }
 
-        public void SubscribeEvaluateEvent(ref EvaluateAction evaluateDelegate)
+        public static StateTransition<S> Generate(StateTransitionScriptableObject transitionData)
         {
-            evaluateDelegate += TriggerEvaluate;
-        }
-
-        public void UnsubscribeEvaluateEvent(ref EvaluateAction evaluateDelegate)
-        {
-            evaluateDelegate -= TriggerEvaluate;
-        }
-        
-        protected virtual bool TriggerEvaluate()
-        {
-            return false;
+            return new StateTransition<S>(transitionData);
         }
     }
 }
