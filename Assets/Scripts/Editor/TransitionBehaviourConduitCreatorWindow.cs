@@ -86,7 +86,7 @@ namespace FESStateSystem
                         dataScriptName = $"{realConduitName}TransitionBehaviourConduitScriptableObject";
                         conduitScriptName = $"{realConduitName}TransitionBehaviourConduit";
                 
-                        savePath = $"Assets/Scripts/AuthoredStateSystem/TransitionBehaviourConduits/{sourceName}";
+                        savePath = $"Assets/Scripts/AuthoredStateSystem/TransitionBehaviourConduits/{sourceName}/{conduitName}";
                     }
                     else valid = false;
                 }
@@ -112,7 +112,7 @@ namespace FESStateSystem
             if (!string.IsNullOrEmpty(sourceUsingLine))
             {
                 EditorGUI.indentLevel = 1;
-                EditorGUILayout.TextField("", $"{sourceUsingLine.Replace(";", "")}");
+                EditorGUILayout.TextField("Dependency", $"{sourceUsingLine.Replace(";", "").Replace("using ", "")}");
                 EditorGUI.indentLevel = 0;
             }
             EditorGUI.EndDisabledGroup();

@@ -18,6 +18,7 @@ namespace FESStateSystem
         private bool prefixInherited = true;
         private bool encapsulateField = false;
         private MonoScript encapsulates;
+        private string sourceUsingLine;
     
         private MonoScript inheritsFromState = null;
         private Type inheritsBaseclass = typeof(AbstractGameplayStateScriptableObject);
@@ -54,8 +55,25 @@ namespace FESStateSystem
                 {
                     prefixInherited = EditorGUILayout.Toggle("As Prefix", prefixInherited);
                 }
-            
+                
                 string inheritedState = inheritsFromState.GetClass().ToString();
+                string[] sourceNameStrings = inheritedState.Split('.');
+                if (sourceNameStrings.Length > 1)
+                {
+                    sourceUsingLine = "using ";
+                    for (int i = 0; i < sourceNameStrings.Length - 1; i++)
+                    {
+                        sourceUsingLine += sourceNameStrings[i];
+                        if (i < sourceNameStrings.Length - 2) sourceUsingLine += ".";
+                    }
+
+                    sourceUsingLine += ";";
+                }
+                else
+                {
+                    sourceUsingLine = "";
+                }
+                
                 inheritedState = inheritedState.Split('.')[^1];
                 inheritedState = inheritedState.Replace("GameplayStateScriptableObject", "");
                 inheritedState = inheritedState.Replace("Abstract", "");
@@ -104,6 +122,12 @@ namespace FESStateSystem
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.TextField("", scriptName);
             EditorGUILayout.TextField("", className);
+            if (!string.IsNullOrEmpty(sourceUsingLine))
+            {
+                EditorGUI.indentLevel = 1;
+                EditorGUILayout.TextField("Dependency", sourceUsingLine.Replace("using ", "").Replace(";", ""));
+                EditorGUI.indentLevel = 0;
+            }
             EditorGUI.EndDisabledGroup();
             
             EditorGUILayout.Space(10);
@@ -133,13 +157,13 @@ namespace FESStateSystem
             GUILayout.Label("Asset Menu", EditorStyles.boldLabel);
             
             actorTarget = EditorGUILayout.TextField("Actor Target", actorTarget);
-            
-            string menuTarget = !string.IsNullOrEmpty(stateName) ? $"{stateName} State" : "";
+
+            string menuTarget = !string.IsNullOrEmpty(actorTarget) ? $"{actorTarget}/{stateName} State" : $"General/{stateName} State";
             string menuPath = !isAbstract
-                ? $"FESStates/Actor/{(!string.IsNullOrEmpty(actorTarget) ? $"{actorTarget}/{menuTarget}" : $"General/{menuTarget}")}"
+                ? $"FESState/Authored/State/{menuTarget}"
                 : "No menu path for abstract classes";
             EditorGUI.BeginDisabledGroup(true);
-            EditorGUILayout.TextField("", menuPath);
+            EditorGUILayout.TextField("", string.IsNullOrEmpty(stateName) ? "" : menuPath);
             EditorGUI.EndDisabledGroup();
         
             EditorGUILayout.Space(10);
@@ -167,8 +191,8 @@ namespace FESStateSystem
 
         private void ResetStateStuff()
         {
-            inheritsFromState = null;
-            isInheritable = false;
+            // inheritsFromState = null;
+            // isInheritable = false;
 
             attachInherited = false;
             prefixInherited = true;
@@ -178,8 +202,9 @@ namespace FESStateSystem
             isAbstract = false;
             scriptName = "";
             className = "";
+            sourceUsingLine = "";
 
-            actorTarget = "";
+            // actorTarget = "";
         }
 
         private void CreateStateScript()
@@ -187,8 +212,11 @@ namespace FESStateSystem
             string inheritedFrom = isInheritable && inheritsFromState is not null
                 ? inheritsFromState.GetClass().ToString()
                 : "AbstractGameplayStateScriptableObject";
+            if (!string.IsNullOrEmpty(sourceUsingLine)) inheritedFrom = inheritedFrom.Replace(sourceUsingLine.Replace("using ", "").Replace(";", ""), "").Replace(".", "");
             string subInheritedFrom = inheritsFromState is not null
-                ? inheritedFrom.Replace("ScriptableObject", "") : "AbstractGameplayState";
+                ? inheritedFrom.Replace("ScriptableObject", "") 
+                : "AbstractGameplayState";
+            if (!string.IsNullOrEmpty(sourceUsingLine)) subInheritedFrom = subInheritedFrom.Replace(sourceUsingLine.Replace("using ", "").Replace(";", ""), "").Replace(".", "");
             string menuTarget = !string.IsNullOrEmpty(actorTarget) ? $"{actorTarget}/{stateName} State" : $"General/{stateName} State";
             string header = isAbstract ? "" : $"[CreateAssetMenu(menuName = \"FESState/Authored/State/{menuTarget}\", fileName = \"{realStateName}State\")]";
             string abstractTag = isAbstract ? "abstract " : "";
@@ -257,10 +285,13 @@ namespace FESStateSystem
             {classInit}
         }}
 ";
-        
-            string scriptTemplate = $@"using UnityEngine;
-using System.Collections.Generic;
-using FESStateSystem;
+            string usingString = "using UnityEngine;\nusing System.Collections.Generic;\nusing FESStateSystem;";
+            if (!string.IsNullOrEmpty(sourceUsingLine))
+            {
+                usingString += $"\n{sourceUsingLine}";
+            }
+
+            string scriptTemplate = $@"{usingString}
 
 {header}
 public {abstractTag}class {scriptName} : {inheritedFrom}

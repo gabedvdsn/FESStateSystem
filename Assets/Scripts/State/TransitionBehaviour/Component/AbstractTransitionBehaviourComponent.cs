@@ -18,9 +18,6 @@ namespace FESStateSystem
         private StateTransitionMatrix<S> Matrix;
         private Dictionary<AbstractTransitionBehaviourConduit<S>, bool> RegisteredConduits;
 
-        public delegate void RunAllDelegate(bool interruptStateChange);
-        public delegate void RunWithinDelegate(StateContextTagScriptableObject contextTag, bool interruptStateChange);
-
         private void Awake()
         {
             State = GetComponent<StateActor>();
@@ -155,5 +152,6 @@ namespace FESStateSystem
         }
         
         #endregion
+        
     }
 }
