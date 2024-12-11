@@ -12,7 +12,7 @@ namespace FESStateSystem
         private MonoScript sourceType;
         private string sourceName;
 
-        private string savePath = "Assets/Scripts/AuthoredStateSystem/TransitionBehaviours";
+        private static string savePath = "Assets/Scripts/AuthoredStateSystem/TransitionBehaviours";
 
         [MenuItem("StateSystem/Transition Behaviour Creator")]
         public static void ShowWindow()
@@ -86,7 +86,7 @@ namespace FESStateSystem
 using FESStateSystem;
 
 [RequireComponent(typeof({sourceName}))]
-public class {scriptName} : AbstractStateTransitionBehaviourComponent<{sourceName}>
+public class {scriptName} : AbstractTransitionBehaviourComponent<{sourceName}>
 {{
 
 }}
@@ -108,5 +108,6 @@ public class {scriptName} : AbstractStateTransitionBehaviourComponent<{sourceNam
             // Refresh the Asset Database to show the new script
             AssetDatabase.Refresh();
         }
+        
     }
 }

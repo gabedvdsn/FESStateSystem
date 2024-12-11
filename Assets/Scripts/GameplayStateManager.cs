@@ -48,7 +48,7 @@ namespace FESStateSystem
             }
         }
 
-        private void Start()
+        private void OnEnable()
         {
             PerformInitialDistribution(DefaultStateEnvironmentIdentifier);
         }
@@ -160,9 +160,14 @@ namespace FESStateSystem
         
         #region Conduits
 
+        public bool ConduitIsRegistered(ITransitionBehaviourConduit conduit)
+        {
+            return ActiveConduits.Contains(conduit);
+        }
+
         public void RegisterConduit(ITransitionBehaviourConduit conduit)
         {
-            if (ActiveConduits is null) ActiveConduits = new List<ITransitionBehaviourConduit>();
+            ActiveConduits ??= new List<ITransitionBehaviourConduit>();
             ActiveConduits.Add(conduit);
         }
         
@@ -173,7 +178,7 @@ namespace FESStateSystem
             if (ActiveConduits is null) return;
             foreach (ITransitionBehaviourConduit conduit in ActiveConduits)
             {
-                conduit.Clean();
+                conduit.CleanDependencies();
             }
         }
 

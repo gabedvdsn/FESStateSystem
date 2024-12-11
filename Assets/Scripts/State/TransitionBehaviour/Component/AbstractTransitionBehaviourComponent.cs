@@ -6,17 +6,17 @@ using UnityEngine;
 namespace FESStateSystem
 {
     [RequireComponent(typeof(StateActor))]
-    public abstract class AbstractStateTransitionBehaviourComponent<S> : MonoBehaviour where S : MonoBehaviour
+    public abstract class AbstractTransitionBehaviourComponent<S> : MonoBehaviour where S : MonoBehaviour
     {
         [Header("Matrix")]
         public StateTransitionMatrixScriptableObject TransitionMatrix;
 
         [Header("Conduits")] 
-        public List<AbstractStateTransitionBehaviourConduitScriptableObject<S>> TransitionBehaviourConduits;
+        public List<AbstractTransitionBehaviourConduitScriptableObject<S>> TransitionBehaviourConduits;
 
         private StateActor State;
         private StateTransitionMatrix<S> Matrix;
-        private Dictionary<AbstractStateTransitionBehaviourConduit<S>, bool> RegisteredConduits;
+        private Dictionary<AbstractTransitionBehaviourConduit<S>, bool> RegisteredConduits;
 
         public delegate void RunAllDelegate(bool interruptStateChange);
         public delegate void RunWithinDelegate(StateContextTagScriptableObject contextTag, bool interruptStateChange);
@@ -24,11 +24,14 @@ namespace FESStateSystem
         private void Awake()
         {
             State = GetComponent<StateActor>();
-            
-            Matrix = TransitionMatrix.GenerateMatrix(GetComponent<S>(), State);
-            foreach (AbstractStateTransitionBehaviourConduitScriptableObject<S> conduit in TransitionBehaviourConduits)
+
+            if (TransitionMatrix)
             {
-                conduit.InitializeConduit(this);
+                Matrix = TransitionMatrix.GenerateMatrix(GetComponent<S>(), State);
+                foreach (AbstractTransitionBehaviourConduitScriptableObject<S> conduit in TransitionBehaviourConduits)
+                {
+                    conduit.InitializeConduit(this);
+                }
             }
             
             OnAwakeEvent();
@@ -39,14 +42,14 @@ namespace FESStateSystem
             
         }
 
-        private void OnEnable()
+        private void Start()
         {
             RunAll();
 
-            OnEnableEvent();
+            OnStartEvent();
         }
 
-        protected virtual void OnEnableEvent()
+        protected virtual void OnStartEvent()
         {
             
         }
@@ -69,18 +72,12 @@ namespace FESStateSystem
             }
         }
 
-        public void SubscribeRunAllTo(ref RunAllDelegate runAllAction) => runAllAction += RunAll;
-        public void UnsubscribeRunAllTo(ref RunAllDelegate runAllAction) => runAllAction -= RunAll;
-
         public void RunWithinContext(StateContextTagScriptableObject contextTag, bool interruptStateChange = true)
         {
             if (!State.Moderator.TryGetActiveState(contextTag, out AbstractGameplayState state)) return;
             if (!Matrix.TryEvaluateTransitionsFor(state.StateData, out TransitionEvaluationResult result)) return;
             PerformTransitionBy(result, contextTag, interruptStateChange);
         }
-
-        public void SubscribeRunWithinContextTo(ref RunWithinDelegate runWithinAction) => runWithinAction += RunWithinContext;
-        public void UnsubscribeRunWithinContextTo(ref RunWithinDelegate runWithinAction) => runWithinAction -= RunWithinContext;
 
         private void PerformTransitionBy(TransitionEvaluationResult result, StateContextTagScriptableObject contextTag, bool interrupts = true)
         {
@@ -117,38 +114,40 @@ namespace FESStateSystem
         
         #region Conduit Handling
 
-        public bool RegisterConduit(AbstractStateTransitionBehaviourConduit<S> conduit, bool startOpen = true)
+        public bool RegisterConduit(AbstractTransitionBehaviourConduit<S> conduit, bool startOpen = true)
         {
-            if (RegisteredConduits.ContainsKey(conduit)) return false;
+            RegisteredConduits ??= new Dictionary<AbstractTransitionBehaviourConduit<S>, bool>();
+            
+            if (ConduitIsRegistered(conduit)) return false;
             RegisteredConduits[conduit] = startOpen;
             return true;
         }
 
-        public bool DeRegisterConduit(AbstractStateTransitionBehaviourConduit<S> conduit)
+        public bool DeRegisterConduit(AbstractTransitionBehaviourConduit<S> conduit)
         {
             if (!ConduitIsRegistered(conduit)) return false;
             RegisteredConduits.Remove(conduit);
             return true;
         }
 
-        public bool CloseConduit(AbstractStateTransitionBehaviourConduit<S> conduit)
+        public bool CloseConduit(AbstractTransitionBehaviourConduit<S> conduit)
         {
             if (!ConduitIsOpen(conduit)) return false;
             RegisteredConduits[conduit] = false;
             return true;
         }
         
-        public bool OpenConduit(AbstractStateTransitionBehaviourConduit<S> conduit)
+        public bool OpenConduit(AbstractTransitionBehaviourConduit<S> conduit)
         {
             if (ConduitIsOpen(conduit)) return false;
             RegisteredConduits[conduit] = true;
             return true;
         }
 
-        private bool ConduitIsRegistered(AbstractStateTransitionBehaviourConduit<S> conduit) => RegisteredConduits.ContainsKey(conduit);
-        private bool ConduitIsOpen(AbstractStateTransitionBehaviourConduit<S> conduit) => ConduitIsRegistered(conduit) && RegisteredConduits[conduit];
+        private bool ConduitIsRegistered(AbstractTransitionBehaviourConduit<S> conduit) => RegisteredConduits.ContainsKey(conduit);
+        private bool ConduitIsOpen(AbstractTransitionBehaviourConduit<S> conduit) => ConduitIsRegistered(conduit) && RegisteredConduits[conduit];
 
-        public bool SendConduitTransition(AbstractStateTransitionBehaviourConduit<S> conduit, LiveTransitionFrequencyData<S> frequencyData)
+        public bool SendConduitTransition(AbstractTransitionBehaviourConduit<S> conduit, LiveFrequencyTransitionData<S> frequencyData)
         {
             if (!ConduitIsOpen(conduit)) return false;
             Run(frequencyData.Transition, frequencyData.Base.Context, frequencyData.Transition.BaseTransition.StateChangeInterrupts);

@@ -25,7 +25,7 @@ namespace FESStateSystem
         
         private string actorTarget;
 
-        private string savePath = "Assets/Scripts/AuthoredStateSystem/GameplayStates";
+        private static string savePath = "Assets/Scripts/AuthoredStateSystem/GameplayStates";
 
         [MenuItem("StateSystem/State Creator")]
         public static void ShowWindow()

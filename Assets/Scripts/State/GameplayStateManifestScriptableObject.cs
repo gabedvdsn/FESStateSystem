@@ -14,7 +14,7 @@ namespace FESStateSystem
             InitialStates;
         
         [SerializedDictionary("Context Tag", "Permitted States")]
-        public SerializedDictionary<StateContextTagScriptableObject, List<AbstractGameplayStateBehaviourScriptableObject>>
+        public SerializedDictionary<StateContextTagScriptableObject, List<BaseAbstractGameplayStateScriptableObject>>
             ContextManifest;
         
         [Space]
@@ -28,9 +28,9 @@ namespace FESStateSystem
         public List<AbstractGameplayStateScriptableObject> Get(StateContextTagScriptableObject contextTag)
         {
             List<AbstractGameplayStateScriptableObject> states = new List<AbstractGameplayStateScriptableObject>();
-            foreach (AbstractGameplayStateBehaviourScriptableObject stateBehaviour in ContextManifest[contextTag])
+            foreach (BaseAbstractGameplayStateScriptableObject baseState in ContextManifest[contextTag])
             {
-                states.AddRange(stateBehaviour.Get());
+                states.AddRange(baseState.Get());
             }
 
             return states;

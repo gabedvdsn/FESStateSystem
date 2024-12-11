@@ -762,8 +762,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6039f51939cec349870b5a98af3c0a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TransitionMatrix: {fileID: 0}
-  TransitionBehaviourConduits: []
+  TransitionMatrix: {fileID: 11400000, guid: 75f6755f64cea5a46bfb426305d5af87, type: 2}
+  TransitionBehaviourConduits:
+  - {fileID: 11400000, guid: 7a8189ebf6c1796469286190a163f0cb, type: 2}
 --- !u!114 &114098547
 MonoBehaviour:
   m_ObjectHideFlags: 0

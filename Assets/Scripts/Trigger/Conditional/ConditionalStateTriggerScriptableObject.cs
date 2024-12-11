@@ -14,7 +14,7 @@ namespace FESStateSystem
     
         [Header("States")]
     
-        public SerializedDictionary<StateContextTagScriptableObject, List<AbstractGameplayStateBehaviourScriptableObject>> LookForStates;
+        public SerializedDictionary<StateContextTagScriptableObject, List<BaseAbstractGameplayStateScriptableObject>> LookForStates;
         
         public bool ActiveStatesOnly = true;
         public bool AllowDescendants;
@@ -119,7 +119,7 @@ namespace FESStateSystem
             foreach (StateContextTagScriptableObject contextTag in LookForStates.Keys)
             {
                 states[contextTag] = new List<AbstractGameplayStateScriptableObject>();
-                foreach (AbstractGameplayStateBehaviourScriptableObject stateBehaviour in LookForStates[contextTag]) states[contextTag].AddRange(stateBehaviour.Get());
+                foreach (BaseAbstractGameplayStateScriptableObject baseState in LookForStates[contextTag]) states[contextTag].AddRange(baseState.Get());
             }
 
             return states;

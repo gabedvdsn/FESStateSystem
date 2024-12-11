@@ -14,7 +14,7 @@ namespace FESStateSystem
         private string subclassName;
         private string assetMenuString;
 
-        private string savePath = "Assets/Scripts/AuthoredStateSystem/Predicates";
+        private static string savePath = "Assets/Scripts/AuthoredStateSystem/Predicates";
 
         [MenuItem("StateSystem/Predicate Creator")]
         public static void ShowWindow()

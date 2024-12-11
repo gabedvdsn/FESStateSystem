@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e5b53ee1c2ba94d47aed466015d9271e, type: 3}
-  m_Name: EnvTransitionBehaviourDemo
+  m_Name: EnvWorld
   m_EditorClassIdentifier: 
   GeneralIdentifierInitialStateTriggers:
     _serializedList:

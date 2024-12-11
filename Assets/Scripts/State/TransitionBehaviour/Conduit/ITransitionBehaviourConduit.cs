@@ -4,6 +4,7 @@ namespace FESStateSystem
 {
     public interface ITransitionBehaviourConduit
     {
-        public void Clean();
+        public void ForceTransmitAll();
+        public void CleanDependencies();
     }
 }

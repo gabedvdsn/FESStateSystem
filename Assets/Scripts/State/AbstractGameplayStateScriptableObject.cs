@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 namespace FESStateSystem
 {
-    public abstract class AbstractGameplayStateScriptableObject : AbstractGameplayStateBehaviourScriptableObject
+    public abstract class AbstractGameplayStateScriptableObject : BaseAbstractGameplayStateScriptableObject
     {
         [Header("Gameplay State")] 
         public AbstractGameplayStateScriptableObject Parent;

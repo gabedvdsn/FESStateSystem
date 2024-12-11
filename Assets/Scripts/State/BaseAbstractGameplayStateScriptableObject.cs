@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FESStateSystem
 {
-    public abstract class AbstractGameplayStateBehaviourScriptableObject : ScriptableObject
+    public abstract class BaseAbstractGameplayStateScriptableObject : ScriptableObject
     {
         public abstract List<AbstractGameplayState> GenerateStates(StateActor actor);
         public abstract bool Defines(AbstractGameplayStateScriptableObject state);

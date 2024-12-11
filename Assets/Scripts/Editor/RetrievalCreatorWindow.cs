@@ -12,7 +12,7 @@ namespace FESStateSystem
         private bool useExternalTarget;
         private bool useExternalTargets;
 
-        private string savePath = "Assets/Scripts/AuthoredStateSystem/Retrievals";
+        private static string savePath = "Assets/Scripts/AuthoredStateSystem/Retrievals";
 
         [MenuItem("StateSystem/Retrieval Creator")]
         public static void ShowWindow()

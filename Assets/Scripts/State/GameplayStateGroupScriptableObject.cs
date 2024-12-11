@@ -5,16 +5,16 @@ using UnityEngine;
 namespace FESStateSystem
 {
     [CreateAssetMenu(menuName = "FESState/State/Group")]
-    public class GameplayStateGroupScriptableObject : AbstractGameplayStateBehaviourScriptableObject
+    public class GameplayStateGroupScriptableObject : BaseAbstractGameplayStateScriptableObject
     {
-        public List<AbstractGameplayStateBehaviourScriptableObject> States;
+        public List<BaseAbstractGameplayStateScriptableObject> States;
         
         public override List<AbstractGameplayState> GenerateStates(StateActor actor)
         {
             List<AbstractGameplayState> states = new List<AbstractGameplayState>();
-            foreach (AbstractGameplayStateBehaviourScriptableObject state in States)
+            foreach (BaseAbstractGameplayStateScriptableObject baseState in States)
             {
-                states.AddRange(state.GenerateStates(actor));
+                states.AddRange(baseState.GenerateStates(actor));
             }
 
             return states;
@@ -28,9 +28,9 @@ namespace FESStateSystem
         public override List<AbstractGameplayStateScriptableObject> Get()
         {
             List<AbstractGameplayStateScriptableObject> states = new List<AbstractGameplayStateScriptableObject>();
-            foreach (AbstractGameplayStateBehaviourScriptableObject stateBehaviour in States)
+            foreach (BaseAbstractGameplayStateScriptableObject baseState in States)
             {
-                states.AddRange(stateBehaviour.Get());
+                states.AddRange(baseState.Get());
             }
 
             return states;
