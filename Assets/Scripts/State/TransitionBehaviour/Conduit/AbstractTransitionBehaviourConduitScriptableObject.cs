@@ -12,12 +12,12 @@ namespace FESStateSystem
             AbstractTransitionBehaviourConduit<S> conduit = CreateConduit(transitionComponent);
             if (!conduit) return;
             
-            conduit.Initialize(transitionComponent, ConduitStartsOpen);
+            // conduit.Initialize(transitionComponent, ConduitStartsOpen);
         }
 
-        protected T InstantiateConduit<T>(T prefab) where T : AbstractTransitionBehaviourConduit<S>
+        protected T InstantiateConduit<T>(T prefab, Transform parent) where T : AbstractTransitionBehaviourConduit<S>
         { 
-            T conduit = Instantiate(prefab, GameplayStateManager.Instance.transform);
+            T conduit = Instantiate(prefab, parent);
             conduit.name = $"{typeof(T).Name.Split('`')[0].Replace("TransitionBehaviour", "")} [{typeof(S).Name.Split('`')[0]}]";
             return conduit;
         }

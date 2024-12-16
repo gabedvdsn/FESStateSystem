@@ -1,0 +1,220 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2906881610292109823
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 702838991538225721}
+  - component: {fileID: 875362369190156113}
+  - component: {fileID: 2076734898178671654}
+  m_Layer: 0
+  m_Name: PlayerInputConduit
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &702838991538225721
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2906881610292109823}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &875362369190156113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2906881610292109823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 058fcd4d59474ae47bf0c63e2e393969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FrequencyTransitions: {fileID: 11400000, guid: 059c44c966c6b084ea3f800fbb1ca41b, type: 2}
+--- !u!114 &2076734898178671654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2906881610292109823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: e3dcfc3acbd30dd409906a7e2231df83, type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 875362369190156113}
+        m_TargetAssemblyTypeName: PlayerInputTransitionBehaviourConduit, Assembly-CSharp
+        m_MethodName: SendIdle
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: 22c72752ee086704ca527f571659bc3b, type: 2}
+          m_ObjectArgumentAssemblyTypeName: FESStateSystem.StateConduitFrequencyTagScriptableObject,
+            Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 01f63f54-c911-43a7-84ef-71e7887dc8d3
+    m_ActionName: Player/Idle[/Keyboard/1]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 875362369190156113}
+        m_TargetAssemblyTypeName: PlayerInputTransitionBehaviourConduit, Assembly-CSharp
+        m_MethodName: SendWalk
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: ae89ac3b85247b74b9369c8bded2896e, type: 2}
+          m_ObjectArgumentAssemblyTypeName: FESStateSystem.StateConduitFrequencyTagScriptableObject,
+            Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 9231aee8-f976-4dae-8625-e266b148f36f
+    m_ActionName: Player/Walk[/Keyboard/2]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 875362369190156113}
+        m_TargetAssemblyTypeName: PlayerInputTransitionBehaviourConduit, Assembly-CSharp
+        m_MethodName: SendRun
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: b180850ff27375745a5b832278afa83a, type: 2}
+          m_ObjectArgumentAssemblyTypeName: FESStateSystem.StateConduitFrequencyTagScriptableObject,
+            Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 3f5739aa-60a2-47c6-8120-f13c059f40cc
+    m_ActionName: Player/Run[/Keyboard/3]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 875362369190156113}
+        m_TargetAssemblyTypeName: PlayerInputTransitionBehaviourConduit, Assembly-CSharp
+        m_MethodName: SendJump
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: 93d2e34136cab7d47a7154e2013cb1ad, type: 2}
+          m_ObjectArgumentAssemblyTypeName: FESStateSystem.StateConduitFrequencyTagScriptableObject,
+            Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 49c4b77b-93cd-4d8f-bda4-ac2f66c682e3
+    m_ActionName: Player/Jump[/Keyboard/4]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 875362369190156113}
+        m_TargetAssemblyTypeName: PlayerInputTransitionBehaviourConduit, Assembly-CSharp
+        m_MethodName: SendAttack
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: f6d99ed07c5971f4190dd15b1187bf02, type: 2}
+          m_ObjectArgumentAssemblyTypeName: FESStateSystem.StateConduitFrequencyTagScriptableObject,
+            Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 7ccfc669-db80-4992-afb8-e423de2d330f
+    m_ActionName: Player/Attack[/Keyboard/5]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 875362369190156113}
+        m_TargetAssemblyTypeName: PlayerInputTransitionBehaviourConduit, Assembly-CSharp
+        m_MethodName: SendEat
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: 622515bf7362c8c4cad9e7c9780d5409, type: 2}
+          m_ObjectArgumentAssemblyTypeName: FESStateSystem.StateConduitFrequencyTagScriptableObject,
+            Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 38d7831f-520a-4e0e-ab78-43168237eb21
+    m_ActionName: Player/Eat[/Keyboard/6]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a0218efd-eba4-4cdf-87f4-173fe0cf3c19
+    m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 449ea17b-2754-497a-9bd3-59538d7c6c71
+    m_ActionName: UI/Submit[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: bde98ee7-6d11-4390-aa29-3dcdf10f4f00
+    m_ActionName: UI/Cancel[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cc1fc8cf-a9d0-48b6-a41d-538519634924
+    m_ActionName: UI/Point[/Mouse/position,/Pen/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c2c48065-441c-4eb9-a6f7-81b693dea7f5
+    m_ActionName: UI/Click[/Mouse/leftButton,/Pen/tip]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 81f52f72-30ef-4b41-8b4a-5e9ba928418b
+    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6c599116-f458-4f5c-8a25-b305c865fa59
+    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 44173f2b-df90-4dfa-97f8-4b6263bc525d
+    m_ActionName: UI/RightClick[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e0b776f7-4278-4e55-8c6c-ec2fcb601001
+    m_ActionName: UI/TrackedDevicePosition
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e69ebd49-6184-437e-ab96-7eafea91e53e
+    m_ActionName: UI/TrackedDeviceOrientation
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}

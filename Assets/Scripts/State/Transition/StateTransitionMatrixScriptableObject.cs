@@ -12,6 +12,10 @@ namespace FESStateSystem
     {
         [SerializedDictionary("From", "Transitions")]
         public SerializedDictionary<AbstractGameplayStateScriptableObject, StateTransitionData> Transitions;
+        
+        [Space]
+        
+        public bool OnlyDefinedTransitions = false;
         public bool OnlyDefinedStates = true;
 
         public StateTransitionMatrix<S> GenerateMatrix<S>(S source, StateActor actor) where S : MonoBehaviour
@@ -67,12 +71,14 @@ namespace FESStateSystem
         private Dictionary<AbstractGameplayStateScriptableObject, LiveStateTransitionData<S>> Matrix;
         private S Source;
         private StateActor Actor;
+        private bool OnlyDefinedTransitions;
 
-        public StateTransitionMatrix(S source, StateActor actor, Dictionary<AbstractGameplayStateScriptableObject, LiveStateTransitionData<S>> matrix)
+        public StateTransitionMatrix(S source, StateActor actor, Dictionary<AbstractGameplayStateScriptableObject, LiveStateTransitionData<S>> matrix, bool onlyDefinedTransitions = false)
         {
             Source = source;
             Matrix = matrix;
             Actor = actor;
+            OnlyDefinedTransitions = onlyDefinedTransitions;
         }
         
         public bool TryEvaluateTransitionsFor(AbstractGameplayStateScriptableObject activeState, out TransitionEvaluationResult result)
@@ -95,6 +101,12 @@ namespace FESStateSystem
 
         public bool TryEvaluateSingleTransition(StateTransition<S> transition, out TransitionEvaluationResult result)
         {
+            if (OnlyDefinedTransitions && !DefinesTransition(transition.BaseTransition))
+            {
+                result = TransitionEvaluationResult.NullResult();
+                return false;
+            }
+            
             if (transition.EvaluatePredicate(Source, Actor))
             {
                 result = new TransitionEvaluationResult()
@@ -110,6 +122,16 @@ namespace FESStateSystem
             }
 
             result = TransitionEvaluationResult.NullResult();
+            return false;
+        }
+
+        public bool DefinesTransition(StateTransitionScriptableObject transitionData)
+        {
+            foreach (AbstractGameplayStateScriptableObject fromState in Matrix.Keys)
+            {
+                if (Matrix[fromState].Transitions.Any(transition => transition.BaseTransition == transitionData)) return true;
+            }
+
             return false;
         }
         

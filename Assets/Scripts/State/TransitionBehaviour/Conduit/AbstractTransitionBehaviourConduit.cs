@@ -3,55 +3,48 @@ using System.Collections.Generic;
 using System.Linq;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 namespace FESStateSystem
 {
-    public abstract class AbstractTransitionBehaviourConduit<S> : BaseAbstractTransitionBehaviourConduit, ITransitionBehaviourConduit where S : MonoBehaviour
+    public abstract class AbstractTransitionBehaviourConduit<S> : MonoBehaviour, ITransitionBehaviourConduit where S : MonoBehaviour
     {
-        [SerializedDictionary("Frequency", "Transitions")]
-        public SerializedDictionary<StateConduitFrequencyTagScriptableObject, TransitionFrequencyData> TransitionFrequencies;
-
-        private Dictionary<StateConduitFrequencyTagScriptableObject, LiveFrequencyTransitionData<S>> LiveTransitionFrequencies;
-        private AbstractTransitionBehaviourComponent<S> RecipientComponent;
-        
+        protected AbstractTransitionBehaviourComponent<S> RecipientComponent;
+                
         public void Initialize(AbstractTransitionBehaviourComponent<S> transitionComponent, bool conduitStartsOpen)
         {
             RecipientComponent = transitionComponent;
             RecipientComponent.RegisterConduit(this, conduitStartsOpen);
             
-            LiveTransitionFrequencies = new Dictionary<StateConduitFrequencyTagScriptableObject, LiveFrequencyTransitionData<S>>();
-            foreach (StateConduitFrequencyTagScriptableObject frequencyTag in TransitionFrequencies.Keys)
-            {
-                LiveTransitionFrequencies[frequencyTag] = TransitionFrequencies[frequencyTag].ToLiveData<S>();
-            }
-
-            gameObject.name += $" ({RecipientComponent.name})";
+            InitializeFrequencies();
         }
 
-        public AbstractTransitionBehaviourConduit<S1> Get<S1>() where S1 : MonoBehaviour
+        protected abstract void InitializeFrequencies();
+
+        /*public void Transmit(StateConduitFrequencyTagScriptableObject frequency)
         {
-            return this as AbstractTransitionBehaviourConduit<S1>;
-        }
+            TransmitOn(frequency);
+        }*/
         
-        protected bool TransmitOn(StateConduitFrequencyTagScriptableObject frequency)
+        /*protected bool TransmitOn(StateConduitFrequencyTagScriptableObject frequency)
         {
             if (!RecipientComponent) return false;
             return TryGetTransitionOn(frequency, out LiveFrequencyTransitionData<S> frequencyData) && RecipientComponent.SendConduitTransition(this, frequencyData);
-        }
+        }*/
 
-        private bool TryGetTransitionOn(StateConduitFrequencyTagScriptableObject frequency, out LiveFrequencyTransitionData<S> frequencyData)
+        /*private bool TryGetTransitionOn(StateConduitFrequencyTagScriptableObject frequency, out LiveFrequencyTransitionData<S> frequencyData)
         {
             return LiveTransitionFrequencies.TryGetValue(frequency, out frequencyData);
-        }
+        }*/
 
         public void ForceTransmitAll()
         {
-            if (!RecipientComponent) return;
+            /*if (!RecipientComponent) return;
             foreach (StateConduitFrequencyTagScriptableObject frequencyTag in LiveTransitionFrequencies.Keys)
             {
                 TransmitOn(frequencyTag);
-            }
+            }*/
         }
         
         public void CleanDependencies()
@@ -72,15 +65,6 @@ namespace FESStateSystem
             {
                 Base = this,
                 Transition = StateTransition<S>.Generate(Transition)
-            };
-        }
-
-        public static TransitionFrequencyData Generate(StateContextTagScriptableObject context, StateTransitionScriptableObject transition)
-        {
-            return new TransitionFrequencyData()
-            {
-                Context = context,
-                Transition = transition
             };
         }
     }

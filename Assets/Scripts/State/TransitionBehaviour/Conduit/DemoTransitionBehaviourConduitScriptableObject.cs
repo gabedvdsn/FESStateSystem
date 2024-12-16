@@ -5,12 +5,12 @@ namespace FESStateSystem
 {
     public class DemoTransitionBehaviourConduitScriptableObject : AbstractTransitionBehaviourConduitScriptableObject<DemoPlayerController>
     {
-        [Header("Conduit Prefab [Can Be Null]")]
+        [Header("Conduit Prefab")]
         public DemoTransitionBehaviourConduit ConduitPrefab;
         
         protected override AbstractTransitionBehaviourConduit<DemoPlayerController> CreateConduit(AbstractTransitionBehaviourComponent<DemoPlayerController> transitionComponent)
         {
-            return InstantiateConduit(ConduitPrefab);
+            return InstantiateConduit(ConduitPrefab, transitionComponent.transform);
         }
     }
 }

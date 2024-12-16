@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -17,13 +18,16 @@ namespace FESStateSystem
         private MonoScript sourceType;
         private string sourceName;
         private string sourceUsingLine;
+        private static bool createData = true;
 
         private bool attachSourceName;
         private bool attachAsPrefix = true;
+
+        private bool waitingForReload;
         
         private static string savePath = "Assets/Scripts/AuthoredStateSystem/TransitionBehaviourConduits";
         
-        [MenuItem("StateSystem/Transition Behaviour Conduit Creator")]
+        [MenuItem("StateSystem/Transition Behaviour/Conduit Creator")]
         public static void ShowWindow()
         {
             GetWindow<TransitionBehaviourConduitCreatorWindow>("Transition Behaviour Conduit Creator");
@@ -35,7 +39,7 @@ namespace FESStateSystem
         /// </summary>
         private void OnGUI()
         {
-            GUILayout.Label("Create a New Transition Behaviour", EditorStyles.boldLabel);
+            GUILayout.Label("Create a New Transition Behaviour Conduit", EditorStyles.boldLabel);
             
             conduitName = EditorGUILayout.TextField("Conduit Name", conduitName);
             realConduitName = conduitName;
@@ -86,7 +90,7 @@ namespace FESStateSystem
                         dataScriptName = $"{realConduitName}TransitionBehaviourConduitScriptableObject";
                         conduitScriptName = $"{realConduitName}TransitionBehaviourConduit";
                 
-                        savePath = $"Assets/Scripts/AuthoredStateSystem/TransitionBehaviourConduits/{sourceName}/{conduitName}";
+                        savePath = $"Assets/Scripts/AuthoredStateSystem/TransitionBehaviourConduits/{sourceName}";
                     }
                     else valid = false;
                 }
@@ -118,6 +122,8 @@ namespace FESStateSystem
             EditorGUI.EndDisabledGroup();
         
             EditorGUILayout.Space(10);
+            
+            // createData = EditorGUILayout.Toggle("Create Data", createData);
             
             GUILayout.Label("Save Path", EditorStyles.boldLabel);
             savePath = EditorGUILayout.TextField("Path", savePath);
@@ -164,8 +170,76 @@ namespace FESStateSystem
             savePath = "Assets/Scripts/AuthoredStateSystem/TransitionBehaviourConduits";
         }
 
+        private void CreateAbstractScript()
+        {
+            string usingStatements = $"using UnityEngine;\nusing FESStateSystem;\nusing System.Collections.Generic;\nusing AYellowpaper.SerializedCollections;";
+            if (!string.IsNullOrEmpty(sourceUsingLine)) usingStatements += $"\n{sourceUsingLine}";
+            
+            string enumTemplate = $@"
+public enum {sourceName}Frequency
+{{
+
+}}
+";
+            
+            string abstractConduitTemplate = $@"{usingStatements}
+
+public abstract class Abstract{sourceName}TransitionBehaviourConduit : AbstractTransitionBehaviourConduit<{sourceName}>
+{{
+    [SerializedDictionary(""Frequency"", ""Transition Data"")]
+    [SerializeField] private SerializedDictionary<{sourceName}Frequency, TransitionFrequencyData> TransitionFrequencies;
+
+    private Dictionary<{sourceName}Frequency, LiveFrequencyTransitionData<{sourceName}>> LiveTransitionFrequencies;
+
+    protected override void InitializeFrequencies()
+    {{
+        LiveTransitionFrequencies = new Dictionary<{sourceName}Frequency, LiveFrequencyTransitionData<{sourceName}>>();
+
+        foreach ({sourceName}Frequency frequency in TransitionFrequencies.Keys)
+        {{
+            LiveTransitionFrequencies[frequency] = TransitionFrequencies[frequency].ToLiveData<{sourceName}>();
+        }}
+    }}
+
+    public void Transmit({sourceName}Frequency frequency)
+    {{
+        TransmitOn(frequency);
+    }}
+    
+    protected bool TransmitOn({sourceName}Frequency frequency)
+    {{
+        if (!RecipientComponent) return false;
+        return TryGetTransitionOn(frequency, out LiveFrequencyTransitionData<{sourceName}> frequencyData) && RecipientComponent.SendConduitTransition(this, frequencyData);
+    }}
+
+    private bool TryGetTransitionOn({sourceName}Frequency frequency, out LiveFrequencyTransitionData<{sourceName}> frequencyData)
+    {{
+        return LiveTransitionFrequencies.TryGetValue(frequency, out frequencyData);
+    }}
+    
+  
+}}
+
+{enumTemplate}
+";
+            string folderPath = savePath + "/";
+            string conduitFilepath = Path.Combine(folderPath, $"Abstract{sourceName}TransitionBehaviourConduit.cs");
+
+            // Ensure the directory exists
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            // Write the script to the file
+            File.WriteAllText(conduitFilepath, abstractConduitTemplate);
+            
+        }
+
         private void CreateTransitionBehaviourConduitScripts()
         {
+            if (!ScriptUtils.DoesScriptExist($"Abstract{sourceName}TransitionBehaviourConduit")) CreateAbstractScript();
+            
             string usingStatements = $"using UnityEngine;\nusing FESStateSystem;";
             if (!string.IsNullOrEmpty(sourceUsingLine)) usingStatements += $"\n{sourceUsingLine}";
             string dataScriptTemplate = $@"{usingStatements}
@@ -174,13 +248,13 @@ namespace FESStateSystem
 public class {dataScriptName} : AbstractTransitionBehaviourConduitScriptableObject<{sourceName}>
 {{
     [Header(""Conduit Prefab"")]
-    public {conduitScriptName} ConduitPrefab;
+    public {conduitScriptName} ConduitPrefab;  // DO NOT change the name of this field
     
     protected override AbstractTransitionBehaviourConduit<{sourceName}> CreateConduit(AbstractTransitionBehaviourComponent<{sourceName}> transitionComponent)
     {{
         if (!ConduitPrefab) return null;
 
-        {conduitScriptName} conduit = InstantiateConduit(ConduitPrefab);
+        {conduitScriptName} conduit = InstantiateConduit(ConduitPrefab, transitionComponent.transform);
 
         // Write additional logic
 
@@ -192,15 +266,15 @@ public class {dataScriptName} : AbstractTransitionBehaviourConduitScriptableObje
             
             string conduitScriptTemplate = $@"{usingStatements}
 
-public class {conduitScriptName} : AbstractTransitionBehaviourConduit<{sourceName}>
+public class {conduitScriptName} : Abstract{sourceName}TransitionBehaviourConduit
 {{
 
 }}
 
 ";
-            
 
-            string folderPath = savePath + "/";
+
+            string folderPath = savePath + "/" + conduitName + "/";
             string dataFilepath = Path.Combine(folderPath, dataScriptName + ".cs");
             string conduitFilepath = Path.Combine(folderPath, conduitScriptName + ".cs");
 
@@ -213,9 +287,15 @@ public class {conduitScriptName} : AbstractTransitionBehaviourConduit<{sourceNam
             // Write the script to the file
             File.WriteAllText(dataFilepath, dataScriptTemplate);
             File.WriteAllText(conduitFilepath, conduitScriptTemplate);
-
+            
             // Refresh the Asset Database to show the new script
             AssetDatabase.Refresh();
+
+            /*if (createData)
+            {
+                waitingForReload = true;
+                EditorApplication.update += WaitForCompilationAndCreateData;
+            }*/
         }
     }
 }

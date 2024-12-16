@@ -25,7 +25,7 @@ namespace FESStateSystem
         private bool isInheritable;
         
         private string actorTarget;
-
+        
         private static string savePath = "Assets/Scripts/AuthoredStateSystem/GameplayStates";
 
         [MenuItem("StateSystem/State Creator")]

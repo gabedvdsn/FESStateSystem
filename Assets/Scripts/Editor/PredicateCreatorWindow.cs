@@ -93,9 +93,9 @@ public class {scriptName} : AbstractTransitionPredicateScriptableObject
 
     public class {subclassName}<S> : AbstractTransitionPredicate<S>
     {{
-        public override bool Evaluate(S source)
+        public override bool Evaluate(S source, StateActor actor)
         {{
-            return true;
+            return false;
         }}
     }}
 }}

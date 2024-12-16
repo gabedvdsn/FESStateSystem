@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14bb1ff8abff41909c80df73bfa34fa0, type: 3}
-  m_Name: ToTiredTransition
+  m_Script: {fileID: 11500000, guid: e4c84219a74440f39acf83b3f681b18a, type: 3}
+  m_Name: PlayerActorInitializationTrigger
   m_EditorClassIdentifier: 
-  Predicate: {fileID: 11400000, guid: ec99ae18eed3ca744971d4eae72459ce, type: 2}
-  To: {fileID: 11400000, guid: 412fc579b57d9d54994bcc5f4ac0ea31, type: 2}
-  StateChangeInterrupts: 0
+  InitialModerator: {fileID: 11400000, guid: 8ca14ef52768d2347a2c05315b0f0a81, type: 2}
+  OverrideStates:
+    _serializedList: []

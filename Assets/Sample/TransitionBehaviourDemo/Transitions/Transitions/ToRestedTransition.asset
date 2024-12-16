@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 14bb1ff8abff41909c80df73bfa34fa0, type: 3}
-  m_Name: ToTiredTransition
+  m_Name: ToRestedTransition
   m_EditorClassIdentifier: 
   Predicate: {fileID: 11400000, guid: ec99ae18eed3ca744971d4eae72459ce, type: 2}
-  To: {fileID: 11400000, guid: 412fc579b57d9d54994bcc5f4ac0ea31, type: 2}
+  To: {fileID: 11400000, guid: 9c5f7f36438791c408e9d43ae5e88818, type: 2}
   StateChangeInterrupts: 0
