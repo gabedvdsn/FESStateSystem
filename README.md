@@ -1,7 +1,7 @@
 ![fes_logo](https://github.com/user-attachments/assets/a26ba292-5a54-4000-ae70-a617f6fbafe4)
 
 # FAR EMERALD DYNAMIC STATE SYSTEM
-A fully abstract, scalable state system to represent actors in multiple states within multiple control contexts. Implemented almost entirely within scriptable objects, this system is modular and easily extendable. This project is built using native Unity and C#. 
+A fully abstract, scalable state system to represent actors in multiple states within multiple control contexts. Implemented almost entirely within scriptable objects, this system is modular and easily extendable. Custom editor windows make extending the base system more straightforward, accelerating the development process. This project is built using native Unity and C#. 
 
 To see the full design breakdown of the state system, please visit [this Miro board](https://miro.com/app/board/uXjVL51lkNc=/?share_link_id=754146192571).
 
