@@ -244,7 +244,7 @@ public abstract class Abstract{sourceName}TransitionBehaviourConduit : AbstractT
             if (!string.IsNullOrEmpty(sourceUsingLine)) usingStatements += $"\n{sourceUsingLine}";
             string dataScriptTemplate = $@"{usingStatements}
 
-[CreateAssetMenu(menuName = ""FESState/Authored/Transition Behaviour Conduit/{sourceName}/{conduitName}"", fileName = ""{realConduitName}Conduit"")]
+[CreateAssetMenu(menuName = ""FESState/Authored/{sourceName}/Transition Behaviour Conduit/{conduitName}"", fileName = ""{realConduitName}Conduit"")]
 public class {dataScriptName} : AbstractTransitionBehaviourConduitScriptableObject<{sourceName}>
 {{
     [Header(""Conduit Prefab"")]

@@ -25,6 +25,28 @@ namespace FESStateSystem
             return false; // Script not found
         }
         
+        public static bool DoesScriptExist(string scriptName, out string filePath)
+        {
+            // Search for assets with the specified name and a .cs extension
+            string[] guids = AssetDatabase.FindAssets(scriptName + " t:script");
+
+            // Check if any result matches the script name exactly
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                string fileName = System.IO.Path.GetFileNameWithoutExtension(path);
+            
+                if (fileName == scriptName)
+                {
+                    filePath = path;
+                    return true; // Script exists
+                }
+            }
+
+            filePath = "";
+            return false; // Script not found
+        }
+        
         public static string GetFileContents(string fileName)
         {
             // Find assets with the specified file name (without the extension)

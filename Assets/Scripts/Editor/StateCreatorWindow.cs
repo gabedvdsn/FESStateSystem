@@ -217,8 +217,8 @@ namespace FESStateSystem
                 ? inheritedFrom.Replace("ScriptableObject", "") 
                 : "AbstractGameplayState";
             if (!string.IsNullOrEmpty(sourceUsingLine)) subInheritedFrom = subInheritedFrom.Replace(sourceUsingLine.Replace("using ", "").Replace(";", ""), "").Replace(".", "");
-            string menuTarget = !string.IsNullOrEmpty(actorTarget) ? $"{actorTarget}/{stateName} State" : $"General/{stateName} State";
-            string header = isAbstract ? "" : $"[CreateAssetMenu(menuName = \"FESState/Authored/State/{menuTarget}\", fileName = \"{realStateName}State\")]";
+            string menuTarget = !string.IsNullOrEmpty(actorTarget) ? $"{actorTarget}/State/{stateName} State" : $"General/{stateName} State";
+            string header = isAbstract ? "" : $"[CreateAssetMenu(menuName = \"FESState/Authored/{menuTarget}\", fileName = \"{realStateName}State\")]";
             string abstractTag = isAbstract ? "abstract " : "";
 
             string encapsulatesName = "";

@@ -11,14 +11,6 @@ public abstract class AbstractDemoPlayerControllerTransitionBehaviourConduit : A
 
     private Dictionary<DemoPlayerControllerFrequency, LiveFrequencyTransitionData<DemoPlayerController>> LiveTransitionFrequencies;
 
-    public void Initialize(AbstractTransitionBehaviourComponent<DemoPlayerController> transitionComponent, bool conduitStartsOpen)
-    {
-        RecipientComponent = transitionComponent;
-        RecipientComponent.RegisterConduit(this, conduitStartsOpen);
-
-        InitializeFrequencies();
-    }
-
     protected override void InitializeFrequencies()
     {
         LiveTransitionFrequencies = new Dictionary<DemoPlayerControllerFrequency, LiveFrequencyTransitionData<DemoPlayerController>>();
@@ -51,8 +43,6 @@ public abstract class AbstractDemoPlayerControllerTransitionBehaviourConduit : A
 
 public enum DemoPlayerControllerFrequency
 {
-    HelloWorld,
-    Testing2,
-    SeventyFiveEighty
+
 }
 
